@@ -89,13 +89,15 @@ public class Character : ISelectable
 
         if (MovementPercentage < 1.0f)
         {
+            float meanMovementCost = (CurrentTile.MovementCost + NextTile.MovementCost) / 2;
+
             if (NextTile.X != CurrentTile.X || NextTile.Y != CurrentTile.Y)
             {
-                MovementPercentage += ((deltaTime * movementSpeed) / NextTile.MovementCost) / 1.414213562373f;
+                MovementPercentage += ((deltaTime * movementSpeed) / meanMovementCost) / 1.414213562373f;
             }
             else
             {
-                MovementPercentage += ((deltaTime * movementSpeed) / NextTile.MovementCost); // / 1
+                MovementPercentage += ((deltaTime * movementSpeed) / meanMovementCost); // / 1
             }
         }
         else
@@ -109,8 +111,7 @@ public class Character : ISelectable
 
     public void TryGetNewPath()
     {
-        if (DestinationTile == null || DestinationTile == CurrentTile 
-            || DestinationTile.Building != null || DestinationTile.MovementCost == 0f)
+        if (DestinationTile == null || DestinationTile == CurrentTile || DestinationTile.MovementCost == 0f)
         {
             DestinationTile = null;
             return;

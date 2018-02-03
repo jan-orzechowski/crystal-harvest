@@ -20,8 +20,8 @@ public class World
 
     public Tile[,,] Tiles { get; protected set; }
 
-    List<Building> buildings;
-    List<Character> characters;
+    public List<Building> Buildings { get; protected set; }
+    public List<Character> Characters { get; protected set; }
 
     List<BuildingPrototype> buildingPrototypes;
 
@@ -48,7 +48,7 @@ public class World
         {
             for (int y = 0; y < YSize; y++)
             {
-                if (x < 6 && y < 6) // piach
+                if (x < 15 && y < 15) // piach
                 {
                     newTile = new Tile(x, y, 0, TileType.Dirt, this); // piach
                     Tiles[x, y, 0] = newTile;
@@ -80,8 +80,8 @@ public class World
             }
         }
 
-        buildings = new List<Building>(1024);
-        characters = new List<Character>(32);
+        Buildings = new List<Building>(1024);
+        Characters = new List<Character>(32);
 
         DEBUG_LoadPrototypes();
 
@@ -105,13 +105,13 @@ public class World
 
         Pathfinder.Process();
 
-        for (int i = 0; i < characters.Count; i++)
+        for (int i = 0; i < Characters.Count; i++)
         {
-            characters[i].UpdateCharacter(deltaTime);
+            Characters[i].UpdateCharacter(deltaTime);
         }
-        for (int i = 0; i < buildings.Count; i++)
+        for (int i = 0; i < Buildings.Count; i++)
         {
-            buildings[i].UpdateBuilding(deltaTime);
+            Buildings[i].UpdateBuilding(deltaTime);
         }
     }
 
@@ -156,7 +156,7 @@ public class World
         if (t != null && t.Building == null)
         {
             Character c = new Character("Wiesław", t, humanBehaviourTree);
-            characters.Add(c);
+            Characters.Add(c);
 
             GameManager.Instance.GenerateDisplayForCharacter(c);
             Debug.Log("Dodano postać: " + c.CurrentTile.Position.ToString());
@@ -165,19 +165,32 @@ public class World
         return false;
     }
 
-    public bool IsValidBuildingPosition(Tile tile, BuildingPrototype prototype)
+    public bool IsCharacterOnTile(Tile tile)
     {
-        bool result =   (tile != null &&
-                        tile.Building == null &&
-                        tile.Type != TileType.Empty);
-        return result;
+        for (int i = 0; i < Characters.Count; i++)
+        {
+            if ((Characters[i].CurrentTile == tile && Characters[i].MovementPercentage < 0.4f)
+                || (Characters[i].NextTile == tile && Characters[i].MovementPercentage > 0.4f))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public bool IsValidBuildingPosition(List<Tile> tiles, BuildingPrototype prototype)
+    public bool IsValidBuildingPosition(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
-        for (int i = 0; i < tiles.Count; i++)
+        List<Tile> tilesToCheck = MapPrototypeToWorld(origin, rotation, prototype);
+
+        for (int i = 0; i < tilesToCheck.Count; i++)
         {
-            if (IsValidBuildingPosition(tiles[i], prototype))
+            Tile tile = tilesToCheck[i];
+            if (tile != null
+                && tile.Building == null
+                && tile.Type != TileType.Empty
+                && (IsCharacterOnTile(tile) == false || prototype.MovementCost != 0f)
+                && (prototype.DoesNotBlockAccess || tile.ReservedForAccess != true)
+                )
             {
                 continue;
             }
@@ -186,55 +199,86 @@ public class World
                 return false;
             }
         }
+
+        if (prototype.HasAccessTile)
+        {
+            Tile accessTile = MapPrototypeAccessTileToWorld(origin, rotation, prototype);
+
+            if (accessTile != null
+                && (accessTile.Building == null || accessTile.Building.DoesNotBlockAccess)
+                && accessTile.Type != TileType.Empty
+                && accessTile.MovementCost > 0f
+                )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
+    public Tile MapPrototypeAccessTileToWorld(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
+    {
+        if (prototype.HasAccessTile)
+        {
+            return GetTileFromPosition(MapNormalizedPositionToWorld(
+                        prototype.NormalizedAccessTilePosition,
+                        origin, rotation));
+        }
+        else
+        {
+            return null;
+        }
+    }
     public List<Tile> MapPrototypeToWorld(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
-        List<Tile> tiles = new List<Tile>();
+        List<Tile> tiles = new List<Tile>(prototype.NormalizedTilePositions.Count);
+
         for (int i = 0; i < prototype.NormalizedTilePositions.Count; i++)
         {
             TilePosition tp = prototype.NormalizedTilePositions[i];
-
-            Tile tile = null;
-
-            if (rotation == Rotation.N)
-            {
-                tile = GetTileFromPosition(new TilePosition(
-                origin.X + tp.X,
-                origin.Y + tp.Y,
-                origin.Height + tp.Height));
-            }
-            else if (rotation == Rotation.E)
-            {
-                tile = GetTileFromPosition(new TilePosition(
-                origin.X + tp.Y,
-                origin.Y - tp.X, //
-                origin.Height + tp.Height));
-            }
-            else if (rotation == Rotation.S)
-            {
-                tile = GetTileFromPosition(new TilePosition(
-                origin.X - tp.X,
-                origin.Y - tp.Y,
-                origin.Height + tp.Height));
-            }
-            else if (rotation == Rotation.W)
-            {
-                tile = GetTileFromPosition(new TilePosition(
-                origin.X - tp.Y,
-                origin.Y + tp.X,
-                origin.Height + tp.Height));
-            }
-
-            if (tile == null)
-            {
-                return null;
-            }
-
+            Tile tile = GetTileFromPosition(MapNormalizedPositionToWorld(tp, origin, rotation));
             tiles.Add(tile);
         }
         return tiles;
+    }
+
+    TilePosition MapNormalizedPositionToWorld(TilePosition normalizedPosition, TilePosition origin, Rotation rotation)
+    {
+        TilePosition result;
+        if (rotation == Rotation.N)
+        {
+            result = new TilePosition(
+            origin.X + normalizedPosition.X,
+            origin.Y + normalizedPosition.Y,
+            origin.Height + normalizedPosition.Height);
+        }
+        else if (rotation == Rotation.E)
+        {
+            result = new TilePosition(
+            origin.X + normalizedPosition.Y,
+            origin.Y - normalizedPosition.X,
+            origin.Height + normalizedPosition.Height);
+        }
+        else if (rotation == Rotation.S)
+        {
+            result = new TilePosition(
+            origin.X - normalizedPosition.X,
+            origin.Y - normalizedPosition.Y,
+            origin.Height + normalizedPosition.Height);
+        }
+        else // W
+        {
+            result = new TilePosition(
+            origin.X - normalizedPosition.Y,
+            origin.Y + normalizedPosition.X,
+            origin.Height + normalizedPosition.Height);
+        }
+        return result;
     }
 
     public BuildingPrototype GetBuildingPrototype(string type)
@@ -253,36 +297,41 @@ public class World
 
     public void PlaceNewBuilding(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
-        List<Tile> validTiles = MapPrototypeToWorld(origin, rotation, prototype);
-        if (validTiles == null ||
-            IsValidBuildingPosition(validTiles, prototype) == false
-            )
+        if (IsValidBuildingPosition(origin, rotation, prototype) == false)
         {
-            Debug.Log("Nie udało się wybudować budynku: pola są niedostępne.");
+            Debug.Log("Nie udało się wybudować budynku: lokacja jest nieodpowiednia.");
             return;
         }
         else
         {
-            Building b = new Building(prototype.Type, rotation, new List<Tile>(validTiles));
-            buildings.Add(b);
-            for (int i = 0; i < validTiles.Count; i++)
-            {
-                validTiles[i].Building = b;
-                validTiles[i].MovementCost = 0f;
-                modifiedTiles.Add(validTiles[i]);
-            }
-            GameManager.Instance.ShowBuilding(b, rotation);
+            List<Tile> tilesForBuilding = MapPrototypeToWorld(origin, rotation, prototype);
+            Tile accessTile = MapPrototypeAccessTileToWorld(origin, rotation, prototype);
 
+            Building b = new Building(prototype, rotation, tilesForBuilding, accessTile);
+            Buildings.Add(b);
+
+            for (int i = 0; i < tilesForBuilding.Count; i++)
+            {
+                tilesForBuilding[i].Building = b;
+                tilesForBuilding[i].MovementCost = prototype.MovementCost;
+                modifiedTiles.Add(tilesForBuilding[i]);
+            }
             mapChangedThisFrame = true;
 
+            if (accessTile != null) { accessTile.ReservedForAccess = true; }
+
+            GameManager.Instance.ShowBuilding(b, rotation);
+            
             Debug.Log("Dodano budynek: " + b.Tiles[0].Position.ToString());
         }       
     }
 
     public bool DeleteBuilding(Building building)
     {
-        if (buildings.Contains(building))
+        if (Buildings.Contains(building))
         {
+            CancelReservationForAccess(building);
+
             for (int i = 0; i < building.Tiles.Count; i++)
             {
                 building.Tiles[i].Building = null;
@@ -290,7 +339,7 @@ public class World
                 modifiedTiles.Add(building.Tiles[i]);
             }
             GameManager.Instance.RemoveDisplayForBuilding(building);
-            buildings.Remove(building);
+            Buildings.Remove(building);
 
             mapChangedThisFrame = true;
 
@@ -302,6 +351,22 @@ public class World
             Debug.Log("Próbujemy usunąć budynek, którego nie ma na liście!");
             return false;
         }
+    }
+
+    void CancelReservationForAccess(Building building)
+    {
+        if (building.AccessTile == null) return;
+
+        for (int i = 0; i < Buildings.Count; i++)
+        {
+            if(Buildings[i].AccessTile != null 
+                && Buildings[i].AccessTile == building.AccessTile 
+                && Buildings[i] != building)
+            {
+                return;
+            }
+        }
+        building.AccessTile.ReservedForAccess = false;
     }
 
     void DEBUG_LoadPrototypes()
@@ -317,11 +382,15 @@ public class World
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnSand = true;
         bp.AllowRotation = false;
+        bp.DoesNotBlockAccess = true;
+        bp.MovementCost = 0.5f;
+        bp.HasAccessTile = false;
         bp.NormalizedTilePositions = new List<TilePosition>()
         {
             new TilePosition(0,0,0),
         };
         buildingPrototypes.Add(bp);
+        
 
 
         bp = new BuildingPrototype();
@@ -336,6 +405,11 @@ public class World
             new TilePosition(0,0,0),
             new TilePosition(0,1,0),
         };
+        bp.HasAccessTile = true;
+        bp.MovementCost = 0f;
+        bp.NormalizedAccessTilePosition = new TilePosition(1, 1, 0);
+        bp.NormalizedAccessTileRotation = Rotation.W;
+
         buildingPrototypes.Add(bp);
 
     }

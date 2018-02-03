@@ -12,4 +12,9 @@ public class BuildingPrototype
     public bool CanBeBuiltOnPlatform;
     public bool AllowRotation;
     public List<TilePosition> NormalizedTilePositions;
+    public bool HasAccessTile;
+    public TilePosition NormalizedAccessTilePosition;
+    public Rotation NormalizedAccessTileRotation;
+    public bool DoesNotBlockAccess;
+    public float MovementCost;
 }

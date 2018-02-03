@@ -70,16 +70,18 @@ public class BT_Tree
 
     public void DEBUG_LoadTestTree()
     {
-        root = Subtree(new BT_Sequence(),
-                            Subtree(new BT_MemSequence(),
-                                        new BT_GetRandomTile("wanderTile", 15),
-                                        new BT_GoTo("wanderTile"),
-                                        new BT_WaitRandom(0.5f, 3f)
+        root = Subtree(new BT_MemSequence(),
+                                Subtree(new BT_MemSequence(),
+                                            new BT_GetRandomTile("wanderTile", 15),
+                                            new BT_GoTo("wanderTile"),
+                                            new BT_WaitRandom(2f, 5f)
                                 ),
-                            Subtree(new BT_Sequence(),
-                                        new BT_Node(),
-                                        new BT_Node()
+                                Subtree(new BT_MemSequence(),
+                                            new BT_GetRandomBuilding("buildingTile"),
+                                            new BT_GoTo("buildingTile"),
+                                            new BT_Wait(3f)
                                 )
+                            
                );
         AssignIDs(root);
     }

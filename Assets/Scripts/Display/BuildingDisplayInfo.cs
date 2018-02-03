@@ -9,4 +9,5 @@ public class BuildingDisplayInfo
     public string Type;
     public GameObject Model;
     public GameObject PreviewModel;
+    public GameObject InvalidPreviewModel;
 }

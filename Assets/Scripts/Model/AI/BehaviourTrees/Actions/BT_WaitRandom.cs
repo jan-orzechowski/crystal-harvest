@@ -7,32 +7,36 @@ public class BT_WaitRandom : BT_ActionNode
 {
     float minWaitingTime;
     float maxWaitingTime;
-    BT_Wait childWaitNode;
+    float waitingTime;
 
     public BT_WaitRandom(float minWaitingTime, float maxWaitingTime)
     {
         this.minWaitingTime = minWaitingTime;
         this.maxWaitingTime = maxWaitingTime;
-        childWaitNode = new BT_Wait(0);
     }
 
     public override BT_Result Tick(BT_AgentMemory am)
     {
         if (am.IsRunning(ID) == false)
-        {            
-            childWaitNode.ChangeWaitingTime(
-                UnityEngine.Random.Range(minWaitingTime, maxWaitingTime));
+        {
+            waitingTime = UnityEngine.Random.Range(minWaitingTime, maxWaitingTime);
+            am.SetFloat(ID, "timer", waitingTime);
             am.SetRunning(ID, true);
         }
 
-        BT_Result result = childWaitNode.Tick(am);
+        float timer = am.GetFloat(ID, "timer", 0f);
+        timer -= am.DeltaTime;
+        am.SetFloat(ID, "timer", timer);
 
-        if (result != BT_Result.RUNNING)
+        if (timer <= 0)
         {
             am.SetRunning(ID, false);
+            return BT_Result.SUCCESS;
         }
-
-        return result;
+        else
+        {
+            return BT_Result.RUNNING;
+        }
     }
 
 }

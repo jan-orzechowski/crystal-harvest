@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public GameObject CharactersParent;
     public GameObject PreviewsParent;
 
+    public GameObject AccessArrowPrefab;
+
     public GameObject DebugBuildingPreviewPrefab;
 
     public float LevelHeightOffset;
@@ -24,7 +26,8 @@ public class GameManager : MonoBehaviour
     // Tablica zamiast słownika - dzięki temu można ustalić jej zawartość z poziomu edytora
     public BuildingDisplayInfo[] buildingDisplay;
 
-    List<GameObject> PreviewObjects = new List<GameObject>();
+    List<GameObject> previewObjects = new List<GameObject>();
+    GameObject accessArrow;
 
     void OnEnable()
     {
@@ -93,7 +96,7 @@ public class GameManager : MonoBehaviour
             BuildingsParent.transform
             );
 
-        GetRotationForDisplayObject(gameObject, rotation);
+        RotateDisplayObject(gameObject, rotation);
 
         SelectableDisplayObject selectableDisplayObject = gameObject.GetComponentInChildren<SelectableDisplayObject>();
 
@@ -105,12 +108,21 @@ public class GameManager : MonoBehaviour
 
     public void ShowPreview(TilePosition position, Rotation rotation, BuildingPrototype prototype)
     {
+        bool isPositionValid = World.IsValidBuildingPosition(position, rotation, prototype);
+
         GameObject model = null;
         for (int i = 0; i < buildingDisplay.Length; i++)
         {
             if (buildingDisplay[i] != null && buildingDisplay[i].Type == prototype.ModelName)
             {
-                model = buildingDisplay[i].PreviewModel;
+                if (isPositionValid)
+                {
+                    model = buildingDisplay[i].PreviewModel;
+                }
+                else
+                {
+                    model = buildingDisplay[i].InvalidPreviewModel;
+                }
                 break;
             }
         }
@@ -119,23 +131,48 @@ public class GameManager : MonoBehaviour
             model = DebugBuildingPreviewPrefab;
         }
 
-        GameObject preview = SimplePool.Spawn(model, 
+        GameObject preview = SimplePool.Spawn(
+            model, 
             new Vector3(position.X, position.Height * LevelHeightOffset, position.Y), 
             Quaternion.identity);
 
-        GetRotationForDisplayObject(preview, rotation);
+       
+        if (isPositionValid && prototype.HasAccessTile)
+        {
+            TilePosition arrowPosition = prototype.NormalizedAccessTilePosition;
+
+            accessArrow = SimplePool.Spawn(
+                AccessArrowPrefab,
+                new Vector3(position.X + arrowPosition.X,
+                            (position.Height + arrowPosition.Height) * LevelHeightOffset,
+                            position.Y + arrowPosition.Y),
+                Quaternion.identity);
+
+            RotateDisplayObject(accessArrow, prototype.NormalizedAccessTileRotation);
+
+            previewObjects.Add(accessArrow);
+
+            accessArrow.transform.SetParent(preview.transform);            
+        }
+
+        RotateDisplayObject(preview, rotation);
 
         preview.transform.SetParent(PreviewsParent.transform);
-        PreviewObjects.Add(preview);
+        previewObjects.Add(preview);
     }
 
     public void HidePreviews()
     {
-        for (int i = 0; i < PreviewObjects.Count; i++)
+        for (int i = 0; i < previewObjects.Count; i++)
         {
-            SimplePool.Despawn(PreviewObjects[i]);
+            SimplePool.Despawn(previewObjects[i]);
         }
-        PreviewObjects.Clear();
+        if (accessArrow != null)
+        {
+            SimplePool.Despawn(accessArrow);
+        }
+        previewObjects.Clear();
+        
     }
 
     public void RemoveDisplayForBuilding(Building building)
@@ -174,7 +211,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GetRotationForDisplayObject(GameObject displayObject, Rotation rotation)
+    void RotateDisplayObject(GameObject displayObject, Rotation rotation)
     {
         if (rotation == Rotation.N)
         {

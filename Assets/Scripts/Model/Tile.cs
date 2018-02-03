@@ -21,6 +21,8 @@ public class Tile
     public float MovementCost = 2f;
     public TileType Type;
 
+    public bool ReservedForAccess;
+
     public Building Building;
 
     World World;

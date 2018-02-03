@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4888818393938284}
   m_Layer: 0
-  m_Name: DebugBuildingPreview
+  m_Name: DebugBuildingInvalidPreview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,9 +84,9 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 83ce79e5f340a2b4991d95fb076cd20d, type: 2}
-  - {fileID: 2100000, guid: 83ce79e5f340a2b4991d95fb076cd20d, type: 2}
-  - {fileID: 2100000, guid: 83ce79e5f340a2b4991d95fb076cd20d, type: 2}
+  - {fileID: 2100000, guid: ea311cc7d05def04eade78ff5c9b181c, type: 2}
+  - {fileID: 2100000, guid: ea311cc7d05def04eade78ff5c9b181c, type: 2}
+  - {fileID: 2100000, guid: ea311cc7d05def04eade78ff5c9b181c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

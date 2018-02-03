@@ -6,17 +6,23 @@ using System;
 public class Building : ISelectable 
 {
     public string Type;
-    public List<Tile> Tiles;
-    public Rotation Rotation;
+    public List<Tile> Tiles { get; protected set; }
+    public Rotation Rotation { get; protected set; }
 
-    public SelectableDisplayObject DisplayObject;    
+    public Tile AccessTile { get; protected set; }
+    public Rotation AccessTileRotation { get; protected set; }
 
-    public Building(string type, Rotation rotation, List<Tile> tiles)
+    public SelectableDisplayObject DisplayObject;
+
+    public bool DoesNotBlockAccess;
+
+    public Building(BuildingPrototype prototype, Rotation rotation, List<Tile> tiles, Tile accessTile)
     {
-        Type = type;
+        Type = prototype.Type;
         Rotation = rotation;
         Tiles = tiles;
-       
+        AccessTile = accessTile;
+        DoesNotBlockAccess = prototype.DoesNotBlockAccess;
     }
     public void UpdateBuilding(float deltaTime)
     {

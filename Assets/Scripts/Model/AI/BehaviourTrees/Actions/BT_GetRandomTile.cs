@@ -8,6 +8,7 @@ public class BT_GetRandomTile : BT_ActionNode
     string tileVarName;
     int maxDistanceFromCharacter;
     int maxHeightDifference;
+    int maxSearchesNumber = 100;
 
     public BT_GetRandomTile(string tileVarName, int maxDistanceFromCharacter, int maxHeightDifference = 2) : base()
     {
@@ -23,10 +24,8 @@ public class BT_GetRandomTile : BT_ActionNode
 
         World world = GameManager.Instance.World;
 
-        bool found = false;
-
-        while (found == false)
-        {
+        for (int i = 0; i < maxSearchesNumber; i++)
+        {        
             int x = UnityEngine.Random.Range(
             (Math.Max(pos.X - maxDistanceFromCharacter, 0)),
             (Math.Min(pos.X + maxDistanceFromCharacter, world.XSize)));
@@ -51,6 +50,6 @@ public class BT_GetRandomTile : BT_ActionNode
                 return BT_Result.SUCCESS;
             }
         }
-        return BT_Result.ERROR;
+        return BT_Result.FAILURE;
     }
 }

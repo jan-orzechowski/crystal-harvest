@@ -75,9 +75,10 @@ public class BuildModeManager : MonoBehaviour
                     y++)
                 {
                     if (world.IsValidBuildingPosition(
-                        world.GetTileFromPosition(new TilePosition(x, y, start.Height)), 
-                        currentPrototype
-                        ))
+                            new TilePosition(x, y, start.Height),
+                            currentRotation,
+                            currentPrototype)
+                        )
                     {
                         GameManager.Instance.ShowPreview(
                             new TilePosition(x, y, start.Height),

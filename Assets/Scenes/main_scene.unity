@@ -775,6 +775,8 @@ MonoBehaviour:
   BuildingsParent: {fileID: 1256720390}
   CharactersParent: {fileID: 2048119415}
   PreviewsParent: {fileID: 2120994381}
+  AccessArrowPrefab: {fileID: 1448314325074952, guid: 3bcb6664f12c80044ac3c6d5ab565df2,
+    type: 2}
   DebugBuildingPreviewPrefab: {fileID: 1459769429501506, guid: fd74e2ff043880245852887e2584f489,
     type: 2}
   LevelHeightOffset: 0.5
@@ -783,13 +785,18 @@ MonoBehaviour:
     Model: {fileID: 1459769429501506, guid: 1be4d57ee9f48a34b8e44d3393ed69b2, type: 2}
     PreviewModel: {fileID: 1604322685696820, guid: e96ac9d83dd77a4458b68b1835432496,
       type: 2}
+    InvalidPreviewModel: {fileID: 1604322685696820, guid: 92d467907f7f0a44b9277c59c9b81bd3,
+      type: 2}
   - Type: Debug2
     Model: {fileID: 1916034819458400, guid: 0ba8989ff92a62b4d9947109bc8091a6, type: 2}
     PreviewModel: {fileID: 1734733986697778, guid: 64fb881f94b1fc64db2d990bb74317c2,
       type: 2}
+    InvalidPreviewModel: {fileID: 1734733986697778, guid: 3e53791b2ce2e26498bf4c4a4b8d651b,
+      type: 2}
   - Type: Stairs
     Model: {fileID: 0}
     PreviewModel: {fileID: 0}
+    InvalidPreviewModel: {fileID: 0}
 --- !u!4 &855187724
 Transform:
   m_ObjectHideFlags: 0
