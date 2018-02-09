@@ -14,7 +14,9 @@ public class Building : ISelectable
 
     public SelectableDisplayObject DisplayObject;
 
-    public bool DoesNotBlockAccess;
+    public bool DoesNotBlockAccess { get; protected set; }
+
+    public IStorage IStorage { get; protected set; }
 
     public Building(BuildingPrototype prototype, Rotation rotation, List<Tile> tiles, Tile accessTile)
     {
@@ -22,19 +24,34 @@ public class Building : ISelectable
         Rotation = rotation;
         Tiles = tiles;
         AccessTile = accessTile;
-        DoesNotBlockAccess = prototype.DoesNotBlockAccess;
+        DoesNotBlockAccess = prototype.DoesNotBlockAccess;  
+        if (prototype.ProductionTime > 0f)
+        {
+            IStorage = new Factory(this, prototype);
+        }     
+        else if (prototype.MaxStorage > 0)
+        {
+            IStorage = new Storage(this, prototype);
+        }
     }
     public void UpdateBuilding(float deltaTime)
     {
 
-    }
+    }    
+
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
     {
         DisplayObject = displayObject;
     }
     public string GetSelectionText()
     {
-        return Type;
+        string s = "";
+        s += Type + "\n";
+        if (IStorage != null)
+        {
+            s += IStorage.GetSelectionText();
+        }
+        return s;
     }
     public SelectableDisplayObject GetDisplayObject()
     {

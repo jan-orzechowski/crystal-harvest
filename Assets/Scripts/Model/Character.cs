@@ -20,7 +20,9 @@ public class Character : ISelectable
     public bool PathNeedsReplacement;
 
     BT_Tree behaviourTree;
-    BT_AgentMemory agentMemory; 
+    BT_AgentMemory agentMemory;
+
+    public int Resource { get; protected set; }
 
     SelectableDisplayObject DisplayObject;
 
@@ -171,6 +173,24 @@ public class Character : ISelectable
         }        
     }
 
+    public bool AddResource(int id)
+    {
+        if (Resource == 0)
+        {
+            Resource = id;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void RemoveResource()
+    {
+        Resource = 0;
+    }
+
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
     {
         DisplayObject = displayObject;
@@ -195,7 +215,13 @@ public class Character : ISelectable
         {
             s += "NextTile: brak \n";
         }
-        s += "CurrentTile: " + CurrentTile.Position.ToString();
+        s += "CurrentTile: " + CurrentTile.Position.ToString() + "\n";
+
+        if ( Resource != 0)
+        {
+            s += "Resource: " + Resource + "\n";
+        }
+
         return s;
     }
     public SelectableDisplayObject GetDisplayObject()

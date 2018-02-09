@@ -40,9 +40,9 @@ public class GameManager : MonoBehaviour
 
         GenerateDisplayForTiles();
 
-        for (int x = 0; x < 6; x++)
+        for (int x = 0; x < 2; x++)
         {
-            for (int y = 0; y < 5; y++)
+            for (int y = 0; y < 2; y++)
             {
                 World.CreateNewCharacter(new TilePosition(x, y, 0));
             }

@@ -7,9 +7,11 @@ public class BuildingPrototype
 {    
     public string Type;
     public string ModelName;
+
     public bool CanBeBuiltOnSand; 
     public bool CanBeBuiltOnRock;
     public bool CanBeBuiltOnPlatform;
+
     public bool AllowRotation;
     public List<TilePosition> NormalizedTilePositions;
     public bool HasAccessTile;
@@ -17,4 +19,10 @@ public class BuildingPrototype
     public Rotation NormalizedAccessTileRotation;
     public bool DoesNotBlockAccess;
     public float MovementCost;
+
+    public int MaxStorage;
+  
+    public float ProductionTime;
+    public Dictionary<int, int> ConsumedResources;
+    public Dictionary<int, int> ProducedResources;
 }

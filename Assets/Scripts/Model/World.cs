@@ -24,6 +24,9 @@ public class World
     public List<Character> Characters { get; protected set; }
 
     List<BuildingPrototype> buildingPrototypes;
+    public Dictionary<int, ResourceInfo> ResourcesInfo { get; protected set; }
+    public List<Storage> Storages { get; protected set; }
+    public List<Factory> Factories { get; protected set; }
 
     public Pathfinder Pathfinder { get; protected set; }
 
@@ -82,14 +85,18 @@ public class World
 
         Buildings = new List<Building>(1024);
         Characters = new List<Character>(32);
-
+        
         DEBUG_LoadPrototypes();
+        DEBUG_LoadResources();
 
         Pathfinder = new Pathfinder(this);
         modifiedTiles = new List<Tile>();
 
         humanBehaviourTree = new BT_Tree();
         humanBehaviourTree.DEBUG_LoadTestTree();
+
+        Storages = new List<Storage>();
+        Factories = new List<Factory>();
 
         mapChangedThisFrame = true;
     }
@@ -307,12 +314,24 @@ public class World
             List<Tile> tilesForBuilding = MapPrototypeToWorld(origin, rotation, prototype);
             Tile accessTile = MapPrototypeAccessTileToWorld(origin, rotation, prototype);
 
-            Building b = new Building(prototype, rotation, tilesForBuilding, accessTile);
-            Buildings.Add(b);
+            Building newBuilding = new Building(prototype, rotation, tilesForBuilding, accessTile);
+            Buildings.Add(newBuilding);
+
+            if (newBuilding.IStorage != null)
+            {
+                if (newBuilding.IStorage is Factory)
+                {
+                    Factories.Add((Factory)newBuilding.IStorage);
+                }
+                else
+                {
+                    Storages.Add((Storage)newBuilding.IStorage);
+                }             
+            }
 
             for (int i = 0; i < tilesForBuilding.Count; i++)
             {
-                tilesForBuilding[i].Building = b;
+                tilesForBuilding[i].Building = newBuilding;
                 tilesForBuilding[i].MovementCost = prototype.MovementCost;
                 modifiedTiles.Add(tilesForBuilding[i]);
             }
@@ -320,9 +339,9 @@ public class World
 
             if (accessTile != null) { accessTile.ReservedForAccess = true; }
 
-            GameManager.Instance.ShowBuilding(b, rotation);
+            GameManager.Instance.ShowBuilding(newBuilding, rotation);
             
-            Debug.Log("Dodano budynek: " + b.Tiles[0].Position.ToString());
+            Debug.Log("Dodano budynek: " + newBuilding.Tiles[0].Position.ToString());
         }       
     }
 
@@ -340,6 +359,18 @@ public class World
             }
             GameManager.Instance.RemoveDisplayForBuilding(building);
             Buildings.Remove(building);
+
+            if(building.IStorage != null)
+            {
+                if (building.IStorage is Factory)
+                {
+                    Factories.Remove((Factory)building.IStorage);
+                }
+                else
+                {
+                    Storages.Remove((Storage)building.IStorage);
+                }
+            }
 
             mapChangedThisFrame = true;
 
@@ -367,6 +398,174 @@ public class World
             }
         }
         building.AccessTile.ReservedForAccess = false;
+    }
+
+    public ResourceReservation GetReservationForFillingInput(Character character)
+    {
+        ResourceReservation newReservation = null;
+        foreach (Factory factory in Factories)
+        {
+            newReservation = GetReservationForFillingInput(character, factory);
+            if (newReservation == null)
+            {
+                continue;
+            }
+            else
+            {
+                return newReservation;
+            }
+        }
+        return null;
+    }
+
+    public ResourceReservation GetReservationForFillingInput(Character character, Factory factoryToFill)
+    {
+        if (factoryToFill.MissingResourcesCount == 0)
+        {
+            return null;
+        }
+
+        ResourceReservation newReservation = null;
+        
+        foreach (int resourceID in factoryToFill.MissingResources.Keys)
+        {
+            // Czy nie ma potrzebnych zasobów w jakiejś fabryce do opróżnienia?
+            foreach (Factory factoryToCheck in Factories)
+            {
+                if (factoryToCheck.OutputResources.ContainsKey(resourceID))
+                {
+                    if (factoryToCheck.CanReserveResource(resourceID, character)
+                        && factoryToFill.CanReserveFreeSpace(resourceID, character))
+                    {
+                        newReservation = new ResourceReservation(factoryToCheck, factoryToFill, resourceID);
+                        break;
+                    }
+                }
+            }
+
+            if (newReservation != null)
+            {
+                break;
+            }
+
+            // Czy nie ma potrzebnych zasobów w jakimś magazynie?
+            foreach (Storage storageToCheck in Storages)
+            {
+                if (storageToCheck.Resources.ContainsKey(resourceID))
+                {
+                    if (storageToCheck.CanReserveResource(resourceID, character)
+                        && factoryToFill.CanReserveFreeSpace(resourceID, character))
+                    {
+                        newReservation = new ResourceReservation(storageToCheck, factoryToFill, resourceID);
+                        break;
+                    }
+                }
+            }
+
+            if(newReservation != null)
+            {
+                break;
+            }            
+        }
+
+        if (newReservation != null)
+        {
+            newReservation.SourceStorage.ReserveResource(newReservation.Resource, character);
+            newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character);
+            return newReservation;
+        }
+
+        // Nie udało się nic znaleźć
+        return null;        
+    }
+    public ResourceReservation GetReservationForHandlingOutput(Character character)
+    {
+        ResourceReservation newReservation = null;
+        foreach (Factory factory in Factories)
+        {
+            newReservation = GetReservationForHandlingOutput(character, factory);
+            if (newReservation == null)
+            {
+                continue;
+            }
+            else
+            {
+                return newReservation;
+            }
+        }
+        return null;
+    }
+    public ResourceReservation GetReservationForHandlingOutput(Character character, Factory factoryWithOutput)
+    {
+        if (factoryWithOutput.OutputResourcesCount == 0)
+        {
+            return null;
+        }
+
+        ResourceReservation newReservation = null;
+
+        foreach (int resourceID in factoryWithOutput.OutputResources.Keys)
+        {
+            // Czy jakaś fabryka nie potrzebuje tego zasobu?
+            foreach (Factory factoryToCheck in Factories)
+            {
+                if (factoryToCheck.MissingResourcesCount > 0
+                    && factoryToCheck.MissingResources.ContainsKey(resourceID))
+                {
+                    if (factoryWithOutput.CanReserveResource(resourceID, character)
+                        && factoryToCheck.CanReserveFreeSpace(resourceID, character))
+                    {
+                        newReservation = new ResourceReservation(factoryWithOutput, factoryToCheck, resourceID);
+                        break;
+                    }
+                }
+            }
+
+            if (newReservation != null)
+            {
+                break;
+            }
+
+            // Czy w jakimś magazynie jest wolne miejsce?
+            foreach (Storage storageToCheck in Storages)
+            {
+                if (storageToCheck.UnreservedFreeSpace > 0)
+                {
+                    if (factoryWithOutput.CanReserveResource(resourceID, character)
+                        && storageToCheck.CanReserveFreeSpace(character))
+                    {
+                        newReservation = new ResourceReservation(factoryWithOutput, storageToCheck, resourceID);
+                        break;
+                    }
+                }
+            }
+
+            if (newReservation != null)
+            {
+                break;
+            }
+        }
+
+        if (newReservation != null)
+        {
+            newReservation.SourceStorage.ReserveResource(newReservation.Resource, character);
+            newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character);
+            return newReservation;
+        }
+
+        // Nie udało się nic znaleźć
+        return null;
+    }
+
+    float DistanceToStorage(Character character, Storage storage)
+    {
+        Tile storageTile = storage.Building.AccessTile;
+        if (storageTile == null || storageTile.MovementCost <= 0)
+        {
+            Debug.Log("Magazyn jest niedostępny!");
+        }
+        return Mathf.Sqrt(Mathf.Pow(character.CurrentTile.X - storageTile.X, 2) +
+            Mathf.Pow(character.CurrentTile.Y - storageTile.Y, 2));
     }
 
     void DEBUG_LoadPrototypes()
@@ -410,7 +609,60 @@ public class World
         bp.NormalizedAccessTilePosition = new TilePosition(1, 1, 0);
         bp.NormalizedAccessTileRotation = Rotation.W;
 
+        bp.ProductionTime = 5f;
+        bp.ProducedResources = new Dictionary<int, int>() { { 2, 1 } };
+
         buildingPrototypes.Add(bp);
 
+
+        bp = new BuildingPrototype();
+        bp.Type = "Debug3";
+        bp.ModelName = "Debug1";
+        bp.CanBeBuiltOnPlatform = false;
+        bp.CanBeBuiltOnRock = true;
+        bp.CanBeBuiltOnSand = true;
+        bp.AllowRotation = true;
+        bp.NormalizedTilePositions = new List<TilePosition>()
+        {
+            new TilePosition(0,0,0),
+        };
+        bp.HasAccessTile = true;
+        bp.MovementCost = 0f;
+        bp.NormalizedAccessTilePosition = new TilePosition(0, 1, 0);
+        bp.NormalizedAccessTileRotation = Rotation.S;
+
+        bp.MaxStorage = 5;
+
+        buildingPrototypes.Add(bp);
+
+        bp = new BuildingPrototype();
+        bp.Type = "Debug4";
+        bp.ModelName = "Debug4";
+        bp.CanBeBuiltOnPlatform = false;
+        bp.CanBeBuiltOnRock = true;
+        bp.CanBeBuiltOnSand = true;
+        bp.AllowRotation = true;
+        bp.NormalizedTilePositions = new List<TilePosition>()
+        {
+            new TilePosition(0,0,0),
+        };
+        bp.HasAccessTile = true;
+        bp.MovementCost = 0f;
+        bp.NormalizedAccessTilePosition = new TilePosition(0, 1, 0);
+        bp.NormalizedAccessTileRotation = Rotation.S;
+
+        bp.ProductionTime = 2f;
+        bp.ConsumedResources = new Dictionary<int, int>() { {2, 1 } };
+        bp.ProducedResources = new Dictionary<int, int>() { {3, 1 } };
+
+        buildingPrototypes.Add(bp);
+    }
+
+    void DEBUG_LoadResources()
+    {
+        ResourcesInfo = new Dictionary<int, ResourceInfo>();
+        ResourcesInfo.Add(1, new ResourceInfo() { Name = "Metal" });
+        ResourcesInfo.Add(2, new ResourceInfo() { Name = "Gaz" });
+        ResourcesInfo.Add(3, new ResourceInfo() { Name = "Kryształy" });
     }
 }
