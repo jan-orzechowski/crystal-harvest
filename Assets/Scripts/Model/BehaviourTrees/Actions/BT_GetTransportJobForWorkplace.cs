@@ -28,7 +28,7 @@ public class BT_GetTransportJobForWorkplace : BT_Node
         else
         {
             am.SetNewReservation(newReservation);
-            Debug.Log("Nowa rezerwacja: " + newReservation.Resource);
+            //Debug.Log("Nowa rezerwacja: " + newReservation.Resource);
             return BT_Result.SUCCESS;
         }
     }

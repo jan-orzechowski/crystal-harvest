@@ -36,7 +36,7 @@ public class Building : ISelectable
     }
     public void UpdateBuilding(float deltaTime)
     {
-
+        
     }    
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)

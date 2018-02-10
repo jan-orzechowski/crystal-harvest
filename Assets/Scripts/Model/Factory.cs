@@ -25,6 +25,11 @@ public class Factory : IStorage
     public Dictionary<int, int> ResourcesProducedAtTheEnd { get; protected set; }
     int resourcesProducedAtTheEndCount;
 
+    public Character WorkingCharacter { get; protected set; }
+    bool jobReserved;
+    float jobReservationTimer;
+    float timeWithoutWork;
+
     public Factory(Building building, BuildingPrototype prototype)
     {
         Building = building;
@@ -68,19 +73,50 @@ public class Factory : IStorage
         }
     }
 
-    public bool Work(float deltaTime)
+    public void UpdateFactory(float deltaTime)
+    {                       
+        if (jobReserved)
+        {
+            jobReservationTimer -= deltaTime;
+            if(jobReservationTimer < 0f)
+            {
+                jobReserved = false;
+            }
+        }
+
+        if (timeWithoutWork > 0.2f)
+        {
+            WorkingCharacter = null;
+        }
+
+        timeWithoutWork += deltaTime;
+    }
+
+    public bool Work(float deltaTime, Character workingCharacter)
     {
         if (MissingResourcesCount > 0 || OutputResourcesCount > 0)
         {
             return false;
         }
-      
+
+        if (jobReserved)
+        {
+            jobReserved = false;
+        }
+
+        if(WorkingCharacter != null && WorkingCharacter != workingCharacter)
+        {
+            return false;
+        }
+
         if (ProductionStarted == false)
         {
             if (Consume())
             {
                 ProductionStarted = true;
                 productionTimeLeft = productionTime;
+                WorkingCharacter = workingCharacter;
+                timeWithoutWork = 0;
                 return true;
             }
             else
@@ -91,6 +127,8 @@ public class Factory : IStorage
         else
         {
             productionTimeLeft -= deltaTime;
+            WorkingCharacter = workingCharacter;
+            timeWithoutWork = 0;
             if (productionTimeLeft <= 0)
             {
                 if (Produce())
@@ -144,6 +182,26 @@ public class Factory : IStorage
         MissingResources = new Dictionary<int, int>(ResourcesConsumedAtStart);
         MissingResourcesCount = resourcesConsumedAtStartCount;
         return true;
+    }
+
+    public bool IsJobFree()
+    {
+        return (WorkingCharacter == null
+                && jobReserved == false);
+    }
+
+    public bool ReserveJob()
+    {
+        if (jobReserved)
+        {
+            return false;
+        }
+        else
+        {
+            jobReserved = true;
+            jobReservationTimer = 10f;
+            return true;
+        }
     }
 
     public bool CanReserveFreeSpace(int resourceID, Character character)
@@ -285,6 +343,13 @@ public class Factory : IStorage
     public string GetSelectionText()
     {
         string s = "";
+
+        s += "Pracująca postać: ";
+        if (WorkingCharacter != null)
+        {
+            s += WorkingCharacter.Name;
+        }
+        s += "\n";
 
         s += "Pozostały czas produkcji: ";
         if (ProductionStarted)

@@ -219,7 +219,7 @@ public class Character : ISelectable
 
         if ( Resource != 0)
         {
-            s += "Resource: " + Resource + "\n";
+            s += "Resource: " + GameManager.Instance.World.ResourcesInfo[Resource].Name + "\n";
         }
 
         return s;

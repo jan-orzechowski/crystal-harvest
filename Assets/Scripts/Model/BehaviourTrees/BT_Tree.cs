@@ -87,35 +87,28 @@ public class BT_Tree
                         ),
                     Subtree(new BT_MemSequence(),
                         new BT_HasWorkplace(),
-                        new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
-                        new BT_GetTransportJobForWorkplace()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_HasWorkplace(),
                         new BT_IsWorkplaceReadyForProduction(),
+                        new BT_ReserveJob(),
                         new BT_GetTileForWorkplace("workplaceTile"),
                         new BT_GoTo("workplaceTile"),
                         new BT_Work()
                         ),
                     Subtree(new BT_MemSequence(),
+                        new BT_HasWorkplace(),
+                        new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
+                        new BT_GetTransportJobForWorkplace()
+                        ),
+                    Subtree(new BT_MemSequence(),
                         new BT_GetRandomWorkplace()
                         )
+                    //    ,
+                    //Subtree(new BT_MemSequence(),
+                    //    new BT_GetRandomTile("wanderTile", 4),
+                    //    new BT_GoTo("wanderTile"),
+                    //    new BT_WaitRandom(1f, 2f)
+                    //    )
         );
 
         AssignIDs(root);
-
-        //root = Subtree(new BT_MemSequence(),
-        //                        Subtree(new BT_MemSequence(),
-        //                                    new BT_GetRandomTile("wanderTile", 15),
-        //                                    new BT_GoTo("wanderTile"),
-        //                                    new BT_WaitRandom(2f, 5f)
-        //                        ),
-        //                        Subtree(new BT_MemSequence(),
-        //                                    new BT_GetRandomBuilding("buildingTile"),
-        //                                    new BT_GoTo("buildingTile"),
-        //                                    new BT_Wait(3f)
-        //                        )
-
-        //       );
     }
 }

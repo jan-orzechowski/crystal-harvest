@@ -120,6 +120,10 @@ public class World
         {
             Buildings[i].UpdateBuilding(deltaTime);
         }
+        for (int i = 0; i < Factories.Count; i++)
+        {
+            Factories[i].UpdateFactory(deltaTime);
+        }
     }
 
     public Tile GetTileFromPosition(int x, int y, int height)

@@ -13,7 +13,8 @@ public class BT_GetTileForWorkplace : BT_Node
     public override BT_Result Tick(BT_AgentMemory am)
     {
         if (am.Workplace == null) { return BT_Result.ERROR; }
-        Tile tile = am.Workplace.GetAccessTile();
+
+        Tile tile = am.Workplace.GetAccessTile();    
         am.SetGlobalTile(tileVarName, tile);
         return BT_Result.SUCCESS;
     }

@@ -169,6 +169,8 @@ public class GameManager : MonoBehaviour
         }
         if (accessArrow != null)
         {
+            accessArrow.transform.parent = null;
+            accessArrow.transform.localScale = new Vector3(1f, 1f, 1f);
             SimplePool.Despawn(accessArrow);
         }
         previewObjects.Clear();

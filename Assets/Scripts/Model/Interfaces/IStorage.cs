@@ -10,5 +10,5 @@ public interface IStorage
     bool TransferToStorage(int resourceID, Character character);
     bool ReserveResource(int resourceID, Character character);
     bool ReserveFreeSpace(int resourceID, Character character);
-    string GetSelectionText();
+    string GetSelectionText();    
 }

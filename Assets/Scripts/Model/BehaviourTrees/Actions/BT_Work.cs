@@ -13,10 +13,17 @@ public class BT_Work : BT_Node
         }
         else
         {
-            bool result = am.Workplace.Work(am.DeltaTime);
+            bool result = am.Workplace.Work(am.DeltaTime, am.Character);
             if (result)
             {
-                return BT_Result.SUCCESS;
+                if(am.Workplace.ProductionStarted == false)
+                {
+                    return BT_Result.SUCCESS;
+                }
+                else
+                {
+                    return BT_Result.RUNNING;
+                }                
             }
             else
             {

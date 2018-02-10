@@ -25,6 +25,7 @@ public class Storage : IStorage
         MaxCapacity = prototype.MaxStorage;
         CurrentResourceCount = 0;
     }
+    
     public bool CanReserveFreeSpace(Character character)
     {
         return (UnreservedFreeSpace > 0
