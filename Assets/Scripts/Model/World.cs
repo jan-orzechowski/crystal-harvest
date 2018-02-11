@@ -4,14 +4,6 @@ using UnityEngine;
 using System;
 using Pathfinding;
 
-public enum Rotation
-{
-    N,
-    E,
-    S,
-    W
-}
-
 public class World 
 {
     public int XSize { get; protected set; }
@@ -317,7 +309,7 @@ public class World
         {
             List<Tile> tilesForBuilding = MapPrototypeToWorld(origin, rotation, prototype);
             Tile accessTile = MapPrototypeAccessTileToWorld(origin, rotation, prototype);
-
+            
             Building newBuilding = new Building(prototype, rotation, tilesForBuilding, accessTile);
             Buildings.Add(newBuilding);
 

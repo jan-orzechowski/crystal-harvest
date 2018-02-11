@@ -109,7 +109,7 @@ public class Storage : IStorage
     {
         if (ReservedResources.ContainsKey(character) &&
             ReservedResources[character] == resourceID
-            && character.Resource == 0)
+            && character.HasResource == false)
         {
             ReservedResources.Remove(character);
             character.AddResource(resourceID);
@@ -164,6 +164,12 @@ public class Storage : IStorage
     {
         return Building.AccessTile;
     }
+
+    public Rotation GetAccessTileRotation()
+    {
+        return Building.AccessTileRotation;
+    }
+
     public string GetSelectionText()
     {
         string s = "";

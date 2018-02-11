@@ -20,8 +20,10 @@ public class GameManager : MonoBehaviour
     public GameObject AccessArrowPrefab;
 
     public GameObject DebugBuildingPreviewPrefab;
-
+   
     public float LevelHeightOffset;
+
+    public ResourceDisplayInfo[] resourceDisplay;
 
     // Tablica zamiast słownika - dzięki temu można ustalić jej zawartość z poziomu edytora
     public BuildingDisplayInfo[] buildingDisplay;
@@ -53,7 +55,7 @@ public class GameManager : MonoBehaviour
     {
         World.UpdateModel(Time.deltaTime);
     }
-    public SelectableDisplayObject GenerateDisplayForCharacter(Character c)
+    public CharacterDisplayObject GenerateDisplayForCharacter(Character c)
     {
         GameObject gameObject = GameObject.Instantiate(
             CharacterPrefab,
@@ -62,9 +64,9 @@ public class GameManager : MonoBehaviour
             BuildingsParent.transform
             );
 
-        SelectableDisplayObject displayObject = gameObject.GetComponentInChildren<SelectableDisplayObject>();
+        CharacterDisplayObject displayObject = gameObject.GetComponentInChildren<CharacterDisplayObject>();
 
-        displayObject.AssignModelObject(c);
+        displayObject.AssignCharacter(c);
         c.AssignDisplayObject(displayObject);
 
         return displayObject;
@@ -175,6 +177,30 @@ public class GameManager : MonoBehaviour
         }
         previewObjects.Clear();
         
+    }
+
+    public ResourceDisplayInfo GetResourceDisplayInfo(int resourceID)
+    {
+        string resourceName;
+        if (World.ResourcesInfo.ContainsKey(resourceID))
+        {
+            resourceName = World.ResourcesInfo[resourceID].Name;
+        }
+        else
+        {
+            return null;
+        }
+        
+        ResourceDisplayInfo result = null;
+        for (int i = 0; i < resourceDisplay.Length; i++)
+        {
+            if (resourceDisplay[i] != null && resourceDisplay[i].ResourceName == resourceName)
+            {
+                result = resourceDisplay[i];
+                break;
+            }
+        }
+        return result;
     }
 
     public void RemoveDisplayForBuilding(Building building)

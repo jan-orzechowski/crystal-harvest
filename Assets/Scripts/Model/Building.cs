@@ -18,13 +18,20 @@ public class Building : ISelectable
 
     public IStorage IStorage { get; protected set; }
 
-    public Building(BuildingPrototype prototype, Rotation rotation, List<Tile> tiles, Tile accessTile)
+    public Building(BuildingPrototype prototype, Rotation buildingRotation, List<Tile> tiles, Tile accessTile)
     {
         Type = prototype.Type;
-        Rotation = rotation;
+        Rotation = buildingRotation;
         Tiles = tiles;
-        AccessTile = accessTile;
-        DoesNotBlockAccess = prototype.DoesNotBlockAccess;  
+
+        if (prototype.HasAccessTile)
+        {
+            AccessTile = accessTile;
+            AccessTileRotation = prototype.NormalizedAccessTileRotation.Rotate(buildingRotation);
+        }
+
+        DoesNotBlockAccess = prototype.DoesNotBlockAccess;
+        
         if (prototype.ProductionTime > 0f)
         {
             IStorage = new Factory(this, prototype);
@@ -32,7 +39,7 @@ public class Building : ISelectable
         else if (prototype.MaxStorage > 0)
         {
             IStorage = new Storage(this, prototype);
-        }
+        }                
     }
     public void UpdateBuilding(float deltaTime)
     {
@@ -47,6 +54,7 @@ public class Building : ISelectable
     {
         string s = "";
         s += Type + "\n";
+        s += "Obrót: " + Rotation + ". Obrót pola dostępu: " + AccessTileRotation + "\n";
         if (IStorage != null)
         {
             s += IStorage.GetSelectionText();

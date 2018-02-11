@@ -6,6 +6,7 @@ using System;
 public interface IStorage
 {
     Tile GetAccessTile();
+    Rotation GetAccessTileRotation();
     bool TransferFromStorage(int resourceID, Character character);
     bool TransferToStorage(int resourceID, Character character);
     bool ReserveResource(int resourceID, Character character);

@@ -11,7 +11,7 @@ public class BT_GetRandomWorkplace : BT_Node
 
         if (world.Factories.Count == 0) return BT_Result.FAILURE;
 
-        for (int i = 0; i < 500; i++)
+        for (int i = 0; i < 5; i++)
         {
             int f = UnityEngine.Random.Range(0, world.Factories.Count);
             if (world.Factories[f].IsJobFree())

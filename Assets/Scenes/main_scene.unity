@@ -1081,6 +1081,19 @@ MonoBehaviour:
   DebugBuildingPreviewPrefab: {fileID: 1459769429501506, guid: fd74e2ff043880245852887e2584f489,
     type: 2}
   LevelHeightOffset: 0.5
+  resourceDisplay:
+  - ResourceName: Metal
+    Model: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b, type: 2}
+    HeldModel: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b,
+      type: 2}
+  - ResourceName: Gaz
+    Model: {fileID: 1423872702665596, guid: c10d3c2ee86619c46ae62c04cf0c4f43, type: 2}
+    HeldModel: {fileID: 1423872702665596, guid: c10d3c2ee86619c46ae62c04cf0c4f43,
+      type: 2}
+  - ResourceName: "Kryszta\u0142y"
+    Model: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b, type: 2}
+    HeldModel: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b,
+      type: 2}
   buildingDisplay:
   - Type: Debug1
     Model: {fileID: 1459769429501506, guid: 1be4d57ee9f48a34b8e44d3393ed69b2, type: 2}

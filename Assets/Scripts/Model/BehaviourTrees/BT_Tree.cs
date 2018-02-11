@@ -72,17 +72,22 @@ public class BT_Tree
     {
         root =
         Subtree(new BT_Priority(),
+                    new BT_IsMoving(),
                     Subtree(new BT_MemSequence(),
-                        new BT_HasReservation(), 
+                        new BT_HasReservation(),
                         new BT_HasResourceForReservation(),
                         new BT_GetTileForTargetStorage("targetStorage"),
                         new BT_GoTo("targetStorage"),
+                        new BT_RotateTowardsTargetStorage(),
+                        new BT_Wait(1f),
                         new BT_DepositResource()
                         ),
                     Subtree(new BT_MemSequence(),
                         new BT_HasReservation(),
                         new BT_GetTileForSourceStorage("sourceStorage"),
                         new BT_GoTo("sourceStorage"),
+                        new BT_RotateTowardsSourceStorage(),
+                        new BT_Wait(1f),
                         new BT_TakeResource()
                         ),
                     Subtree(new BT_MemSequence(),
@@ -91,6 +96,8 @@ public class BT_Tree
                         new BT_ReserveJob(),
                         new BT_GetTileForWorkplace("workplaceTile"),
                         new BT_GoTo("workplaceTile"),
+                        new BT_RotateTowardsWorkplace(),
+                        new BT_Wait(1f),
                         new BT_Work()
                         ),
                     Subtree(new BT_MemSequence(),
@@ -101,12 +108,12 @@ public class BT_Tree
                     Subtree(new BT_MemSequence(),
                         new BT_GetRandomWorkplace()
                         )
-                    //    ,
-                    //Subtree(new BT_MemSequence(),
-                    //    new BT_GetRandomTile("wanderTile", 4),
-                    //    new BT_GoTo("wanderTile"),
-                    //    new BT_WaitRandom(1f, 2f)
-                    //    )
+                        ,
+                    Subtree(new BT_MemSequence(),
+                        new BT_GetRandomTile("wanderTile", 4),
+                        new BT_GoTo("wanderTile"),
+                        new BT_WaitRandom(1f, 2f)
+                        )
         );
 
         AssignIDs(root);

@@ -94,7 +94,7 @@ public class Factory : IStorage
 
     public bool Work(float deltaTime, Character workingCharacter)
     {
-        if (MissingResourcesCount > 0 || OutputResourcesCount > 0)
+        if (ProductionStarted == false && (MissingResourcesCount > 0 || OutputResourcesCount > 0))
         {
             return false;
         }
@@ -187,7 +187,8 @@ public class Factory : IStorage
     public bool IsJobFree()
     {
         return (WorkingCharacter == null
-                && jobReserved == false);
+                && jobReserved == false
+                && (ProductionStarted || (MissingResourcesCount == 0 && OutputResourcesCount == 0)));
     }
 
     public bool ReserveJob()
@@ -213,7 +214,6 @@ public class Factory : IStorage
     {
         if (CanReserveFreeSpace(resourceID, character))
         {
-            MissingResourcesCount--;
             MissingResources[resourceID] = MissingResources[resourceID] - 1;            
             if (MissingResources[resourceID] == 0)
             {
@@ -321,7 +321,7 @@ public class Factory : IStorage
             && character.Resource == resourceID)
         {
             PendingInputResources.Remove(character);
-
+            MissingResourcesCount--;
             if (InputResources.ContainsKey(resourceID))
             {
                 InputResources[resourceID] = InputResources[resourceID] + 1;
@@ -340,6 +340,12 @@ public class Factory : IStorage
     {
         return Building.AccessTile;
     }
+
+    public Rotation GetAccessTileRotation()
+    {
+        return Building.AccessTileRotation;
+    }
+
     public string GetSelectionText()
     {
         string s = "";

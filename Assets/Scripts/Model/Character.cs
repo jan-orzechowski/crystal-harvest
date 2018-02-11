@@ -15,6 +15,13 @@ public class Character : ISelectable
     public float MovementPercentage { get; protected set; }
     float movementSpeed = 3f;
 
+    public Quaternion CurrentRotation { get; protected set; }
+    Quaternion targetRotation;
+    float degreesPerSecond = 270f;
+
+    bool isLastTileRotationSet;
+    Quaternion lastTileRotation;
+
     AStar path;
     Pathfinder pathfinder;
     public bool PathNeedsReplacement;
@@ -23,6 +30,7 @@ public class Character : ISelectable
     BT_AgentMemory agentMemory;
 
     public int Resource { get; protected set; }
+    public bool HasResource { get { return (Resource != 0); } }
 
     SelectableDisplayObject DisplayObject;
 
@@ -40,6 +48,11 @@ public class Character : ISelectable
 
         this.behaviourTree = behaviourTree;
         agentMemory = new BT_AgentMemory(this);
+
+        CurrentRotation = Quaternion.identity;
+        targetRotation = Quaternion.identity;
+        lastTileRotation = Quaternion.identity;
+        isLastTileRotationSet = false;
     }
     
     public void UpdateCharacter(float deltaTime)
@@ -51,9 +64,21 @@ public class Character : ISelectable
 
     public void Move(float deltaTime)
     {
-        if (DestinationTile == null || DestinationTile == CurrentTile)
+        if (DestinationTile == CurrentTile) { DestinationTile = null; }
+
+        if (DestinationTile == null)
         {
-            DestinationTile = null;
+            if (isLastTileRotationSet && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
+            {
+                CurrentRotation = Quaternion.RotateTowards(
+                                    CurrentRotation, lastTileRotation,
+                                    deltaTime * degreesPerSecond);
+
+                if (AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation))
+                {
+                    isLastTileRotationSet = false;
+                }
+            }
             return;
         }
 
@@ -77,6 +102,7 @@ public class Character : ISelectable
         if (NextTile == null)
         {
             NextTile = path.Dequeue();
+            targetRotation = GetRotationForNextTile(NextTile);
         }
 
         // Czy w ogóle możemy wejść na to pole?
@@ -86,6 +112,14 @@ public class Character : ISelectable
             NextTile = null;
             MovementPercentage = 0f;
             path = null;
+            return;
+        }
+
+        if(AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
+        {
+            CurrentRotation = Quaternion.RotateTowards(
+                CurrentRotation, targetRotation,
+                deltaTime * degreesPerSecond);
             return;
         }
 
@@ -105,7 +139,7 @@ public class Character : ISelectable
         else
         {
             // Przechodzimy do nastepnego pola
-            CurrentTile = NextTile;
+            CurrentTile = NextTile;            
             NextTile = null;
             MovementPercentage = 0f;
         }        
@@ -131,6 +165,7 @@ public class Character : ISelectable
             if (newPath.IsImpossible)
             {
                 DestinationTile = null;
+                isLastTileRotationSet = false;
                 MovementPercentage = 0f;
                 NextTile = null;
                 path = null;
@@ -173,6 +208,18 @@ public class Character : ISelectable
         }        
     }
 
+    public void SetNewDestination(Tile tile, Rotation finalRotation)
+    {
+        SetNewDestination(tile);
+        SetLastTileRotation(finalRotation);
+    }
+
+    public void SetLastTileRotation(Rotation rotation)
+    {
+        isLastTileRotationSet = true;
+        lastTileRotation = Quaternion.Euler(rotation.ToEulerAngles());
+    }
+
     public bool AddResource(int id)
     {
         if (Resource == 0)
@@ -191,10 +238,33 @@ public class Character : ISelectable
         Resource = 0;
     }
 
+    Quaternion GetRotationForNextTile(Tile nextTile)
+    {
+        Vector3 rotationVector = new Vector3(nextTile.X - CurrentTile.X, 0, nextTile.Y - CurrentTile.Y);
+        float rotationAngle = Vector3.SignedAngle(Vector3.back, rotationVector, Vector3.up);
+        return Quaternion.Euler(new Vector3(0f, rotationAngle, 0f));
+    }
+
+    bool AreRotationsEqualInYAxis(Quaternion quaternionA, Quaternion quaternionB)
+    {
+        float range = 0.01f;
+        return (Mathf.Abs(quaternionA.eulerAngles.y - quaternionB.eulerAngles.y) <= range);
+    }
+
+    public bool IsMoving()
+    {
+        return (MovementPercentage > 0.01f
+                || (NextTile != null && AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
+                || (isLastTileRotationSet && CurrentTile == DestinationTile
+                        && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
+                );
+    }
+
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
     {
         DisplayObject = displayObject;
     }
+
     public string GetSelectionText()
     {
         string s = "";
@@ -217,13 +287,16 @@ public class Character : ISelectable
         }
         s += "CurrentTile: " + CurrentTile.Position.ToString() + "\n";
 
-        if ( Resource != 0)
+        s += "lastTileRotation: " + lastTileRotation.eulerAngles.ToString() + "\n";
+
+        if (HasResource)
         {
             s += "Resource: " + GameManager.Instance.World.ResourcesInfo[Resource].Name + "\n";
         }
 
         return s;
     }
+
     public SelectableDisplayObject GetDisplayObject()
     {
         if (DisplayObject == null)
