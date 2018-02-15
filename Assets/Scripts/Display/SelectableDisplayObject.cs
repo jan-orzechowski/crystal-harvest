@@ -5,14 +5,14 @@ using System;
 
 public class SelectableDisplayObject : MonoBehaviour 
 {
-    public Collider Collider;
+    public BoxCollider Collider;
     public ISelectable ModelObject;
    
     void Start () 
     {
         if(Collider == null)
         {
-            Collider = GetComponentInChildren<Collider>();
+            Collider = GetComponentInChildren<BoxCollider>();
         }
     }
         

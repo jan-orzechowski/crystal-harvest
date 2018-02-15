@@ -7,12 +7,12 @@ using System;
 public class InfoPanel : MonoBehaviour 
 {
     Text text;
-    MouseManager mouseManager;
+    InputManager mouseManager;
 
     void Start () 
     {
         text = this.GetComponentInChildren<Text>();
-        mouseManager = FindObjectOfType<MouseManager>();        
+        mouseManager = FindObjectOfType<InputManager>();        
     }
 
     void Update()

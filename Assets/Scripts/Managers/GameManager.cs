@@ -16,11 +16,12 @@ public class GameManager : MonoBehaviour
     public GameObject BuildingsParent;
     public GameObject CharactersParent;
     public GameObject PreviewsParent;
+    public GameObject ConstructionSitesParent;
 
     public GameObject AccessArrowPrefab;
 
     public GameObject DebugBuildingPreviewPrefab;
-   
+
     public float LevelHeightOffset;
 
     public ResourceDisplayInfo[] resourceDisplay;
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     List<GameObject> previewObjects = new List<GameObject>();
     GameObject accessArrow;
+    
+    Dictionary<ConstructionSite, GameObject> constructionSitesDisplay;
 
     void OnEnable()
     {
@@ -40,15 +43,19 @@ public class GameManager : MonoBehaviour
 
         World = new World(worldSize, worldSize);
 
+        constructionSitesDisplay = new Dictionary<ConstructionSite, GameObject>();
+
         GenerateDisplayForTiles();
 
-        for (int x = 0; x < 2; x++)
+        for (int x = 3; x < 5; x++)
         {
             for (int y = 0; y < 2; y++)
             {
                 World.CreateNewCharacter(new TilePosition(x, y, 0));
             }
-        }                
+        }
+
+        World.InstantBuild(new TilePosition(0, 2, 0), Rotation.N, World.GetBuildingPrototype("Spaceship"));
     }
 
     void Update ()
@@ -61,7 +68,7 @@ public class GameManager : MonoBehaviour
             CharacterPrefab,
             new Vector3(c.CurrentTile.X, 0, c.CurrentTile.Y),
             Quaternion.identity,
-            BuildingsParent.transform
+            CharactersParent.transform
             );
 
         CharacterDisplayObject displayObject = gameObject.GetComponentInChildren<CharacterDisplayObject>();
@@ -72,7 +79,7 @@ public class GameManager : MonoBehaviour
         return displayObject;
     }
 
-    public SelectableDisplayObject ShowBuilding(Building building, Rotation rotation)
+    public SelectableDisplayObject ShowBuilding(Building building)
     {
         GameObject model = null;
         for (int i = 0; i < buildingDisplay.Length; i++)
@@ -98,7 +105,7 @@ public class GameManager : MonoBehaviour
             BuildingsParent.transform
             );
 
-        RotateDisplayObject(gameObject, rotation);
+        RotateGameObject(gameObject, building.Rotation);
 
         SelectableDisplayObject selectableDisplayObject = gameObject.GetComponentInChildren<SelectableDisplayObject>();
 
@@ -106,6 +113,53 @@ public class GameManager : MonoBehaviour
         building.AssignDisplayObject(selectableDisplayObject);
 
         return selectableDisplayObject;
+    }
+
+    public ConstructionSiteDisplayObject ShowConstructionSite(ConstructionSite newSite)
+    {
+        Building building = newSite.Building;
+
+        GameObject siteObjectPrefab = null;
+        for (int i = 0; i < buildingDisplay.Length; i++)
+        {
+            if (buildingDisplay[i] != null && buildingDisplay[i].Type == building.Type)
+            {
+                siteObjectPrefab = buildingDisplay[i].ConstructionSiteObject;
+                break;
+            }
+        }
+        if (siteObjectPrefab == null)
+        {
+            Debug.Log("Nie znaleziono placu konstrukcyjnego dla budynku: " + building.Type);
+            return null;
+        }
+
+        GameObject gameObject = GameObject.Instantiate(
+            siteObjectPrefab,
+            new Vector3(building.Tiles[0].Position.X,
+                        building.Tiles[0].Position.Height * LevelHeightOffset,
+                        building.Tiles[0].Position.Y),
+            Quaternion.identity,
+            ConstructionSitesParent.transform
+            );
+
+        RotateGameObject(gameObject, building.Rotation);
+
+        bool builtOnSecondLevel = (building.Tiles[0].Position.Height > 0);
+
+        ConstructionSiteDisplayObject selectableObject = gameObject.GetComponentInChildren<ConstructionSiteDisplayObject>();
+
+        selectableObject.AssignConstructionSite(newSite, builtOnSecondLevel);
+        building.AssignDisplayObject(selectableObject);
+
+        return selectableObject;
+    }
+
+    public void RemoveConstructionSiteDisplay(ConstructionSite siteToRemove)
+    {
+        siteToRemove.Building.DisplayObject.transform.gameObject.SetActive(false);
+        siteToRemove.Building.DisplayObject.ModelObject = null;
+        siteToRemove.Building.DisplayObject = null;
     }
 
     public void ShowPreview(TilePosition position, Rotation rotation, BuildingPrototype prototype)
@@ -150,14 +204,14 @@ public class GameManager : MonoBehaviour
                             position.Y + arrowPosition.Y),
                 Quaternion.identity);
 
-            RotateDisplayObject(accessArrow, prototype.NormalizedAccessTileRotation);
+            RotateGameObject(accessArrow, prototype.NormalizedAccessTileRotation);
 
             previewObjects.Add(accessArrow);
 
             accessArrow.transform.SetParent(preview.transform);            
         }
 
-        RotateDisplayObject(preview, rotation);
+        RotateGameObject(preview, rotation);
 
         preview.transform.SetParent(PreviewsParent.transform);
         previewObjects.Add(preview);
@@ -175,8 +229,7 @@ public class GameManager : MonoBehaviour
             accessArrow.transform.localScale = new Vector3(1f, 1f, 1f);
             SimplePool.Despawn(accessArrow);
         }
-        previewObjects.Clear();
-        
+        previewObjects.Clear();        
     }
 
     public ResourceDisplayInfo GetResourceDisplayInfo(int resourceID)
@@ -239,7 +292,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void RotateDisplayObject(GameObject displayObject, Rotation rotation)
+    void RotateGameObject(GameObject displayObject, Rotation rotation)
     {
         if (rotation == Rotation.N)
         {

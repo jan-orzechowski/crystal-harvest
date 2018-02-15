@@ -16,14 +16,15 @@ public class BT_Work : BT_Node
             bool result = am.Workplace.Work(am.DeltaTime, am.Character);
             if (result)
             {
-                if(am.Workplace.ProductionStarted == false)
-                {
-                    return BT_Result.SUCCESS;
-                }
-                else
-                {
-                    return BT_Result.RUNNING;
-                }                
+                //if(am.Workplace.ProductionStarted == false)
+                //{
+                //    return BT_Result.SUCCESS;
+                //}
+                //else
+                //{
+                //    return BT_Result.RUNNING;
+                //}      
+                return BT_Result.RUNNING;
             }
             else
             {

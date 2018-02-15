@@ -110,6 +110,10 @@ public class BT_Tree
                         )
                         ,
                     Subtree(new BT_MemSequence(),
+                        new BT_GetTransportJob()
+                        )
+                        ,
+                    Subtree(new BT_MemSequence(),
                         new BT_GetRandomTile("wanderTile", 4),
                         new BT_GoTo("wanderTile"),
                         new BT_WaitRandom(1f, 2f)

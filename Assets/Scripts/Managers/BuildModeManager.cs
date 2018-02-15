@@ -40,7 +40,7 @@ public class BuildModeManager : MonoBehaviour
                         y <= Math.Max(start.Y, end.Y);
                         y++)
                     {
-                        world.PlaceNewBuilding(
+                        world.PlaceNewConstructionSite(
                             new TilePosition(x,y,start.Height),
                             currentRotation,
                             currentPrototype);
@@ -49,7 +49,7 @@ public class BuildModeManager : MonoBehaviour
             }
             else if (BuildMode == BuildMode.Single)
             {
-                world.PlaceNewBuilding(start, currentRotation, currentPrototype);
+                world.PlaceNewConstructionSite(start, currentRotation, currentPrototype);
             }            
         }
         return true;
@@ -109,10 +109,7 @@ public class BuildModeManager : MonoBehaviour
     {
         if (currentPrototype.AllowRotation)
         {
-            if      (currentRotation == Rotation.N) currentRotation = Rotation.E;
-            else if (currentRotation == Rotation.E) currentRotation = Rotation.S;
-            else if (currentRotation == Rotation.S) currentRotation = Rotation.W;
-            else     currentRotation = Rotation.N;
+            currentRotation = currentRotation.Rotate(Rotation.E);
         }
         else
         {

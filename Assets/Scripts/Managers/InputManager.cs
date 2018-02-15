@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class MouseManager : MonoBehaviour 
+public class InputManager : MonoBehaviour 
 {
     public Tile CurrentTile { get; private set; }
 
@@ -11,7 +11,7 @@ public class MouseManager : MonoBehaviour
 
     Ray ray;
     RaycastHit[] raycastResults;
-    int maxRaycastResultsNumber = 5;
+    int maxRaycastResultsNumber = 20;
     Dictionary<Character, RaycastHit> charactersHit = new Dictionary<Character, RaycastHit>();
     Dictionary<Building, RaycastHit> buildingsHit = new Dictionary<Building, RaycastHit>();
 
@@ -185,7 +185,7 @@ public class MouseManager : MonoBehaviour
         if (Input.GetMouseButton(2)) // ŚPM
         {
             if (CurrentTile != null && CurrentTile.Building != null)
-                if (GameManager.Instance.World.DeleteBuilding(CurrentTile.Building)) RemoveSelection();
+                if (GameManager.Instance.World.MarkBuildingToDeconstruction(CurrentTile.Building)) RemoveSelection();
         }
     }
 
@@ -222,6 +222,7 @@ public class MouseManager : MonoBehaviour
         charactersHit.Clear();
         buildingsHit.Clear();
         
+        // To zwraca wszystkie collidery
         int hitNumber = Physics.RaycastNonAlloc(ray, raycastResults, rayMaxDistance, rayLayerMask, QueryTriggerInteraction.Ignore);
         
         for (int i = 0; i < hitNumber; i++)
@@ -231,7 +232,10 @@ public class MouseManager : MonoBehaviour
             if (hitDisplayObject.ModelObject is Character)
             {
                 charactersHit.Add((Character)hitDisplayObject.ModelObject, raycastResults[i]);
-
+            }
+            else if (hitDisplayObject.ModelObject is ConstructionSite)
+            {
+                buildingsHit.Add(((ConstructionSite)hitDisplayObject.ModelObject).Building, raycastResults[i]);
             }
             else if (hitDisplayObject.ModelObject is Building)
             {
@@ -332,7 +336,7 @@ public class MouseManager : MonoBehaviour
             {
                 selectionBox.SetActive(true);
                 selectionBox.transform.SetPositionAndRotation(
-                    selectedObjectCollider.transform.position,
+                    selectedObjectCollider.transform.position + selectedObjectCollider.center,
                     selectedObjectCollider.transform.rotation);
                 seletionBoxMeshRenderer.transform.localScale = 
                     selectedObjectCollider.size * 1.05f;

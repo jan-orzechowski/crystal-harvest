@@ -16,10 +16,13 @@ public class Building : ISelectable
 
     public bool DoesNotBlockAccess { get; protected set; }
 
-    public IStorage IStorage { get; protected set; }
+    public IStorage IStorage;
+    BuildingPrototype prototype;
 
-    public Building(BuildingPrototype prototype, Rotation buildingRotation, List<Tile> tiles, Tile accessTile)
+    public Building(BuildingPrototype buildingPrototype, Rotation buildingRotation, List<Tile> tiles, Tile accessTile)
     {
+        prototype = buildingPrototype;
+
         Type = prototype.Type;
         Rotation = buildingRotation;
         Tiles = tiles;
@@ -31,19 +34,26 @@ public class Building : ISelectable
         }
 
         DoesNotBlockAccess = prototype.DoesNotBlockAccess;
-        
+
+        IStorage = new ConstructionSite(this, prototype);
+        GameManager.Instance.World.RegisterConstructionSite((ConstructionSite)IStorage);
+    }
+
+    public void LoadDataForFinishedBuilding()
+    {
         if (prototype.ProductionTime > 0f)
         {
             IStorage = new Factory(this, prototype);
-        }     
+        }
         else if (prototype.MaxStorage > 0)
         {
             IStorage = new Storage(this, prototype);
-        }                
+        }
     }
+
     public void UpdateBuilding(float deltaTime)
     {
-        
+
     }    
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)

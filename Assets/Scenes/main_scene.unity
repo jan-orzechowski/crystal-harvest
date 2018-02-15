@@ -1076,6 +1076,7 @@ MonoBehaviour:
   BuildingsParent: {fileID: 1256720390}
   CharactersParent: {fileID: 2048119415}
   PreviewsParent: {fileID: 2120994381}
+  ConstructionSitesParent: {fileID: 1239247446}
   AccessArrowPrefab: {fileID: 1448314325074952, guid: 3bcb6664f12c80044ac3c6d5ab565df2,
     type: 2}
   DebugBuildingPreviewPrefab: {fileID: 1459769429501506, guid: fd74e2ff043880245852887e2584f489,
@@ -1101,11 +1102,14 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1604322685696820, guid: 92d467907f7f0a44b9277c59c9b81bd3,
       type: 2}
+    ConstructionSiteObject: {fileID: 0}
   - Type: Debug2
     Model: {fileID: 1916034819458400, guid: 0ba8989ff92a62b4d9947109bc8091a6, type: 2}
     PreviewModel: {fileID: 1734733986697778, guid: 64fb881f94b1fc64db2d990bb74317c2,
       type: 2}
     InvalidPreviewModel: {fileID: 1734733986697778, guid: 3e53791b2ce2e26498bf4c4a4b8d651b,
+      type: 2}
+    ConstructionSiteObject: {fileID: 1226485674601198, guid: 735c7af4d120d8a40b985a104772b323,
       type: 2}
   - Type: Debug3
     Model: {fileID: 1459769429501506, guid: 1be4d57ee9f48a34b8e44d3393ed69b2, type: 2}
@@ -1113,16 +1117,27 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1734733986697778, guid: 3e53791b2ce2e26498bf4c4a4b8d651b,
       type: 2}
+    ConstructionSiteObject: {fileID: 0}
   - Type: Debug4
     Model: {fileID: 1185680338318534, guid: c8c3712b326dae641a86d8e80ecdee64, type: 2}
     PreviewModel: {fileID: 1604322685696820, guid: e96ac9d83dd77a4458b68b1835432496,
       type: 2}
     InvalidPreviewModel: {fileID: 1604322685696820, guid: 92d467907f7f0a44b9277c59c9b81bd3,
       type: 2}
+    ConstructionSiteObject: {fileID: 0}
   - Type: Stairs
     Model: {fileID: 0}
     PreviewModel: {fileID: 0}
     InvalidPreviewModel: {fileID: 0}
+    ConstructionSiteObject: {fileID: 0}
+  - Type: Spaceship
+    Model: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62, type: 2}
+    PreviewModel: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62,
+      type: 2}
+    InvalidPreviewModel: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62,
+      type: 2}
+    ConstructionSiteObject: {fileID: 1226485674601198, guid: 735c7af4d120d8a40b985a104772b323,
+      type: 2}
 --- !u!4 &855187724
 Transform:
   m_ObjectHideFlags: 0
@@ -1391,6 +1406,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1239247446
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1239247447}
+  m_Layer: 0
+  m_Name: ConstructionSites
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1239247447
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1239247446}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.4000828, y: -0.46426916, z: 1.0117832}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1256720390
 GameObject:
   m_ObjectHideFlags: 0

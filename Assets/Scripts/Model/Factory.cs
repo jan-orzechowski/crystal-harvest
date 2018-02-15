@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Factory : IStorage
+public class Factory : IWorkplace
 {
     public Building Building { get; protected set; }
 
@@ -13,7 +13,7 @@ public class Factory : IStorage
     public int MissingResourcesCount { get; protected set; }
 
     public Dictionary<int, int> OutputResources { get; protected set; }
-    public int OutputResourcesCount { get; protected set; }
+    public int ResourcesToRemoveCount { get; protected set; }
     public Dictionary<Character, int> ReservedOutputResources { get; protected set; }
 
     float productionTime;
@@ -94,7 +94,7 @@ public class Factory : IStorage
 
     public bool Work(float deltaTime, Character workingCharacter)
     {
-        if (ProductionStarted == false && (MissingResourcesCount > 0 || OutputResourcesCount > 0))
+        if (ProductionStarted == false && (MissingResourcesCount > 0 || ResourcesToRemoveCount > 0))
         {
             return false;
         }
@@ -104,7 +104,7 @@ public class Factory : IStorage
             jobReserved = false;
         }
 
-        if(WorkingCharacter != null && WorkingCharacter != workingCharacter)
+        if (WorkingCharacter != null && WorkingCharacter != workingCharacter)
         {
             return false;
         }
@@ -150,10 +150,10 @@ public class Factory : IStorage
 
     bool Produce()
     {
-        if (OutputResourcesCount == 0)
+        if (ResourcesToRemoveCount == 0)
         {
             OutputResources = new Dictionary<int, int>(ResourcesProducedAtTheEnd);
-            OutputResourcesCount = resourcesProducedAtTheEndCount;
+            ResourcesToRemoveCount = resourcesProducedAtTheEndCount;
             return true;
         }
         else
@@ -188,7 +188,7 @@ public class Factory : IStorage
     {
         return (WorkingCharacter == null
                 && jobReserved == false
-                && (ProductionStarted || (MissingResourcesCount == 0 && OutputResourcesCount == 0)));
+                && (ProductionStarted || (MissingResourcesCount == 0 && ResourcesToRemoveCount == 0)));
     }
 
     public bool ReserveJob()
@@ -307,7 +307,7 @@ public class Factory : IStorage
             && ReservedOutputResources[character] == resourceID)
         {
             ReservedOutputResources.Remove(character);
-            OutputResourcesCount--;
+            ResourcesToRemoveCount--;
             character.AddResource(resourceID);
             return true;
         }

@@ -17,12 +17,28 @@ public class Storage : IStorage
     public Storage(Building building, BuildingPrototype prototype)
     {
         Building = building;
-
-        Resources = new Dictionary<int, int>();
+       
         ReservedResources = new Dictionary<Character, int>();
         FreeSpaceReservations = new List<Character>();
 
         MaxCapacity = prototype.MaxStorage;
+        
+        if(prototype.InitialStorage != null)
+        {
+            int initialStorageCount = 0;
+            foreach (int id in prototype.InitialStorage.Keys)
+            {
+                initialStorageCount += prototype.InitialStorage[id];
+            }
+            if (initialStorageCount <= MaxCapacity)
+            {
+                Resources = new Dictionary<int, int>(prototype.InitialStorage);
+                CurrentResourceCount = initialStorageCount;
+                return;
+            }           
+        }
+
+        Resources = new Dictionary<int, int>();
         CurrentResourceCount = 0;
     }
     

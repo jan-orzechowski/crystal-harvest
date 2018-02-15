@@ -21,8 +21,13 @@ public class BuildingPrototype
     public float MovementCost;
 
     public int MaxStorage;
-  
+    public Dictionary<int, int> InitialStorage;
+
     public float ProductionTime;
     public Dictionary<int, int> ConsumedResources;
     public Dictionary<int, int> ProducedResources;
+
+    public float ConstructionTime;
+    public Dictionary<int, int> ConstructionResources;
+    public Dictionary<int, int> ResourcesFromDeconstruction;
 }

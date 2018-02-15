@@ -670,5 +670,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 65749301096038156}
-  Model: {fileID: 1979318801662022}
-  HoldingModel: {fileID: 1643405066895322}
+  CharacterModel: {fileID: 1979318801662022}
+  CharacterHoldingModel: {fileID: 1643405066895322}

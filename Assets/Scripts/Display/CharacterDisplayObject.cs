@@ -5,23 +5,24 @@ using System;
 
 public class CharacterDisplayObject : SelectableDisplayObject 
 {
-    public Character Character;
+    Character character;
 
-    public GameObject Model;
-    public GameObject HoldingModel;
+    public GameObject CharacterModel;
+    public GameObject CharacterHoldingModel;
     GameObject heldResource;
 
     void Update()
     {
-        if (Character == null) { return; }
+        if (character == null) { return; }
 
-        if (Character.HasResource)
+        if (character.HasResource)
         {
-            Model.SetActive(false);
-            HoldingModel.SetActive(true);
+            if (CharacterModel.activeSelf) CharacterModel.SetActive(false);
+            if (CharacterHoldingModel.activeSelf == false) CharacterHoldingModel.SetActive(true);
+
             if(heldResource == null)
             {
-                ResourceDisplayInfo info = GameManager.Instance.GetResourceDisplayInfo(Character.Resource);
+                ResourceDisplayInfo info = GameManager.Instance.GetResourceDisplayInfo(character.Resource);
                 heldResource = SimplePool.Spawn(
                     info.HeldModel, 
                     this.transform.position, 
@@ -31,8 +32,9 @@ public class CharacterDisplayObject : SelectableDisplayObject
         }
         else
         {
-            Model.SetActive(true);
-            HoldingModel.SetActive(false);
+            if (CharacterModel.activeSelf) CharacterModel.SetActive(true);
+            if (CharacterHoldingModel.activeSelf == false) CharacterHoldingModel.SetActive(false);
+
             if (heldResource != null)
             {
                 SimplePool.Despawn(heldResource);
@@ -40,25 +42,25 @@ public class CharacterDisplayObject : SelectableDisplayObject
             }
         }
 
-        if (Character.NextTile != null && Character.CurrentTile != Character.NextTile)
+        if (character.NextTile != null && character.CurrentTile != character.NextTile)
         {
-            Vector3 startingPosition = new Vector3(Character.CurrentTile.X + 0.5f, 0, Character.CurrentTile.Y + 0.5f);
-            Vector3 goalPosition = new Vector3(Character.NextTile.X + 0.5f, 0, Character.NextTile.Y + 0.5f);
+            Vector3 startingPosition = new Vector3(character.CurrentTile.X + 0.5f, 0, character.CurrentTile.Y + 0.5f);
+            Vector3 goalPosition = new Vector3(character.NextTile.X + 0.5f, 0, character.NextTile.Y + 0.5f);
 
-            Vector3 displayPosition = Vector3.Lerp(startingPosition, goalPosition, Character.MovementPercentage);
-            transform.SetPositionAndRotation(displayPosition, Character.CurrentRotation);
+            Vector3 displayPosition = Vector3.Lerp(startingPosition, goalPosition, character.MovementPercentage);
+            transform.SetPositionAndRotation(displayPosition, character.CurrentRotation);
         }
         else
         {
             transform.SetPositionAndRotation(
-                new Vector3(Character.CurrentTile.X + 0.5f, 0, Character.CurrentTile.Y + 0.5f),
-                Character.CurrentRotation);
+                new Vector3(character.CurrentTile.X + 0.5f, 0, character.CurrentTile.Y + 0.5f),
+                character.CurrentRotation);
         }        
     }
 
     public void AssignCharacter(Character character)
     {
-        Character = character;
+        this.character = character;
         ModelObject = character;
     }
 }

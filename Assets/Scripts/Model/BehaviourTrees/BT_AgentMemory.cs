@@ -10,7 +10,7 @@ public class BT_AgentMemory
     Dictionary<int, Dictionary<string, Tile>> tiles;
 
     public ResourceReservation Reservation { get; protected set; }
-    public Factory Workplace { get; protected set; }
+    public IWorkplace Workplace { get; protected set; }
 
     public Character Character { get; protected set; }
 
@@ -137,7 +137,7 @@ public class BT_AgentMemory
         Reservation = null;
     }
 
-    public void SetNewWorkplace(Factory workplace)
+    public void SetNewWorkplace(IWorkplace workplace)
     {
         Workplace = workplace;
     }
