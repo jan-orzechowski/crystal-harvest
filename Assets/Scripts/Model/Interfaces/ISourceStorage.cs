@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public interface IStorage
-{
+public interface ISourceStorage
+{ 
     Tile GetAccessTile();
     Rotation GetAccessTileRotation();
     bool TransferFromStorage(int resourceID, Character character);
-    bool TransferToStorage(int resourceID, Character character);
     bool ReserveResource(int resourceID, Character character);
-    bool ReserveFreeSpace(int resourceID, Character character);
-    string GetSelectionText();    
+    string GetSelectionText();
 }

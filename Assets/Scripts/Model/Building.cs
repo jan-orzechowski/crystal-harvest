@@ -16,7 +16,10 @@ public class Building : ISelectable
 
     public bool DoesNotBlockAccess { get; protected set; }
 
-    public IStorage IStorage;
+    public Factory Factory;
+    public Service Service;
+    public Storage Storage;
+
     BuildingPrototype prototype;
 
     public Building(BuildingPrototype buildingPrototype, Rotation buildingRotation, List<Tile> tiles, Tile accessTile)
@@ -34,20 +37,21 @@ public class Building : ISelectable
         }
 
         DoesNotBlockAccess = prototype.DoesNotBlockAccess;
-
-        IStorage = new ConstructionSite(this, prototype);
-        GameManager.Instance.World.RegisterConstructionSite((ConstructionSite)IStorage);
     }
 
     public void LoadDataForFinishedBuilding()
     {
         if (prototype.ProductionTime > 0f)
         {
-            IStorage = new Factory(this, prototype);
+            Factory = new Factory(this, prototype);
+        }
+        else if (prototype.NeedFulfilled != null)
+        {
+            Service = new Service(this, prototype);
         }
         else if (prototype.MaxStorage > 0)
         {
-            IStorage = new Storage(this, prototype);
+            Storage = new Storage(this, prototype);
         }
     }
 
@@ -65,9 +69,17 @@ public class Building : ISelectable
         string s = "";
         s += Type + "\n";
         s += "Obrót: " + Rotation + ". Obrót pola dostępu: " + AccessTileRotation + "\n";
-        if (IStorage != null)
+        if (Factory != null)
         {
-            s += IStorage.GetSelectionText();
+            s += Factory.GetSelectionText();
+        }
+        if (Storage != null)
+        {
+            s += Storage.GetSelectionText();
+        }
+        if (Service != null)
+        {
+            s += Service.GetSelectionText();
         }
         return s;
     }

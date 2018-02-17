@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 using Pathfinding;
 
 public class Character : ISelectable 
@@ -13,7 +14,7 @@ public class Character : ISelectable
     public Tile DestinationTile { get; protected set; }
 
     public float MovementPercentage { get; protected set; }
-    float movementSpeed = 3f;
+    float movementSpeed = 6f; //3f
 
     public Quaternion CurrentRotation { get; protected set; }
     Quaternion targetRotation;
@@ -32,9 +33,14 @@ public class Character : ISelectable
     public int Resource { get; protected set; }
     public bool HasResource { get { return (Resource != 0); } }
 
+    public Dictionary<string, float> Needs { get; protected set; }
+    public Dictionary<string, float> NeedGrowthPerSecond { get; protected set; }
+
     SelectableDisplayObject DisplayObject;
 
     World world;
+
+    public bool UsingService;
 
     public Character(string name, Tile currentTile, BT_Tree behaviourTree)
     {
@@ -49,6 +55,8 @@ public class Character : ISelectable
         this.behaviourTree = behaviourTree;
         agentMemory = new BT_AgentMemory(this);
 
+        LoadNeeds();
+
         CurrentRotation = Quaternion.identity;
         targetRotation = Quaternion.identity;
         lastTileRotation = Quaternion.identity;
@@ -59,7 +67,11 @@ public class Character : ISelectable
     {
         agentMemory.DeltaTime = deltaTime;
         behaviourTree.Tick(agentMemory);
-        Move(deltaTime);
+        UpdateNeeds(deltaTime);
+        if(UsingService == false)
+        {
+            Move(deltaTime);
+        }
     }
 
     public void Move(float deltaTime)
@@ -238,6 +250,25 @@ public class Character : ISelectable
         Resource = 0;
     }
 
+    void UpdateNeeds(float deltaTime)
+    {
+        foreach (string need in Needs.Keys.ToList())
+        {
+            if (NeedGrowthPerSecond.ContainsKey(need))
+                Needs[need] = Needs[need] + (NeedGrowthPerSecond[need] * deltaTime);
+            if (Needs[need] > 1f)
+                Needs[need] = 1f;
+        }
+    }
+
+    void LoadNeeds()
+    {
+        Needs = new Dictionary<string, float>()
+        { {"Sleep", 0f}, {"Hunger", 0f} };
+        NeedGrowthPerSecond = new Dictionary<string, float>()
+        { {"Sleep", 0.05f}, {"Hunger", 0.05f} };
+    }
+
     Quaternion GetRotationForNextTile(Tile nextTile)
     {
         Vector3 rotationVector = new Vector3(nextTile.X - CurrentTile.X, 0, nextTile.Y - CurrentTile.Y);
@@ -269,6 +300,8 @@ public class Character : ISelectable
     {
         string s = "";
         s += Name + "\n";
+        s += "Sen: " + Needs["Sleep"] + "\n";
+        s += "Głód: " + Needs["Hunger"] + "\n";
         if (DestinationTile != null)
         {
             s += "DestinationTile: " + DestinationTile.Position.ToString() + "\n";

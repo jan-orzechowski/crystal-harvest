@@ -11,6 +11,7 @@ public class BT_AgentMemory
 
     public ResourceReservation Reservation { get; protected set; }
     public IWorkplace Workplace { get; protected set; }
+    public Service Service { get; protected set; }
 
     public Character Character { get; protected set; }
 
@@ -140,6 +141,19 @@ public class BT_AgentMemory
     public void SetNewWorkplace(IWorkplace workplace)
     {
         Workplace = workplace;
+    }
+
+    public bool SetNewService(Service service)
+    {
+        if (Character.UsingService == false)
+        {
+            Service = service;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void SetRunning(int id, bool running)

@@ -32,8 +32,8 @@ public class CharacterDisplayObject : SelectableDisplayObject
         }
         else
         {
-            if (CharacterModel.activeSelf) CharacterModel.SetActive(true);
-            if (CharacterHoldingModel.activeSelf == false) CharacterHoldingModel.SetActive(false);
+            if (CharacterModel.activeSelf == false) CharacterModel.SetActive(true);
+            if (CharacterHoldingModel.activeSelf) CharacterHoldingModel.SetActive(false);
 
             if (heldResource != null)
             {

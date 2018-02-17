@@ -20,6 +20,8 @@ public class World
     public List<Storage> Storages { get; protected set; }
     public List<Factory> Factories { get; protected set; }
     public List<ConstructionSite> ConstructionSites { get; protected set; }
+    public Dictionary<string, List<Service>> Services { get; protected set; }
+
 
     public Pathfinder Pathfinder { get; protected set; }
 
@@ -90,6 +92,7 @@ public class World
 
         Storages = new List<Storage>();
         Factories = new List<Factory>();
+        Services = new Dictionary<string, List<Service>>();
 
         ConstructionSites = new List<ConstructionSite>();
 
@@ -122,6 +125,13 @@ public class World
         for (int i = 0; i < ConstructionSites.Count; i++)
         {
             ConstructionSites[i].UpdateConstructionSite(deltaTime);
+        }
+        foreach (string need in Services.Keys)
+        {
+            for (int i = 0; i < Services[need].Count; i++)
+            {
+                Services[need][i].UpdateService(deltaTime);
+            }
         }
     }
 
@@ -330,11 +340,14 @@ public class World
 
             if (accessTile != null) { accessTile.ReservedForAccess = true; }
 
-            GameManager.Instance.ShowConstructionSite((ConstructionSite)newBuilding.IStorage);
+            ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype);
+            ConstructionSites.Add(newConstructionSite);
+
+            GameManager.Instance.ShowConstructionSite(newConstructionSite);
 
             Debug.Log("Dodano budynek: " + newBuilding.Tiles[0].Position.ToString());
 
-            return (ConstructionSite)newBuilding.IStorage;
+            return newConstructionSite;
         }       
     }
 
@@ -365,19 +378,21 @@ public class World
             GameManager.Instance.RemoveDisplayForBuilding(building);
             Buildings.Remove(building);
 
-            if(building.IStorage != null)
+            if (building.Factory != null)
             {
-                if (building.IStorage is Factory)
+                Factories.Remove(building.Factory);
+            }
+            if (building.Storage != null)
+            {
+                Storages.Remove(building.Storage);
+            }
+            if (building.Service != null)
+            {
+                string need = building.Service.NeedFulfilled;
+                Services[need].Remove(building.Service);
+                if(Services[need].Count == 0)
                 {
-                    Factories.Remove((Factory)building.IStorage);
-                }
-                else if (building.IStorage is ConstructionSite)
-                {
-                    ConstructionSites.Remove((ConstructionSite)building.IStorage);
-                }
-                else
-                {
-                    Storages.Remove((Storage)building.IStorage);
+                    Services.Remove(need);
                 }
             }
 
@@ -419,16 +434,24 @@ public class World
 
         Building buildingToConstruct = site.Building;
 
-        buildingToConstruct.IStorage = null;
         buildingToConstruct.LoadDataForFinishedBuilding();
 
-        if(buildingToConstruct.IStorage is Factory)
+        if(buildingToConstruct.Factory != null)
         {
-            Factories.Add((Factory)buildingToConstruct.IStorage);
+            Factories.Add(buildingToConstruct.Factory);
         }
-        if (buildingToConstruct.IStorage is Storage)
+        if (buildingToConstruct.Storage != null)
         {
-            Storages.Add((Storage)buildingToConstruct.IStorage);
+            Storages.Add(buildingToConstruct.Storage);
+        }
+        if (buildingToConstruct.Service != null)
+        {
+            string need = buildingToConstruct.Service.NeedFulfilled;
+            if (Services.ContainsKey(need) == false)
+            {
+                Services.Add(need, new List<Service>());
+            }
+            Services[need].Add(buildingToConstruct.Service);
         }
 
         GameManager.Instance.RemoveConstructionSiteDisplay(site);   
@@ -449,7 +472,6 @@ public class World
 
         Building buildingToDeconstruct = site.Building;
 
-        buildingToDeconstruct.IStorage = null;
         site.Building = null;
         ConstructionSites.Remove(site);
 
@@ -504,24 +526,32 @@ public class World
 
     public ResourceReservation GetReservationForFillingInput(Character character, IWorkplace workplaceToFill)
     {
-        if (workplaceToFill.MissingResourcesCount == 0)
+        return GetReservationForFillingInput(character, workplaceToFill.InputStorage);
+
+    }
+    public ResourceReservation GetReservationForFillingInput(Character character, StorageToFill storageToFill)
+    {
+        if (storageToFill.IsFilled)
         {
             return null;
         }
 
         ResourceReservation newReservation = null;
         
-        foreach (int resourceID in workplaceToFill.MissingResources.Keys)
+        foreach (int resourceID in storageToFill.MissingResources.Keys)
         {
             // Czy nie ma potrzebnych zasobów w jakiejś fabryce do opróżnienia?
             foreach (Factory factoryToCheck in Factories)
             {
-                if (factoryToCheck.OutputResources.ContainsKey(resourceID))
+                if (factoryToCheck.OutputStorage.ResourcesToRemove.ContainsKey(resourceID))
                 {
-                    if (factoryToCheck.CanReserveResource(resourceID, character)
-                        && workplaceToFill.CanReserveFreeSpace(resourceID, character))
+                    if (factoryToCheck.OutputStorage.CanReserveResource(resourceID, character)
+                        && storageToFill.CanReserveFreeSpace(resourceID, character))
                     {
-                        newReservation = new ResourceReservation(factoryToCheck, workplaceToFill, resourceID);
+                        newReservation = new ResourceReservation(
+                            factoryToCheck.OutputStorage,
+                            storageToFill, 
+                            resourceID);
                         break;
                     }
                 }
@@ -538,9 +568,12 @@ public class World
                 if (storageToCheck.Resources.ContainsKey(resourceID))
                 {
                     if (storageToCheck.CanReserveResource(resourceID, character)
-                        && workplaceToFill.CanReserveFreeSpace(resourceID, character))
+                        && storageToFill.CanReserveFreeSpace(resourceID, character))
                     {
-                        newReservation = new ResourceReservation(storageToCheck, workplaceToFill, resourceID);
+                        newReservation = new ResourceReservation(
+                            storageToCheck,
+                            storageToFill, 
+                            resourceID);
                         break;
                     }
                 }
@@ -581,25 +614,28 @@ public class World
     }
     public ResourceReservation GetReservationForHandlingOutput(Character character, IWorkplace workplaceWithOutput)
     {
-        if (workplaceWithOutput.ResourcesToRemoveCount == 0)
+        if (workplaceWithOutput.OutputStorage.IsEmpty)
         {
             return null;
         }
 
         ResourceReservation newReservation = null;
 
-        foreach (int resourceID in workplaceWithOutput.OutputResources.Keys)
+        foreach (int resourceID in workplaceWithOutput.OutputStorage.ResourcesToRemove.Keys)
         {
             // Czy jakaś fabryka nie potrzebuje tego zasobu?
             foreach (Factory factoryToCheck in Factories)
             {
-                if (factoryToCheck.MissingResourcesCount > 0
-                    && factoryToCheck.MissingResources.ContainsKey(resourceID))
+                if (factoryToCheck.InputStorage.IsFilled == false
+                    && factoryToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
                 {
-                    if (workplaceWithOutput.CanReserveResource(resourceID, character)
-                        && factoryToCheck.CanReserveFreeSpace(resourceID, character))
+                    if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
+                        && factoryToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
                     {
-                        newReservation = new ResourceReservation(workplaceWithOutput, factoryToCheck, resourceID);
+                        newReservation = new ResourceReservation(
+                            workplaceWithOutput.OutputStorage, 
+                            factoryToCheck.InputStorage, 
+                            resourceID);
                         break;
                     }
                 }
@@ -615,13 +651,16 @@ public class World
             {
                 if (siteToCheck.DeconstructionMode) continue;
 
-                if (siteToCheck.MissingResourcesCount > 0
-                    && siteToCheck.MissingResources.ContainsKey(resourceID))
+                if (siteToCheck.InputStorage.IsFilled == false
+                    && siteToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
                 {
-                    if (workplaceWithOutput.CanReserveResource(resourceID, character)
-                        && siteToCheck.CanReserveFreeSpace(resourceID, character))
+                    if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
+                        && siteToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
                     {
-                        newReservation = new ResourceReservation(workplaceWithOutput, siteToCheck, resourceID);
+                        newReservation = new ResourceReservation(
+                            workplaceWithOutput.OutputStorage, 
+                            siteToCheck.InputStorage, 
+                            resourceID);
                         break;
                     }
                 }
@@ -637,10 +676,13 @@ public class World
             {
                 if (storageToCheck.UnreservedFreeSpace > 0)
                 {
-                    if (workplaceWithOutput.CanReserveResource(resourceID, character)
+                    if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
                         && storageToCheck.CanReserveFreeSpace(character))
                     {
-                        newReservation = new ResourceReservation(workplaceWithOutput, storageToCheck, resourceID);
+                        newReservation = new ResourceReservation(
+                            workplaceWithOutput.OutputStorage, 
+                            storageToCheck, 
+                            resourceID);
                         break;
                     }
                 }
@@ -663,15 +705,24 @@ public class World
         return null;
     }
 
-    float DistanceToStorage(Character character, Storage storage)
+    public Service GetClosestService(string need, Character character)
     {
-        Tile storageTile = storage.Building.AccessTile;
-        if (storageTile == null || storageTile.MovementCost <= 0)
+        Service result = null;
+        if (Services.ContainsKey(need))
         {
-            Debug.Log("Magazyn jest niedostępny!");
+            float distance = Mathf.Infinity;
+            for (int i = 0; i < Services[need].Count; i++)
+            {
+                Service service = Services[need][i];
+                float newDistance = character.CurrentTile.DistanceTo(service.GetAccessTile());
+                if (newDistance < distance)
+                {
+                    distance = newDistance;
+                    result = service;
+                }
+            }
         }
-        return Mathf.Sqrt(Mathf.Pow(character.CurrentTile.X - storageTile.X, 2) +
-            Mathf.Pow(character.CurrentTile.Y - storageTile.Y, 2));
+        return result;
     }
 
     void DEBUG_LoadPrototypes()
@@ -752,15 +803,22 @@ public class World
         bp.NormalizedTilePositions = new List<TilePosition>()
         {
             new TilePosition(0,0,0),
+            new TilePosition(0,1,0),
+            new TilePosition(1,0,0),
+            new TilePosition(1,1,0),
         };
         bp.HasAccessTile = true;
         bp.MovementCost = 0f;
-        bp.NormalizedAccessTilePosition = new TilePosition(0, 1, 0);
+        bp.NormalizedAccessTilePosition = new TilePosition(0, 2, 0);
         bp.NormalizedAccessTileRotation = Rotation.S;
 
-        bp.ProductionTime = 2f;
+        //bp.ProductionTime = 2f;
         bp.ConsumedResources = new Dictionary<int, int>() { {2, 1 } };
-        bp.ProducedResources = new Dictionary<int, int>() { {3, 1 } };
+        //bp.ProducedResources = new Dictionary<int, int>() { {3, 1 } };
+
+        bp.NeedFulfilled = "Hunger";
+        bp.NeedFulfillmentPerSecond = 1f;
+        bp.ServiceDuration = 5f;
 
         bp.ConstructionTime = 5f;
         bp.ConstructionResources = new Dictionary<int, int>() { { 2, 3 } };

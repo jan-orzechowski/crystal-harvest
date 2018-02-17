@@ -15,7 +15,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     public GameObject Building;
     public GameObject ClippableBuilding;
 
-    public float MinColliderHeight;
+    float minColliderHeight = 0.1f;
 
     float colliderBottomPlane;
     float colliderMaxUpperPlane;
@@ -39,7 +39,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
         colliderBottomPlane = Collider.transform.position.y + Collider.center.y - (Collider.size.y / 2);
         colliderMaxUpperPlane = Collider.transform.position.y + Collider.center.y + (Collider.size.y / 2);
 
-        minY = colliderBottomPlane - colliderMaxUpperPlane - 0.2f;
+        minY = colliderBottomPlane - colliderMaxUpperPlane - 0.21f;
 
         maxY = colliderBottomPlane;
     }
@@ -109,7 +109,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     void ResizeCollider()
     {
         float newColliderHeight = Mathf.Lerp(0, colliderMaxUpperPlane, constructionSite.GetStageCompletionPercentage());
-        if (newColliderHeight < MinColliderHeight) { newColliderHeight = MinColliderHeight; }
+        if (newColliderHeight < minColliderHeight) { newColliderHeight = minColliderHeight; }
 
         float newYSize = newColliderHeight;
         float newYCenter = newColliderHeight / 2;

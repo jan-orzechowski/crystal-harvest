@@ -72,6 +72,7 @@ public class BT_Tree
     {
         root =
         Subtree(new BT_Priority(),
+                    new BT_IsUsingService(),
                     new BT_IsMoving(),
                     Subtree(new BT_MemSequence(),
                         new BT_HasReservation(),
@@ -90,6 +91,20 @@ public class BT_Tree
                         new BT_Wait(1f),
                         new BT_TakeResource()
                         ),
+                    // Tutaj potrzeby
+                    Subtree(new BT_MemSequence(),
+                        new BT_HasService(),
+                        new BT_IsServiceReady(),
+                        new BT_GetTileForService("serviceTile"),
+                        new BT_GoTo("serviceTile"),
+                        new BT_RotateTowardsService(),
+                        new BT_StartUsingService()
+                        ),
+                    Subtree(new BT_MemSequence(),
+                        new BT_IsNeedHigherThan("Hunger", 0.5f),
+                        new BT_FindService("Hunger")
+                        ),
+                    // Praca
                     Subtree(new BT_MemSequence(),
                         new BT_HasWorkplace(),
                         new BT_IsWorkplaceReadyForProduction(),

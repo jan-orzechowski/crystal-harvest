@@ -14,14 +14,12 @@ public enum ConstructionStage
 public class ConstructionSite : IWorkplace
 {
     public Building Building;
-    public Dictionary<int, int> Resources { get; protected set; }
-    public Dictionary<Character, int> PendingResources { get; protected set; }
-    public Dictionary<Character, int> ReservedResources { get; protected set; }
-    public Dictionary<int, int> MissingResources { get; protected set; }
-    public int MissingResourcesCount { get; protected set; }
-    public int ResourcesToRemoveCount { get; protected set; }
 
-    public Dictionary<int, int> OutputResources { get { if (DeconstructionMode) { return Resources; } else { return null; } } }
+    StorageToFill ConstructionStorage;
+    StorageToEmpty DeconstructionStorage;
+
+    public StorageToFill InputStorage { get { return ConstructionStorage;  } }
+    public StorageToEmpty OutputStorage { get { return DeconstructionStorage; } }
 
     float constructionTime;
     float deconstructionTime;
@@ -52,11 +50,7 @@ public class ConstructionSite : IWorkplace
         Building = building;
         constructionTime = prototype.ConstructionTime;
         deconstructionTime = constructionTime / 2;
-        
-        Resources = new Dictionary<int, int>();
-        PendingResources = new Dictionary<Character, int>();      
-        ReservedResources = new Dictionary<Character, int>();
-      
+
         Stage = ConstructionStage.ScaffoldingConstruction;
         LoadResourcesForScaffoldingConstruction();
         stageTimeLeft = scaffoldingStageTime;
@@ -83,11 +77,11 @@ public class ConstructionSite : IWorkplace
 
     public bool Work(float deltaTime, Character workingCharacter)
     {
-        if (ConstructionMode && MissingResourcesCount > 0)
+        if (ConstructionMode && ConstructionStorage.IsFilled == false)
         {
             return false;
         }
-        else if (DeconstructionMode && ResourcesToRemoveCount > 0)
+        else if (DeconstructionMode && DeconstructionStorage.IsEmpty == false)
         {
             return false;
         }
@@ -113,7 +107,6 @@ public class ConstructionSite : IWorkplace
             {
                 Stage = ConstructionStage.Construction;                
                 stageTimeLeft = constructionTime;
-                Resources.Clear();
                 LoadResourcesForConstruction();
             }
             else if (Stage == ConstructionStage.Construction)
@@ -124,7 +117,6 @@ public class ConstructionSite : IWorkplace
             {
                 Stage = ConstructionStage.ScaffoldingDeconstruction;
                 stageTimeLeft = scaffoldingStageTime;
-                ResourcesToRemoveCount = 0;
             }
             else if (Stage == ConstructionStage.ScaffoldingDeconstruction)
             {
@@ -139,8 +131,8 @@ public class ConstructionSite : IWorkplace
     {
         return (WorkingCharacter == null
                 && jobReserved == false
-                && ((ConstructionMode && MissingResourcesCount == 0)
-                    || DeconstructionMode && ResourcesToRemoveCount == 0));
+                && ((ConstructionMode && ConstructionStorage.IsFilled)
+                    || DeconstructionMode && DeconstructionStorage.IsEmpty));
     }
 
     public bool ReserveJob()
@@ -157,189 +149,22 @@ public class ConstructionSite : IWorkplace
         }
     }
 
-    public bool CanReserveFreeSpace(int resourceID, Character character)
-    {
-        return ((Stage == ConstructionStage.Deconstruction || Stage == ConstructionStage.ScaffoldingDeconstruction) == false 
-                && MissingResources.ContainsKey(resourceID)
-                && PendingResources.ContainsKey(character) == false);
-    }
-    public bool ReserveFreeSpace(int resourceID, Character character)
-    {
-        if (Stage == ConstructionStage.Deconstruction || Stage == ConstructionStage.ScaffoldingDeconstruction)
-        {
-            return false;
-        }
-
-        if (CanReserveFreeSpace(resourceID, character))
-        {
-            MissingResources[resourceID] = MissingResources[resourceID] - 1;
-            if (MissingResources[resourceID] == 0)
-            {
-                MissingResources.Remove(resourceID);
-            }
-            PendingResources.Add(character, resourceID);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool RemoveFreeSpaceReservation(Character character)
-    {
-        if (PendingResources.ContainsKey(character))
-        {
-            int resourceID = PendingResources[character];
-            PendingResources.Remove(character);
-
-            if (MissingResources.ContainsKey(resourceID))
-            {
-                MissingResources[resourceID] = MissingResources[resourceID] - 1;
-            }
-            else
-            {
-                MissingResources[resourceID] = 1;
-            }
-            MissingResourcesCount++;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool CanReserveResource(int resourceID, Character character)
-    {
-        return (DeconstructionMode
-                && ReservedResources.ContainsKey(character) == false
-                && Resources.ContainsKey(resourceID) && Resources[resourceID] > 0);
-    }
-
-    public bool ReserveResource(int resourceID, Character character)
-    {
-        if (DeconstructionMode == false)
-        {
-            return false;
-        }
-
-        if (CanReserveResource(resourceID, character))
-        {
-            Resources[resourceID] = Resources[resourceID] - 1;
-            if (Resources[resourceID] == 0)
-            {
-                Resources.Remove(resourceID);
-            }
-
-            ReservedResources.Add(character, resourceID);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool RemoveResourceReservation(Character character)
-    {
-        if (ReservedResources.ContainsKey(character))
-        {
-            int resourceID = ReservedResources[character];
-
-            if (Resources.ContainsKey(resourceID))
-            {
-                Resources[resourceID] = Resources[resourceID] + 1;
-            }
-            else
-            {
-                Resources[resourceID] = 1;
-            }
-
-            ReservedResources.Remove(character);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public bool TransferFromStorage(int resourceID, Character character)
-    {
-        if(DeconstructionMode == false)
-        {
-            return false;
-        }
-
-        if (ReservedResources.ContainsKey(character)
-            && ReservedResources[character] == resourceID)
-        {
-            ReservedResources.Remove(character);
-            character.AddResource(resourceID);
-            return true;
-        }
-        return false;
-    }
-
-    public bool TransferToStorage(int resourceID, Character character)
-    {
-        if (DeconstructionMode)
-        {
-            return false;
-        }
-
-        if (PendingResources.ContainsKey(character)
-            && PendingResources[character] == resourceID
-            && character.Resource == resourceID)
-        {
-            PendingResources.Remove(character);
-            MissingResourcesCount--;
-            if (Resources.ContainsKey(resourceID))
-            {
-                Resources[resourceID] = Resources[resourceID] + 1;
-            }
-            else
-            {
-                Resources[resourceID] = 1;
-            }
-            character.RemoveResource();
-            return true;
-        }
-        return false;
-    }
-
     void LoadResourcesForConstruction()
     {      
-        MissingResources = new Dictionary<int, int>(prototype.ConstructionResources);
-        MissingResourcesCount = 0;
-
-        if (MissingResources != null)
-        {
-            foreach (int id in MissingResources.Keys)
-            {
-                MissingResourcesCount += MissingResources[id];
-            }
-        }
+        ConstructionStorage = new StorageToFill(Building, prototype.ConstructionResources);
+        DeconstructionStorage = new StorageToEmpty(Building, null);
     }
 
     void LoadResourcesFromDeconstruction()
     {
-        Resources = new Dictionary<int, int>(prototype.ResourcesFromDeconstruction);
-        ResourcesToRemoveCount = 0;
-        if (Resources != null)
-        {
-            foreach (int id in Resources.Keys)
-            {
-                ResourcesToRemoveCount += Resources[id];
-            }
-        }
+        ConstructionStorage = new StorageToFill(Building, null);
+        DeconstructionStorage = new StorageToEmpty(Building, prototype.ResourcesFromDeconstruction);
     }
 
     void LoadResourcesForScaffoldingConstruction()
     {
-        MissingResources = new Dictionary<int, int>() { { 1, 1 } };
-        MissingResourcesCount = 1;
+        ConstructionStorage = new StorageToFill(Building, new Dictionary<int, int>() { { 1, 1 } });
+        DeconstructionStorage = new StorageToEmpty(Building, null);
     }
 
     public float GetCompletionPercentage()
@@ -405,16 +230,7 @@ public class ConstructionSite : IWorkplace
             return Building.AccessTileRotation;
         else return Rotation.N;
     }
-
-    public int GetMissingResourcesCount()
-    {
-        return MissingResourcesCount;
-    }
-
-    public int GetOutputResourcesCount()
-    {
-        return ResourcesToRemoveCount;
-    }
+  
     public string GetSelectionText()
     {
         string s = "";
@@ -426,36 +242,25 @@ public class ConstructionSite : IWorkplace
         }
         s += "\n";
 
-        //s += "Pozostały czas konstrukcji: ";
-        //if (ConstructionMode)
-        //{
-        //    s += stageTimeLeft + "\n";
-        //}
-        //else
-        //{
-        //    s += "nie rozpoczęta \n";
-        //}
-
-        s += "Potrzebne zasoby - są: " + "\n";
-        foreach (int resourceID in Resources.Keys)
+        s += "Pozostały czas konstrukcji: ";
+        if (ConstructionMode)
         {
-            s += "- " + GameManager.Instance.World.ResourcesInfo[resourceID].Name + " - " + Resources[resourceID] + "\n";
+            s += stageTimeLeft + "\n";
         }
-        s += "\n";
-        s += "Potrzebne zasoby - brakuje: " + "\n";
-        if (MissingResourcesCount > 0)
-            foreach (int resourceID in MissingResources.Keys)
-            {
-                s += "- " + GameManager.Instance.World.ResourcesInfo[resourceID].Name + " - " + MissingResources[resourceID] + "\n";
-            }
-
-        s += "\n";
-        s += "Potrzebne zasoby - w drodze: " + "\n";
-        foreach (Character character in PendingResources.Keys)
+        else
         {
-            s += "- " + character.Name + " - " + GameManager.Instance.World.ResourcesInfo[PendingResources[character]].Name + "\n";
+            s += "nie rozpoczęta \n";
         }
-        s += "\n";
+
+        if (ConstructionMode)
+        {
+            s += ConstructionStorage.GetSelectionText();
+        }
+        else if (DeconstructionMode)
+        {
+            s += DeconstructionStorage.GetSelectionText();
+        }
+
         return s;
     }
 }

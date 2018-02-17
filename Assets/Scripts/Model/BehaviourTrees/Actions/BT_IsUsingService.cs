@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_IsMoving : BT_Node 
+public class BT_IsUsingService : BT_Node 
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Character.IsMoving())
+        if (am.Character.UsingService)
         {
             return BT_Result.SUCCESS;
         }

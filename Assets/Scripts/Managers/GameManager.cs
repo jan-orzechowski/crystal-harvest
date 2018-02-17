@@ -56,12 +56,14 @@ public class GameManager : MonoBehaviour
         }
 
         World.InstantBuild(new TilePosition(0, 2, 0), Rotation.N, World.GetBuildingPrototype("Spaceship"));
+        World.InstantBuild(new TilePosition(5, 5, 0), Rotation.N, World.GetBuildingPrototype("Debug4"));
     }
 
     void Update ()
     {
         World.UpdateModel(Time.deltaTime);
     }
+
     public CharacterDisplayObject GenerateDisplayForCharacter(Character c)
     {
         GameObject gameObject = GameObject.Instantiate(

@@ -1118,18 +1118,21 @@ MonoBehaviour:
     InvalidPreviewModel: {fileID: 1734733986697778, guid: 3e53791b2ce2e26498bf4c4a4b8d651b,
       type: 2}
     ConstructionSiteObject: {fileID: 0}
-  - Type: Debug4
+  - Type: Debug4a
     Model: {fileID: 1185680338318534, guid: c8c3712b326dae641a86d8e80ecdee64, type: 2}
     PreviewModel: {fileID: 1604322685696820, guid: e96ac9d83dd77a4458b68b1835432496,
       type: 2}
     InvalidPreviewModel: {fileID: 1604322685696820, guid: 92d467907f7f0a44b9277c59c9b81bd3,
       type: 2}
     ConstructionSiteObject: {fileID: 0}
-  - Type: Stairs
-    Model: {fileID: 0}
-    PreviewModel: {fileID: 0}
-    InvalidPreviewModel: {fileID: 0}
-    ConstructionSiteObject: {fileID: 0}
+  - Type: Debug4
+    Model: {fileID: 1916614293267664, guid: 413d3f24650a9ee49834ff5a1489b5dd, type: 2}
+    PreviewModel: {fileID: 1888558582551836, guid: 1bf5efd5dea54aa4cbb53bd03bde1272,
+      type: 2}
+    InvalidPreviewModel: {fileID: 1888558582551836, guid: 0231bc164cd94c247aba9bee2c795c11,
+      type: 2}
+    ConstructionSiteObject: {fileID: 1144676222160638, guid: ebca9ec68a0331640bb6767aa2aa3a9c,
+      type: 2}
   - Type: Spaceship
     Model: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62, type: 2}
     PreviewModel: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62,
@@ -1428,7 +1431,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1239247446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.4000828, y: -0.46426916, z: 1.0117832}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

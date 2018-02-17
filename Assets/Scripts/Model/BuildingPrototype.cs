@@ -30,4 +30,8 @@ public class BuildingPrototype
     public float ConstructionTime;
     public Dictionary<int, int> ConstructionResources;
     public Dictionary<int, int> ResourcesFromDeconstruction;
+
+    public string NeedFulfilled;
+    public float NeedFulfillmentPerSecond;
+    public float ServiceDuration;
 }
