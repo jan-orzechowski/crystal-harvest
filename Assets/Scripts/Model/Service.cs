@@ -42,7 +42,7 @@ public class Service
 
             if (ServicedCharacter.Needs[NeedFulfilled] <= 0f && serviceDuration <= 0f)
             {
-                ServicedCharacter.UsingService = false;
+                ServicedCharacter.ServiceEnded();
                 ServicedCharacter = null;
                 reservation = null;
             }
@@ -95,12 +95,20 @@ public class Service
         if (CanReserveService(character))
         {
             reservation = character;
-            reservationTimer = 20f;
+            reservationTimer = 5f;
             return true;
         }
         else
         {
             return false;
+        }
+    }
+
+    public void RenewServiceReservation(Character character)
+    {
+        if(reservation == character)
+        {
+            reservationTimer = 5f;
         }
     }
 

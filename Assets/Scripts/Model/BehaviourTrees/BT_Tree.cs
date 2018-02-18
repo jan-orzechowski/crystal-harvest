@@ -73,31 +73,26 @@ public class BT_Tree
         root =
         Subtree(new BT_Priority(),
                     new BT_IsUsingService(),
-                    new BT_IsMoving(),
+                    new BT_Move(),
+                    // Rezerwacje
                     Subtree(new BT_MemSequence(),
                         new BT_HasReservation(),
                         new BT_HasResourceForReservation(),
-                        new BT_GetTileForTargetStorage("targetStorage"),
-                        new BT_GoTo("targetStorage"),
-                        new BT_RotateTowardsTargetStorage(),
+                        new BT_GoToTargetStorage(),
                         new BT_Wait(1f),
                         new BT_DepositResource()
                         ),
                     Subtree(new BT_MemSequence(),
                         new BT_HasReservation(),
-                        new BT_GetTileForSourceStorage("sourceStorage"),
-                        new BT_GoTo("sourceStorage"),
-                        new BT_RotateTowardsSourceStorage(),
+                        new BT_GoToSourceStorage(),
                         new BT_Wait(1f),
                         new BT_TakeResource()
                         ),
-                    // Tutaj potrzeby
+                    // Potrzeby
                     Subtree(new BT_MemSequence(),
                         new BT_HasService(),
                         new BT_IsServiceReady(),
-                        new BT_GetTileForService("serviceTile"),
-                        new BT_GoTo("serviceTile"),
-                        new BT_RotateTowardsService(),
+                        new BT_GoToService(),
                         new BT_StartUsingService()
                         ),
                     Subtree(new BT_MemSequence(),
@@ -109,9 +104,7 @@ public class BT_Tree
                         new BT_HasWorkplace(),
                         new BT_IsWorkplaceReadyForProduction(),
                         new BT_ReserveJob(),
-                        new BT_GetTileForWorkplace("workplaceTile"),
-                        new BT_GoTo("workplaceTile"),
-                        new BT_RotateTowardsWorkplace(),
+                        new BT_GoToWorkplace(),
                         new BT_Wait(1f),
                         new BT_Work()
                         ),
@@ -122,15 +115,12 @@ public class BT_Tree
                         ),
                     Subtree(new BT_MemSequence(),
                         new BT_GetRandomWorkplace()
-                        )
-                        ,
+                        ),
                     Subtree(new BT_MemSequence(),
                         new BT_GetTransportJob()
-                        )
-                        ,
+                        ),
                     Subtree(new BT_MemSequence(),
-                        new BT_GetRandomTile("wanderTile", 4),
-                        new BT_GoTo("wanderTile"),
+                        new BT_GoToRandomTile(4),
                         new BT_WaitRandom(1f, 2f)
                         )
         );

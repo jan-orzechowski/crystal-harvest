@@ -11,7 +11,7 @@ public class BT_ReserveJob : BT_Node
         {
             return BT_Result.FAILURE;
         }
-        else if (am.Workplace.ReserveJob())
+        else if (am.Workplace.ReserveJob(am.Character))
         {
             return BT_Result.SUCCESS;
         }

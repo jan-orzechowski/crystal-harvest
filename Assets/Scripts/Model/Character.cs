@@ -270,6 +270,12 @@ public class Character : ISelectable
         Reservation = null;
     }
 
+    public void ServiceEnded()
+    {
+        UsingService = false;
+        agentMemory.SetNewService(null);
+    }
+
     void UpdateNeeds(float deltaTime)
     {
         foreach (string need in Needs.Keys.ToList())
@@ -304,7 +310,7 @@ public class Character : ISelectable
 
     public bool IsMoving()
     {
-        return (MovementPercentage > 0.01f
+        return (MovementPercentage > 0.2f
                 || (NextTile != null && AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
                 || (isLastTileRotationSet && CurrentTile == DestinationTile
                         && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)

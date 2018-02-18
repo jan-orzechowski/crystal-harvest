@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class BT_Node
+public abstract class BT_Node
 {
     public int ID;
 

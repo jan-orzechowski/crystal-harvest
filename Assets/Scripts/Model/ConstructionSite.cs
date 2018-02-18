@@ -35,7 +35,7 @@ public class ConstructionSite : IWorkplace
                                             || Stage == ConstructionStage.ScaffoldingDeconstruction);  } }
 
     public Character WorkingCharacter { get; protected set; }
-    bool jobReserved;
+    Character jobReservation;
     float jobReservationTimer;
     float timeWithoutWork;
 
@@ -58,12 +58,12 @@ public class ConstructionSite : IWorkplace
 
     public void UpdateConstructionSite(float deltaTime)
     {
-        if (jobReserved)
+        if (WorkingCharacter == null)
         {
             jobReservationTimer -= deltaTime;
             if (jobReservationTimer < 0f)
             {
-                jobReserved = false;
+                jobReservation = null;
             }
         }
 
@@ -85,16 +85,13 @@ public class ConstructionSite : IWorkplace
         {
             return false;
         }
-
-        if (jobReserved)
-        {
-            jobReserved = false;
-        }
-
+       
         if (WorkingCharacter != null && WorkingCharacter != workingCharacter)
         {
             return false;
         }
+
+        jobReservation = null;
 
         stageTimeLeft -= deltaTime;
         WorkingCharacter = workingCharacter;
@@ -103,6 +100,7 @@ public class ConstructionSite : IWorkplace
         if (stageTimeLeft <= 0)
         {
             WorkingCharacter = null;
+
             if (Stage == ConstructionStage.ScaffoldingConstruction)
             {
                 Stage = ConstructionStage.Construction;                
@@ -130,22 +128,30 @@ public class ConstructionSite : IWorkplace
     public bool IsJobFree()
     {
         return (WorkingCharacter == null
-                && jobReserved == false
+                && jobReservation == null
                 && ((ConstructionMode && ConstructionStorage.IsFilled)
                     || DeconstructionMode && DeconstructionStorage.IsEmpty));
     }
 
-    public bool ReserveJob()
+    public bool ReserveJob(Character character)
     {
-        if (jobReserved)
+        if ((jobReservation == character || jobReservation == null) && WorkingCharacter == null)
         {
-            return false;
+            jobReservation = character;
+            jobReservationTimer = 5f;
+            return true;
         }
         else
         {
-            jobReserved = true;
-            jobReservationTimer = 10f;
-            return true;
+            return false;
+        }
+    }
+
+    public void RenewJobReservation(Character character)
+    {
+        if (jobReservation == character)
+        {
+            jobReservationTimer = 5f;
         }
     }
 

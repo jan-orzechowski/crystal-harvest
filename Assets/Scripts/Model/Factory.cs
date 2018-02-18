@@ -16,7 +16,7 @@ public class Factory : IWorkplace
     public bool ProductionStarted { get; protected set; }
   
     public Character WorkingCharacter { get; protected set; }
-    bool jobReserved;
+    Character jobReservation;
     float jobReservationTimer;
     float timeWithoutWork;
 
@@ -28,17 +28,17 @@ public class Factory : IWorkplace
         ProductionStarted = false;        
 
         InputStorage = new StorageToFill(Building, prototype.ConsumedResources);
-        OutputStorage = new StorageToEmpty(Building, prototype.ProducedResources);
+        OutputStorage = new StorageToEmpty(Building, null);
     }
 
     public void UpdateFactory(float deltaTime)
     {                       
-        if (jobReserved)
+        if (WorkingCharacter == null)
         {
             jobReservationTimer -= deltaTime;
             if(jobReservationTimer < 0f)
             {
-                jobReserved = false;
+                jobReservation = null;
             }
         }
 
@@ -58,15 +58,12 @@ public class Factory : IWorkplace
             return false;
         }
 
-        if (jobReserved)
-        {
-            jobReserved = false;
-        }
-
         if (WorkingCharacter != null && WorkingCharacter != workingCharacter)
         {
             return false;
         }
+
+        jobReservation = null;
 
         if (ProductionStarted == false)
         {
@@ -92,7 +89,7 @@ public class Factory : IWorkplace
             if (productionTimeLeft <= 0)
             {
                 if (Produce())
-                {
+                {                 
                     ProductionStarted = false;
                     return true;
                 }
@@ -137,24 +134,32 @@ public class Factory : IWorkplace
     public bool IsJobFree()
     {
         return (WorkingCharacter == null
-                && jobReserved == false
+                && jobReservation == null
                 && (ProductionStarted || (InputStorage.IsFilled && OutputStorage.IsEmpty)));
     }
 
-    public bool ReserveJob()
+    public bool ReserveJob(Character character)
     {
-        if (jobReserved)
+        if ((jobReservation == character || jobReservation == null) && WorkingCharacter == null)
         {
-            return false;
+            jobReservation = character;
+            jobReservationTimer = 5f;
+            return true;
         }
         else
         {
-            jobReserved = true;
-            jobReservationTimer = 10f;
-            return true;
+            return false;
         }
     }
-   
+
+    public void RenewJobReservation(Character character)
+    {
+        if (jobReservation == character)
+        {
+            jobReservationTimer = 5f;
+        }
+    }
+
     public Tile GetAccessTile()
     {
         return Building.AccessTile;

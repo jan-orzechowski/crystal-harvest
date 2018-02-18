@@ -3,21 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_GetRandomTile : BT_Node
+public class BT_GoToRandomTile : BT_GoTo 
 {
-    string tileVarName;
     int maxDistanceFromCharacter;
-    int maxHeightDifference;
-    int maxSearchesNumber = 100;
+    static int maxSearchesNumber = 100;
 
-    public BT_GetRandomTile(string tileVarName, int maxDistanceFromCharacter, int maxHeightDifference = 2) : base()
+    public BT_GoToRandomTile(int maxDistanceFromCharacter) : base()
     {
-        this.tileVarName = tileVarName;
         this.maxDistanceFromCharacter = maxDistanceFromCharacter;
-        this.maxHeightDifference = maxHeightDifference;
     }
 
-    public override BT_Result Tick(BT_AgentMemory am)
+    public override Tile GetDestinationTile(BT_AgentMemory am)
     {
         Tile newTile;
         TilePosition pos = am.Character.CurrentTile.Position;
@@ -25,7 +21,7 @@ public class BT_GetRandomTile : BT_Node
         World world = GameManager.Instance.World;
 
         for (int i = 0; i < maxSearchesNumber; i++)
-        {        
+        {
             int x = UnityEngine.Random.Range(
             (Math.Max(pos.X - maxDistanceFromCharacter, 0)),
             (Math.Min(pos.X + maxDistanceFromCharacter, world.XSize)));
@@ -34,9 +30,7 @@ public class BT_GetRandomTile : BT_Node
                 (Math.Max(pos.Y - maxDistanceFromCharacter, 0)),
                 (Math.Min(pos.Y + maxDistanceFromCharacter, world.YSize)));
 
-            int height = UnityEngine.Random.Range(
-                (Math.Max(pos.Height - maxHeightDifference, 0)),
-                (Math.Min(pos.Height + maxHeightDifference, world.Height)));
+            int height = UnityEngine.Random.Range(0, world.Height);
 
             newTile = world.GetTileFromPosition(new TilePosition(x, y, height));
 
@@ -46,10 +40,19 @@ public class BT_GetRandomTile : BT_Node
             }
             else
             {
-                am.SetGlobalTile(tileVarName, newTile);
-                return BT_Result.SUCCESS;
+                return newTile;
             }
         }
-        return BT_Result.FAILURE;
+
+        return null;
+    }
+
+    public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
+    {
+        int r = UnityEngine.Random.Range(0, 4);
+        if (r == 0) return Rotation.N;
+        else if (r == 1) return Rotation.E;
+        else if (r == 2) return Rotation.S;
+        else return Rotation.W;
     }
 }
