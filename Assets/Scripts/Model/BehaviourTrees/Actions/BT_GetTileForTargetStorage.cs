@@ -12,9 +12,9 @@ public class BT_GetTileForTargetStorage : BT_Node
     }
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Reservation == null) { return BT_Result.FAILURE; }
-        if (am.Reservation.TargetStorage == null) { return BT_Result.ERROR; }
-        Tile tile = am.Reservation.TargetStorage.GetAccessTile();
+        if (am.Character.Reservation == null) { return BT_Result.FAILURE; }
+        if (am.Character.Reservation.TargetStorage == null) { return BT_Result.ERROR; }
+        Tile tile = am.Character.Reservation.TargetStorage.GetAccessTile();
         am.SetGlobalTile(tileVarName, tile);
         return BT_Result.SUCCESS;
     }

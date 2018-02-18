@@ -7,11 +7,11 @@ public class BT_TakeResource : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Reservation != null 
+        if (am.Character.Reservation != null 
             && am.Character.HasResource == false
-            && am.Reservation.SourceStorage.GetAccessTile() == am.Character.CurrentTile)
+            && am.Character.Reservation.SourceStorage.GetAccessTile() == am.Character.CurrentTile)
         {
-            if (am.Reservation.SourceStorage.TransferFromStorage(am.Reservation.Resource, am.Character))
+            if (am.Character.Reservation.SourceStorage.TransferFromStorage(am.Character.Reservation.Resource, am.Character))
             {
                 return BT_Result.SUCCESS;
             }

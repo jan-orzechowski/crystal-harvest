@@ -33,6 +33,8 @@ public class Character : ISelectable
     public int Resource { get; protected set; }
     public bool HasResource { get { return (Resource != 0); } }
 
+    public ResourceReservation Reservation { get; protected set; }
+
     public Dictionary<string, float> Needs { get; protected set; }
     public Dictionary<string, float> NeedGrowthPerSecond { get; protected set; }
 
@@ -248,6 +250,24 @@ public class Character : ISelectable
     public void RemoveResource()
     {
         Resource = 0;
+    }
+
+    public bool SetNewReservation(ResourceReservation reservation)
+    {
+        if (Reservation != null)
+        {
+            return false;
+        }
+        else
+        {
+            Reservation = reservation;
+            return true;
+        }
+    }
+
+    public void ReservationUsed()
+    {
+        Reservation = null;
     }
 
     void UpdateNeeds(float deltaTime)

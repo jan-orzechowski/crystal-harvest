@@ -43,7 +43,8 @@ public class StorageToFill : ITargetStorage
 
     public virtual bool CanReserveFreeSpace(int resourceID, Character character)
     {
-        return (MissingResources.ContainsKey(resourceID)
+        return (character.Reservation == null
+                && MissingResources.ContainsKey(resourceID)
                 && PendingResources.ContainsKey(character) == false);
     }
 
@@ -64,6 +65,7 @@ public class StorageToFill : ITargetStorage
                 Resources[resourceID] = 1;
             }
             character.RemoveResource();
+            character.ReservationUsed();
             return true;
         }
         return false;
@@ -101,8 +103,7 @@ public class StorageToFill : ITargetStorage
             else
             {
                 MissingResources[resourceID] = 1;
-            }
-            MissingResourcesCount++;
+            }            
             return true;
         }
         else

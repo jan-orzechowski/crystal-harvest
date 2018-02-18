@@ -7,25 +7,21 @@ public class BT_GetTransportJob : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {        
-        if (am.Reservation != null) { return BT_Result.FAILURE; }
+        if (am.Character.Reservation != null) { return BT_Result.FAILURE; }
         
         World world = GameManager.Instance.World;
 
-        ResourceReservation newReservation = world.GetReservationForFillingInput(am.Character);
-
-        if (newReservation == null)
+        if (world.GetReservationForFillingInput(am.Character))
         {
-            newReservation = world.GetReservationForHandlingOutput(am.Character);
+            return BT_Result.SUCCESS;
         }
-
-        if (newReservation == null)
+        else if (world.GetReservationForHandlingOutput(am.Character))
         {
-            return BT_Result.FAILURE;
+            return BT_Result.SUCCESS;
         }
         else
         {
-            am.SetNewReservation(newReservation);
-            return BT_Result.SUCCESS;
+            return BT_Result.FAILURE;
         }
     }
 }

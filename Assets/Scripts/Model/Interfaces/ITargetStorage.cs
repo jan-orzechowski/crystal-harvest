@@ -9,5 +9,6 @@ public interface ITargetStorage
     Rotation GetAccessTileRotation();
     bool TransferToStorage(int resourceID, Character character);
     bool ReserveFreeSpace(int resourceID, Character character);
+    bool RemoveFreeSpaceReservation(Character character);
     string GetSelectionText();
 }

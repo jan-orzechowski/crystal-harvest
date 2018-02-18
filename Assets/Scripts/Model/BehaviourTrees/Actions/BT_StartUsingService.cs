@@ -16,7 +16,6 @@ public class BT_StartUsingService : BT_Node
             bool result = am.Service.StartService(am.Character);
             if (result)
             {
-                Debug.Log("Początek");
                 return BT_Result.SUCCESS;
             }
             else

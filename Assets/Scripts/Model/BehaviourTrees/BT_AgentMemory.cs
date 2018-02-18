@@ -9,7 +9,6 @@ public class BT_AgentMemory
     Dictionary<int, Dictionary<string, int>> ints;
     Dictionary<int, Dictionary<string, Tile>> tiles;
 
-    public ResourceReservation Reservation { get; protected set; }
     public IWorkplace Workplace { get; protected set; }
     public Service Service { get; protected set; }
 
@@ -119,25 +118,7 @@ public class BT_AgentMemory
     {
         SetTile(0, key, tile);
     }
-
-    public bool SetNewReservation(ResourceReservation reservation)
-    {
-        if (Reservation != null)
-        {
-            return false;
-        }
-        else
-        {
-            Reservation = reservation;
-            return true;
-        }
-    }
-
-    public void ReservationUsed()
-    {
-        Reservation = null;
-    }
-
+       
     public void SetNewWorkplace(IWorkplace workplace)
     {
         Workplace = workplace;

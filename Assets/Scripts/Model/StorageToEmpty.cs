@@ -41,7 +41,8 @@ public class StorageToEmpty : ISourceStorage
 
     public virtual bool CanReserveResource(int resourceID, Character character)
     {
-        return (ReservedResources.ContainsKey(character) == false
+        return (character.Reservation == null
+                && ReservedResources.ContainsKey(character) == false
                 && ResourcesToRemove.ContainsKey(resourceID) && ResourcesToRemove[resourceID] > 0);
     }
 

@@ -491,49 +491,38 @@ public class World
         }
     }
 
-    public ResourceReservation GetReservationForFillingInput(Character character)
+    public bool GetReservationForFillingInput(Character character)
     {
-        ResourceReservation newReservation = null;
-        
         foreach (Factory factory in Factories)
         {
-            newReservation = GetReservationForFillingInput(character, factory);
-            if (newReservation == null)
+            if (GetReservationForFillingInput(character, factory))
             {
-                continue;
-            }
-            else
-            {
-                return newReservation;
+                return true;
             }
         }
 
         foreach (ConstructionSite site in ConstructionSites)
         {
-            newReservation = GetReservationForFillingInput(character, site);
-            if (newReservation == null)
+            if (GetReservationForFillingInput(character, site))
             {
-                continue;
-            }
-            else
-            {
-                return newReservation;
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 
-    public ResourceReservation GetReservationForFillingInput(Character character, IWorkplace workplaceToFill)
+    public bool GetReservationForFillingInput(Character character, IWorkplace workplaceToFill)
     {
         return GetReservationForFillingInput(character, workplaceToFill.InputStorage);
 
     }
-    public ResourceReservation GetReservationForFillingInput(Character character, StorageToFill storageToFill)
+
+    public bool GetReservationForFillingInput(Character character, StorageToFill storageToFill)
     {
-        if (storageToFill.IsFilled)
+        if (character.Reservation != null || storageToFill.IsFilled)
         {
-            return null;
+            return false;
         }
 
         ResourceReservation newReservation = null;
@@ -587,36 +576,41 @@ public class World
 
         if (newReservation != null)
         {
-            newReservation.SourceStorage.ReserveResource(newReservation.Resource, character);
-            newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character);
-            return newReservation;
-        }
-
-        // Nie udało się nic znaleźć
-        return null;        
-    }
-    public ResourceReservation GetReservationForHandlingOutput(Character character)
-    {
-        ResourceReservation newReservation = null;
-        foreach (Factory factory in Factories)
-        {
-            newReservation = GetReservationForHandlingOutput(character, factory);
-            if (newReservation == null)
+            if (newReservation.SourceStorage.ReserveResource(newReservation.Resource, character)
+               && newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character))
             {
-                continue;
+                character.SetNewReservation(newReservation);
+                return true;
             }
             else
             {
-                return newReservation;
+                newReservation.SourceStorage.RemoveResourceReservation(character);
+                newReservation.TargetStorage.RemoveFreeSpaceReservation(character);
+                return false;
             }
         }
-        return null;
+
+        // Nie udało się nic znaleźć
+        return false;        
     }
-    public ResourceReservation GetReservationForHandlingOutput(Character character, IWorkplace workplaceWithOutput)
+
+    public bool GetReservationForHandlingOutput(Character character)
     {
-        if (workplaceWithOutput.OutputStorage.IsEmpty)
+        foreach (Factory factory in Factories)
         {
-            return null;
+            if (GetReservationForHandlingOutput(character, factory))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool GetReservationForHandlingOutput(Character character, IWorkplace workplaceWithOutput)
+    {
+        if (character.Reservation != null || workplaceWithOutput.OutputStorage.IsEmpty)
+        {
+            return false;
         }
 
         ResourceReservation newReservation = null;
@@ -696,13 +690,22 @@ public class World
 
         if (newReservation != null)
         {
-            newReservation.SourceStorage.ReserveResource(newReservation.Resource, character);
-            newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character);
-            return newReservation;
+            if (newReservation.SourceStorage.ReserveResource(newReservation.Resource, character)
+                && newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character))
+            {
+                character.SetNewReservation(newReservation);
+                return true;
+            }
+            else
+            {
+                newReservation.SourceStorage.RemoveResourceReservation(character);
+                newReservation.TargetStorage.RemoveFreeSpaceReservation(character);
+                return false;
+            }
         }
 
         // Nie udało się nic znaleźć
-        return null;
+        return false;
     }
 
     public Service GetClosestService(string need, Character character)

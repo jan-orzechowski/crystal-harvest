@@ -7,7 +7,7 @@ public class BT_HasReservation : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Reservation == null)
+        if (am.Character.Reservation == null)
         {
             return BT_Result.FAILURE;
         }

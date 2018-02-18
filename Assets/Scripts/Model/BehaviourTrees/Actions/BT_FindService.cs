@@ -14,7 +14,7 @@ public class BT_FindService : BT_Node
 
     public override BT_Result Tick(BT_AgentMemory am)
     {     
-        if (am.Reservation != null) { return BT_Result.FAILURE; }
+        if (am.Character.Reservation != null) { return BT_Result.FAILURE; }
 
         Service service = GameManager.Instance.World.GetClosestService(need, am.Character);
 
@@ -22,28 +22,23 @@ public class BT_FindService : BT_Node
         {
             return BT_Result.FAILURE;
         }
-       
-        ResourceReservation newReservation
-            = GameManager.Instance.World.GetReservationForFillingInput(am.Character, service.InputStorage);
 
-        if (newReservation == null)
+        if (service.CanReserveService(am.Character)
+            && GameManager.Instance.World.GetReservationForFillingInput(am.Character, service.InputStorage))
         {
-            return BT_Result.FAILURE;
-        }
-        else
-        {
-            if (service.ReserveService(newReservation.Resource, am.Character))
+            if (service.ReserveService(am.Character))
             {
                 am.SetNewService(service);
-                am.SetNewReservation(newReservation);
-                Debug.Log("Udana rezerwacja!");
                 return BT_Result.SUCCESS;
             }
             else
             {
                 return BT_Result.FAILURE;
             }
-
+        }
+        else
+        {            
+            return BT_Result.FAILURE;
         }
     }
 }

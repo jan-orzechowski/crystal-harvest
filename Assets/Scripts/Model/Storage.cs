@@ -74,7 +74,8 @@ public class Storage : ISourceStorage, ITargetStorage
     }
     public bool CanReserveResource(int resourceID, Character character)
     {
-        return (ReservedResources.ContainsKey(character) == false
+        return (character.Reservation == null
+                && ReservedResources.ContainsKey(character) == false
                 && Resources.ContainsKey(resourceID)
                 && Resources[resourceID] > 0);        
     }
@@ -154,6 +155,7 @@ public class Storage : ISourceStorage, ITargetStorage
             }
             CurrentResourceCount++;
             character.RemoveResource();
+            character.ReservationUsed();
             return true;
         }
         return false;

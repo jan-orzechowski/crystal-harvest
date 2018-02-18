@@ -7,13 +7,12 @@ public class BT_DepositResource : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Reservation != null
+        if (am.Character.Reservation != null
             && am.Character.HasResource
-            && am.Reservation.TargetStorage.GetAccessTile() == am.Character.CurrentTile)
+            && am.Character.Reservation.TargetStorage.GetAccessTile() == am.Character.CurrentTile)
         {
-            if (am.Reservation.TargetStorage.TransferToStorage(am.Reservation.Resource, am.Character))
+            if (am.Character.Reservation.TargetStorage.TransferToStorage(am.Character.Reservation.Resource, am.Character))
             {
-                am.ReservationUsed();
                 return BT_Result.SUCCESS;
             }
         }

@@ -72,7 +72,7 @@ public class Service
 
     public bool StartService(Character character)
     {
-        if (reservation == character && Consume())
+        if ((reservation == null || reservation == character) && Consume())
         {
             ServicedCharacter = character;
             ServicedCharacter.UsingService = true;
@@ -85,9 +85,14 @@ public class Service
         }
     }
 
-    public bool ReserveService(int resourceID, Character character)
+    public bool CanReserveService(Character character)
     {
-        if (reservation == null)
+        return ((reservation == character || reservation == null) && ServicedCharacter == null);
+    }
+
+    public bool ReserveService(Character character)
+    {
+        if (CanReserveService(character))
         {
             reservation = character;
             reservationTimer = 20f;

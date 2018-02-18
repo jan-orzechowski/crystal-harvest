@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
         for (int x = 3; x < 5; x++)
         {
-            for (int y = 0; y < 2; y++)
+            for (int y = 0; y < 1; y++)
             {
                 World.CreateNewCharacter(new TilePosition(x, y, 0));
             }
