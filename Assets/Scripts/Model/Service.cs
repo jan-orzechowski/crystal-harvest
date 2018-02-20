@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Service
+public class Service : IBuildingModule
 {
     public Building Building { get; protected set; }
     BuildingPrototype prototype;

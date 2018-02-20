@@ -7,7 +7,7 @@ public enum BuildMode
 {
     Single,
     Multiple,
-    Corridor
+    SingleInstant
 }
 
 public class BuildModeManager : MonoBehaviour 
@@ -41,7 +41,7 @@ public class BuildModeManager : MonoBehaviour
                         y++)
                     {
                         world.PlaceNewConstructionSite(
-                            new TilePosition(x,y,start.Height),
+                            new TilePosition(x, y, start.Height),
                             currentRotation,
                             currentPrototype);
                     }
@@ -49,8 +49,12 @@ public class BuildModeManager : MonoBehaviour
             }
             else if (BuildMode == BuildMode.Single)
             {
-                world.PlaceNewConstructionSite(start, currentRotation, currentPrototype);
-            }            
+                world.PlaceNewConstructionSite(GetPositionForBuilding(start), currentRotation, currentPrototype);
+            }
+            else if (BuildMode == BuildMode.SingleInstant)
+            {
+                world.InstantBuild(GetPositionForBuilding(start), currentRotation, currentPrototype);
+            }
         }
         return true;
     }
@@ -60,7 +64,7 @@ public class BuildModeManager : MonoBehaviour
         if (start == end)
         {
             GameManager.Instance.ShowPreview(
-                            start,
+                            GetPositionForBuilding(start),
                             currentRotation,
                             currentPrototype);
         }
@@ -90,10 +94,17 @@ public class BuildModeManager : MonoBehaviour
         }        
     }
 
+    TilePosition GetPositionForBuilding(TilePosition mousePosition)
+    {
+        return (mousePosition - world.MapNormalizedPositionToWorld(currentPrototype.MousePivotPoint, 
+                                                                    new TilePosition(0, 0, 0),
+                                                                    currentRotation));
+    }
+
     public void SetBuildingType(string type)
     {
         currentPrototype = world.GetBuildingPrototype(type);
-        currentRotation = Rotation.N;
+        currentRotation = currentPrototype.StartingRotation;
 
         if (type == "Debug1")
         {
@@ -102,6 +113,10 @@ public class BuildModeManager : MonoBehaviour
         else if (type == "Debug2")
         {
             BuildMode = BuildMode.Single;
+        }
+        else if (type == "Stairs" || type == "Platform")
+        {
+            BuildMode = BuildMode.SingleInstant;
         }
     }
 

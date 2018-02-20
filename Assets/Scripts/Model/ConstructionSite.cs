@@ -39,16 +39,16 @@ public class ConstructionSite : IWorkplace
     float jobReservationTimer;
     float timeWithoutWork;
 
-    BuildingPrototype prototype;
+    public BuildingPrototype Prototype { get; protected set; }
     World world;
 
     public ConstructionSite(Building building, BuildingPrototype buildingPrototype)
     {
-        prototype = buildingPrototype;
+        Prototype = buildingPrototype;
         world = GameManager.Instance.World;
 
         Building = building;
-        constructionTime = prototype.ConstructionTime;
+        constructionTime = Prototype.ConstructionTime;
         deconstructionTime = constructionTime / 2;
 
         Stage = ConstructionStage.ScaffoldingConstruction;
@@ -157,14 +157,14 @@ public class ConstructionSite : IWorkplace
 
     void LoadResourcesForConstruction()
     {      
-        ConstructionStorage = new StorageToFill(Building, prototype.ConstructionResources);
+        ConstructionStorage = new StorageToFill(Building, Prototype.ConstructionResources);
         DeconstructionStorage = new StorageToEmpty(Building, null);
     }
 
     void LoadResourcesFromDeconstruction()
     {
         ConstructionStorage = new StorageToFill(Building, null);
-        DeconstructionStorage = new StorageToEmpty(Building, prototype.ResourcesFromDeconstruction);
+        DeconstructionStorage = new StorageToEmpty(Building, Prototype.ResourcesFromDeconstruction);
     }
 
     void LoadResourcesForScaffoldingConstruction()

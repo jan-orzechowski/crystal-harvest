@@ -5,28 +5,27 @@ using System;
 
 public class Building : ISelectable 
 {
-    public string Type;
+    public string Type { get { return prototype.Type; } }
     public List<Tile> Tiles { get; protected set; }
     public Rotation Rotation { get; protected set; }
 
     public Tile AccessTile { get; protected set; }
     public Rotation AccessTileRotation { get; protected set; }
+    public Tile SecondAccessTile { get; protected set; }
+    public Rotation SecondAccessTileRotation { get; protected set; }
+
 
     public SelectableDisplayObject DisplayObject;
 
-    public bool DoesNotBlockAccess { get; protected set; }
-
-    public Factory Factory;
-    public Service Service;
-    public Storage Storage;
+    public IBuildingModule Module;
 
     BuildingPrototype prototype;
 
-    public Building(BuildingPrototype buildingPrototype, Rotation buildingRotation, List<Tile> tiles, Tile accessTile)
+    public Building(BuildingPrototype buildingPrototype, Rotation buildingRotation, 
+                    List<Tile> tiles, Tile accessTile, Tile secondAccessTile)
     {
         prototype = buildingPrototype;
 
-        Type = prototype.Type;
         Rotation = buildingRotation;
         Tiles = tiles;
 
@@ -36,22 +35,26 @@ public class Building : ISelectable
             AccessTileRotation = prototype.NormalizedAccessTileRotation.Rotate(buildingRotation);
         }
 
-        DoesNotBlockAccess = prototype.DoesNotBlockAccess;
+        if (prototype.HasSecondAccessTile && secondAccessTile != null)
+        {
+            SecondAccessTile = secondAccessTile;
+            SecondAccessTileRotation = prototype.NormalizedSecondAccessTileRotation.Rotate(buildingRotation);
+        }
     }
 
     public void LoadDataForFinishedBuilding()
     {
         if (prototype.ProductionTime > 0f)
         {
-            Factory = new Factory(this, prototype);
+            Module = new Factory(this, prototype);
         }
         else if (prototype.NeedFulfilled != null)
         {
-            Service = new Service(this, prototype);
+            Module = new Service(this, prototype);
         }
         else if (prototype.MaxStorage > 0)
         {
-            Storage = new Storage(this, prototype);
+            Module = new Storage(this, prototype);
         }
     }
 
@@ -69,17 +72,9 @@ public class Building : ISelectable
         string s = "";
         s += Type + "\n";
         s += "Obrót: " + Rotation + ". Obrót pola dostępu: " + AccessTileRotation + "\n";
-        if (Factory != null)
+        if (Module != null)
         {
-            s += Factory.GetSelectionText();
-        }
-        if (Storage != null)
-        {
-            s += Storage.GetSelectionText();
-        }
-        if (Service != null)
-        {
-            s += Service.GetSelectionText();
+            s += Module.GetSelectionText();
         }
         return s;
     }

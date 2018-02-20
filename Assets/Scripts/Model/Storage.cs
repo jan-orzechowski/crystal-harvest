@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Storage : ISourceStorage, ITargetStorage
+public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
 {
     public Building Building { get; protected set; }
 

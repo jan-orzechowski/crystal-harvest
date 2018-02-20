@@ -14,11 +14,22 @@ public class BuildingPrototype
 
     public bool AllowRotation;
     public List<TilePosition> NormalizedTilePositions;
+
+    public TilePosition MousePivotPoint;
+    public Rotation StartingRotation;
+
     public bool HasAccessTile;
     public TilePosition NormalizedAccessTilePosition;
     public Rotation NormalizedAccessTileRotation;
-    public bool DoesNotBlockAccess;
+
+    public bool HasSecondAccessTile;
+    public TilePosition NormalizedSecondAccessTilePosition;
+    public Rotation NormalizedSecondAccessTileRotation;
+
     public float MovementCost;
+
+    public bool WalkableOnTop;
+    public float MovementCostOnTop;
 
     public int MaxStorage;
     public Dictionary<int, int> InitialStorage;

@@ -44,16 +44,26 @@ public class CharacterDisplayObject : SelectableDisplayObject
 
         if (character.NextTile != null && character.CurrentTile != character.NextTile)
         {
-            Vector3 startingPosition = new Vector3(character.CurrentTile.X + 0.5f, 0, character.CurrentTile.Y + 0.5f);
-            Vector3 goalPosition = new Vector3(character.NextTile.X + 0.5f, 0, character.NextTile.Y + 0.5f);
+            Vector3 startingPosition = new Vector3(character.CurrentTile.X + 0.5f, 
+                                                   character.CurrentTile.Height, 
+                                                   character.CurrentTile.Y + 0.5f);
 
-            Vector3 displayPosition = Vector3.Lerp(startingPosition, goalPosition, character.MovementPercentage);
+            Vector3 goalPosition = new Vector3(character.NextTile.X + 0.5f,
+                                               character.NextTile.Height,
+                                               character.NextTile.Y + 0.5f);
+
+            Vector3 displayPosition = Vector3.Lerp(startingPosition, 
+                                                   goalPosition, 
+                                                   character.MovementPercentage);
+
             transform.SetPositionAndRotation(displayPosition, character.CurrentRotation);
         }
         else
         {
             transform.SetPositionAndRotation(
-                new Vector3(character.CurrentTile.X + 0.5f, 0, character.CurrentTile.Y + 0.5f),
+                new Vector3(character.CurrentTile.X + 0.5f, 
+                            character.CurrentTile.Height, 
+                            character.CurrentTile.Y + 0.5f),
                 character.CurrentRotation);
         }        
     }

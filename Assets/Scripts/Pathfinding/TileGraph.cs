@@ -167,7 +167,7 @@ namespace Pathfinding
                 if (CheckTile(t.GetNorthWestNeighbour()))
                 {
                     tempNeighboursList.Add(tileNodeMap[t.GetNorthWestNeighbour()]);
-                }
+                }                
 
                 // Tworzenie krawędzi do sąsiadów
 
@@ -181,8 +181,7 @@ namespace Pathfinding
                 }
 
                 Node node = tileNodeMap[t];
-                node.Edges = tempEdgesList.ToArray();
-
+                node.Edges = new List<Edge>(tempEdgesList);
 
                 tilesThisCall++;
                 if (tilesThisCall >= tilesPerCall)
@@ -190,9 +189,22 @@ namespace Pathfinding
                     break;
                 }                
             }
-          
+                                
             if (tilesToProcess.Count == 0)
             {
+                // Sprawdzanie wszystkich schodów - z listy z World
+                foreach (Building stairs in world.Stairs)
+                {
+                    Tile highTile = stairs.AccessTile;
+                    Tile lowTile = stairs.SecondAccessTile;
+
+                    Edge egdeUp = new Edge(tileNodeMap[highTile], 6f);
+                    tileNodeMap[lowTile].Edges.Add(egdeUp);
+
+                    Edge edgeDown = new Edge(tileNodeMap[lowTile], 6f);
+                    tileNodeMap[highTile].Edges.Add(edgeDown);
+                }          
+
                 IsReady = true;
                 stopwatch.Stop();
                 UnityEngine.Debug.Log("Stworzono graf do szukania ścieżek. Węzły: " + tileNodeMap.Count + ". Krawędzie: " + edgesCount

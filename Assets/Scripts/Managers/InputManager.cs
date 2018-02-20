@@ -78,7 +78,7 @@ public class InputManager : MonoBehaviour
                 height, GameManager.Instance.LevelHeightOffset);
 
             Tile t = world.GetTileFromPosition(tp);
-            if (t == null || t.Type == TileType.Empty || t.Type == TileType.WalkableEmpty)
+            if (t == null || t.Type == TileType.Empty)
             {
                 continue;
             }
@@ -100,7 +100,7 @@ public class InputManager : MonoBehaviour
                 for (int i = world.Height - 1; i >= 0; i--)
                 {
                     Tile t = world.GetTileFromPosition(new TilePosition(tp.X, tp.Y, i));
-                    if (t == null || t.Type == TileType.Empty || t.Type == TileType.WalkableEmpty)
+                    if (t == null || t.Type == TileType.Empty)
                     {
                         continue;
                     }
@@ -132,7 +132,7 @@ public class InputManager : MonoBehaviour
                         }
 
                     }
-                    else if (buildModeManager.BuildMode == BuildMode.Single)
+                    else // if (buildModeManager.BuildMode == BuildMode.Single)
                     {
                         buildModeManager.Build(CurrentTile.Position, CurrentTile.Position);
                     }

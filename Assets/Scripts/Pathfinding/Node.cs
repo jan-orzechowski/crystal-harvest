@@ -12,7 +12,9 @@ namespace Pathfinding
         public int X { get { return Tile.X; } }
         public int Y { get { return Tile.Y; } }
 
-        public Edge[] Edges;
+        public int Height { get { return Tile.Height; } }
+
+        public List<Edge> Edges;
 
         public Node(Tile tile)
         {

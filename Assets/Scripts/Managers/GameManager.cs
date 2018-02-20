@@ -29,9 +29,12 @@ public class GameManager : MonoBehaviour
     // Tablica zamiast słownika - dzięki temu można ustalić jej zawartość z poziomu edytora
     public BuildingDisplayInfo[] buildingDisplay;
 
+    public PlatformTopsPrefabs PlatformTopsPrefabs;
+
     List<GameObject> previewObjects = new List<GameObject>();
     GameObject accessArrow;
-    
+    GameObject secondAccessArrow;
+
     Dictionary<ConstructionSite, GameObject> constructionSitesDisplay;
 
     void OnEnable()
@@ -47,7 +50,7 @@ public class GameManager : MonoBehaviour
 
         GenerateDisplayForTiles();
 
-        for (int x = 3; x < 5; x++)
+        for (int x = 3; x < 4; x++)
         {
             for (int y = 0; y < 1; y++)
             {
@@ -56,7 +59,7 @@ public class GameManager : MonoBehaviour
         }
 
         World.InstantBuild(new TilePosition(0, 2, 0), Rotation.N, World.GetBuildingPrototype("Spaceship"));
-        World.InstantBuild(new TilePosition(5, 5, 0), Rotation.N, World.GetBuildingPrototype("Debug4"));
+        World.InstantBuild(new TilePosition(5, 5, 0), Rotation.S, World.GetBuildingPrototype("Debug4"));
     }
 
     void Update ()
@@ -81,7 +84,7 @@ public class GameManager : MonoBehaviour
         return displayObject;
     }
 
-    public SelectableDisplayObject ShowBuilding(Building building)
+    public SelectableDisplayObject ShowBuilding(Building building, TilePosition positionForDisplay)
     {
         GameObject model = null;
         for (int i = 0; i < buildingDisplay.Length; i++)
@@ -100,9 +103,9 @@ public class GameManager : MonoBehaviour
 
         GameObject gameObject = GameObject.Instantiate(
             model,
-            new Vector3(building.Tiles[0].Position.X, 
-                        building.Tiles[0].Position.Height * LevelHeightOffset, 
-                        building.Tiles[0].Position.Y),
+            new Vector3(positionForDisplay.X,
+                        positionForDisplay.Height * LevelHeightOffset,
+                        positionForDisplay.Y),
             Quaternion.identity,
             BuildingsParent.transform
             );
@@ -193,7 +196,6 @@ public class GameManager : MonoBehaviour
             model, 
             new Vector3(position.X, position.Height * LevelHeightOffset, position.Y), 
             Quaternion.identity);
-
        
         if (isPositionValid && prototype.HasAccessTile)
         {
@@ -208,9 +210,23 @@ public class GameManager : MonoBehaviour
 
             RotateGameObject(accessArrow, prototype.NormalizedAccessTileRotation);
 
-            previewObjects.Add(accessArrow);
-
             accessArrow.transform.SetParent(preview.transform);            
+        }
+
+        if (isPositionValid && prototype.HasSecondAccessTile)
+        {
+            TilePosition arrowPosition = prototype.NormalizedSecondAccessTilePosition;
+
+            secondAccessArrow = SimplePool.Spawn(
+                AccessArrowPrefab,
+                new Vector3(position.X + arrowPosition.X,
+                            (position.Height + arrowPosition.Height) * LevelHeightOffset,
+                            position.Y + arrowPosition.Y),
+                Quaternion.identity);
+
+            RotateGameObject(secondAccessArrow, prototype.NormalizedSecondAccessTileRotation);
+
+            secondAccessArrow.transform.SetParent(preview.transform);
         }
 
         RotateGameObject(preview, rotation);
@@ -230,6 +246,14 @@ public class GameManager : MonoBehaviour
             accessArrow.transform.parent = null;
             accessArrow.transform.localScale = new Vector3(1f, 1f, 1f);
             SimplePool.Despawn(accessArrow);
+            accessArrow = null;
+        }
+        if (secondAccessArrow != null)
+        {
+            secondAccessArrow.transform.parent = null;
+            secondAccessArrow.transform.localScale = new Vector3(1f, 1f, 1f);
+            SimplePool.Despawn(secondAccessArrow);
+            secondAccessArrow = null;
         }
         previewObjects.Clear();        
     }

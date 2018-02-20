@@ -178,6 +178,10 @@ public class Character : ISelectable
         {
             if (newPath.IsImpossible)
             {
+                Debug.Log("Ścieżka z " 
+                    + newPath.Start.Position.ToString() + " do " 
+                    + newPath.Goal.Position.ToString() + " niemożliwa.");
+
                 DestinationTile = null;
                 isLastTileRotationSet = false;
                 MovementPercentage = 0f;
@@ -215,6 +219,7 @@ public class Character : ISelectable
         }
         else
         {
+            Debug.Log("Nowy cel: " + tile.Position.ToString());
             DestinationTile = tile;
             NextTile = null;
             MovementPercentage = 0f;
@@ -347,6 +352,9 @@ public class Character : ISelectable
         s += "CurrentTile: " + CurrentTile.Position.ToString() + "\n";
 
         s += "lastTileRotation: " + lastTileRotation.eulerAngles.ToString() + "\n";
+
+        s += "CurrentRotation: " + CurrentRotation.eulerAngles.ToString() + "\n";
+        s += "TargetRotation: " + targetRotation.eulerAngles.ToString() + "\n";
 
         if (HasResource)
         {

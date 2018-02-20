@@ -26,6 +26,16 @@ public struct TilePosition : IEquatable<TilePosition>
         return !(a==b);
     }
 
+    public static TilePosition operator + (TilePosition a, TilePosition b)
+    {
+        return new TilePosition(a.X + b.X, a.Y + b.Y, a.Height + b.Height);
+    }
+
+    public static TilePosition operator - (TilePosition a, TilePosition b)
+    {
+        return new TilePosition(a.X - b.X, a.Y - b.Y, a.Height - b.Height);
+    }
+
     public override int GetHashCode()
     {
         unchecked
@@ -34,16 +44,19 @@ public struct TilePosition : IEquatable<TilePosition>
             return hash.GetHashCode();
         }
     }
+
     public override bool Equals(object o)
     {
         if (o == null) return false;
         if (o.GetType() != this.GetType()) return false;
         return ((TilePosition)o == this);
     }
+
     public bool Equals(TilePosition tp)
     {
         return (tp == this);
     }
+
     public override string ToString()
     {
         return "(" + X + "," + Y + "," + Height + ")";

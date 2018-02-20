@@ -77,6 +77,6 @@ Material:
     - _planeNorm: {r: 0, g: 1, b: 0, a: 0}
     - _planeNorm2: {r: 0, g: 0.00000011920929, b: 0.9999999, a: 0}
     - _planeNorm3: {r: 0, g: 1, b: 0, a: 1}
-    - _planePos: {r: 0, g: 0.5, b: 0, a: 0}
+    - _planePos: {r: 0, g: 1, b: 0, a: 0}
     - _planePos2: {r: 0, g: 0, b: 0, a: 0}
     - _planePos3: {r: 0, g: 0, b: 0, a: 1}
