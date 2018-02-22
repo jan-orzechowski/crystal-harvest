@@ -212,9 +212,8 @@ public class World
         for (int i = 0; i < tilesToCheck.Count; i++)
         {
             Tile tile = tilesToCheck[i];
-            if (tile != null
+            if (Tile.CheckPassability(tile)
                 && tile.Building == null
-                && tile.Type != TileType.Empty
                 && (((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) 
                      || prototype.MovementCost != 0f))
                 )
@@ -246,9 +245,7 @@ public class World
 
     bool IsValidAccessTilePosition(Tile tile)
     {
-        return (tile != null
-                && tile.Type != TileType.Empty
-                && tile.MovementCost > 0f);
+        return (Tile.CheckPassability(tile));
     }
    
     public Tile MapPrototypeAccessTileToWorld(TilePosition origin, Rotation rotation, 
@@ -400,7 +397,7 @@ public class World
     {
         if (Buildings.Contains(building))
         {
-            CancelReservationForAccess(building);
+            CancelBuildingReservationForAccess(building);
 
             for (int i = 0; i < building.Tiles.Count; i++)
             {
@@ -461,34 +458,28 @@ public class World
         }
     }
 
-    void CancelReservationForAccess(Building building)
+    void CancelBuildingReservationForAccess(Building building)
     {
-        if (building.AccessTile != null)
-        {
-            for (int i = 0; i < Buildings.Count; i++)
-            {
-                if (Buildings[i].AccessTile != null
-                   && Buildings[i].AccessTile == building.AccessTile
-                   && Buildings[i] != building)
-                {
-                    return;
-                }
-            }
-            building.AccessTile.ReservedForAccess = false;
-        }
+        CancelBuildingReservationForAccess(building, true);
+        CancelBuildingReservationForAccess(building, false);
+    }
 
-        if (building.SecondAccessTile != null)
+    void CancelBuildingReservationForAccess(Building building, bool secondAccessTile)
+    {
+        Tile tileToCancelReservation = building.GetAccessTile(secondAccessTile);
+        if (tileToCancelReservation != null)
         {
             for (int i = 0; i < Buildings.Count; i++)
             {
-                if (Buildings[i].SecondAccessTile != null
-                   && Buildings[i].SecondAccessTile == building.SecondAccessTile
+                Tile accessTileToCheck = Buildings[i].GetAccessTile();
+                if (accessTileToCheck != null
+                   && accessTileToCheck == tileToCancelReservation
                    && Buildings[i] != building)
                 {
                     return;
                 }
             }
-            building.SecondAccessTile.ReservedForAccess = false;
+            tileToCancelReservation.ReservedForAccess = false;
         }
     }
 
@@ -881,6 +872,7 @@ public class World
 
         bp.MovementCost = 2f;
         bp.WalkableOnTop = true;
+        bp.CanBeAccessedFromTop = true;
         bp.MovementCostOnTop = 2f;
 
         buildingPrototypes.Add(bp);
@@ -991,7 +983,27 @@ public class World
 
         buildingPrototypes.Add(bp);
 
-        
+
+        bp = new BuildingPrototype();
+        bp.Type = "OreDeposit";
+        bp.ModelName = "OreDeposit";
+        bp.CanBeBuiltOnPlatform = false;
+        bp.CanBeBuiltOnRock = true;
+        bp.CanBeBuiltOnSand = false;
+        bp.AllowRotation = true;
+        bp.NormalizedTilePositions = new List<TilePosition>()
+        {
+            new TilePosition(0,0,0)
+        };
+        bp.MovementCost = 0f;
+
+        bp.HasAccessTile = false;
+        bp.ProductionTime = 2f;
+        bp.ProducedResources = new Dictionary<int, int>() { {3, 1 } };
+        bp.ProductionCyclesLimitMin = 3;
+        bp.ProductionCyclesLimitMax = 10;
+
+        buildingPrototypes.Add(bp);
     }
 
     void DEBUG_LoadResources()

@@ -20,12 +20,24 @@ public class Factory : IWorkplace, IBuildingModule
     float jobReservationTimer;
     float timeWithoutWork;
 
+    public int RemainingProductionCycles { get; protected set; }
+
     public Factory(Building building, BuildingPrototype prototype)
     {
         Building = building;
         this.prototype = prototype;
         productionTime = prototype.ProductionTime;
-        ProductionStarted = false;        
+        ProductionStarted = false;
+
+        if(prototype.ProductionCyclesLimitMax < 0)
+        {
+            RemainingProductionCycles = -1;
+        }
+        else
+        {
+            RemainingProductionCycles = UnityEngine.Random.Range(prototype.ProductionCyclesLimitMin,
+                                                                 prototype.ProductionCyclesLimitMax + 1);
+        }        
 
         InputStorage = new StorageToFill(Building, prototype.ConsumedResources);
         OutputStorage = new StorageToEmpty(Building, null);
@@ -67,6 +79,11 @@ public class Factory : IWorkplace, IBuildingModule
 
         if (ProductionStarted == false)
         {
+            if (RemainingProductionCycles == 0)
+            {
+                return false;
+            }
+
             if (Consume())
             {
                 ProductionStarted = true;
@@ -91,6 +108,7 @@ public class Factory : IWorkplace, IBuildingModule
                 if (Produce())
                 {                 
                     ProductionStarted = false;
+                    RemainingProductionCycles -= 1;
                     return true;
                 }
                 else
@@ -109,7 +127,7 @@ public class Factory : IWorkplace, IBuildingModule
     {
         if (OutputStorage.IsEmpty)
         {
-            OutputStorage = new StorageToEmpty(Building, prototype.ProducedResources);
+            OutputStorage = new StorageToEmpty(Building, prototype.ProducedResources);           
             return true;
         }
         else
@@ -131,16 +149,17 @@ public class Factory : IWorkplace, IBuildingModule
         }
     }
 
-    public bool IsJobFree()
+    public bool CanReserveJob(Character character)
     {
         return (WorkingCharacter == null
-                && jobReservation == null
+                && (jobReservation == null || jobReservation == character)
+                && RemainingProductionCycles != 0
                 && (ProductionStarted || (InputStorage.IsFilled && OutputStorage.IsEmpty)));
     }
 
     public bool ReserveJob(Character character)
     {
-        if ((jobReservation == character || jobReservation == null) && WorkingCharacter == null)
+        if (CanReserveJob(character))
         {
             jobReservation = character;
             jobReservationTimer = 5f;
@@ -162,12 +181,12 @@ public class Factory : IWorkplace, IBuildingModule
 
     public Tile GetAccessTile()
     {
-        return Building.AccessTile;
+        return Building.GetAccessTile();
     }
 
     public Rotation GetAccessTileRotation()
     {
-        return Building.AccessTileRotation;
+        return Building.GetAccessTileRotation();
     }
 
     public string GetSelectionText()
@@ -189,6 +208,11 @@ public class Factory : IWorkplace, IBuildingModule
         else
         {
             s += "nie rozpoczęta \n";
+        }
+
+        if(RemainingProductionCycles >= 0)
+        {
+            s += "Pozostałe cykle produkcji: " + RemainingProductionCycles + "\n";
         }
 
         s += InputStorage.GetSelectionText();

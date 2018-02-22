@@ -10,7 +10,7 @@ public class SelectableDisplayObject : MonoBehaviour
    
     void Start () 
     {
-        if(Collider == null)
+        if (Collider == null)
         {
             Collider = GetComponentInChildren<BoxCollider>();
         }

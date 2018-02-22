@@ -34,6 +34,11 @@ public class Tile
         Type = type;
     }
 
+    public static bool CheckPassability(Tile t)
+    {
+        return (t != null && t.Type != TileType.Empty && t.MovementCost != 0);
+    }
+
     public Tile GetNorthNeighbour()
     {
         return World.GetTileFromPosition(X, Y + 1, Height);
@@ -102,13 +107,13 @@ public class Tile
 
     public float DistanceTo(Tile tile)
     {
-        // CYy pola sąsiadują wYdłuż osi?
+        // Czy pola sąsiadują wYdłuż osi?
         if (Mathf.Abs(X - tile.X) + Mathf.Abs(Y - tile.Y) == 1)
         {
             return 1f;
         }
 
-        //CYy pola sąsiadują po prYekątnych?
+        // Czy pola sąsiadują po prYekątnych?
         if (Mathf.Abs(X - tile.X) == 1 && Mathf.Abs(Y - tile.Y) == 1)
         {
             return 1.41421356237f;
@@ -118,7 +123,7 @@ public class Tile
         return Mathf.Sqrt(
             Mathf.Pow(X - tile.X, 2) +
             Mathf.Pow(Y - tile.Y, 2)
-        );
+            );
     }
 
     public Tile[] GetNeighbours(bool diagonal = false)
@@ -136,7 +141,6 @@ public class Tile
                 GetWestNeighbour(),
                 GetNorthWestNeighbour()
             };
-
         }
         else
         {
@@ -148,6 +152,16 @@ public class Tile
                 GetWestNeighbour()
             };
         }
+    }
+
+    public Tile[] GetUpperNeighbours()
+    {
+        Tile[] result = new Tile[4];
+        if (GetNorthNeighbour() != null) result[0] = GetNorthNeighbour().GetUpperNeighbour();
+        if (GetEastNeighbour() != null)  result[1] = GetEastNeighbour().GetUpperNeighbour();
+        if (GetSouthNeighbour() != null) result[2] = GetSouthNeighbour().GetUpperNeighbour();
+        if (GetWestNeighbour() != null)  result[3] = GetWestNeighbour().GetUpperNeighbour();
+        return result;
     }
 }
 

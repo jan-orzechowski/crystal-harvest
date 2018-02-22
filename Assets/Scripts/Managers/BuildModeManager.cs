@@ -114,7 +114,7 @@ public class BuildModeManager : MonoBehaviour
         {
             BuildMode = BuildMode.Single;
         }
-        else if (type == "Stairs" || type == "Platform")
+        else if (type == "Stairs" || type == "Platform" || type == "OreDeposit")
         {
             BuildMode = BuildMode.SingleInstant;
         }

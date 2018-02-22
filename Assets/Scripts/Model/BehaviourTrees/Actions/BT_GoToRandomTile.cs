@@ -34,7 +34,7 @@ public class BT_GoToRandomTile : BT_GoTo
 
             newTile = world.GetTileFromPosition(new TilePosition(x, y, height));
 
-            if (newTile == null || newTile.MovementCost == 0 || newTile.Type == TileType.Empty)
+            if (Tile.CheckPassability(newTile) == false)
             {
                 continue;
             }

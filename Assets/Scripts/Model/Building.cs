@@ -9,11 +9,10 @@ public class Building : ISelectable
     public List<Tile> Tiles { get; protected set; }
     public Rotation Rotation { get; protected set; }
 
-    public Tile AccessTile { get; protected set; }
-    public Rotation AccessTileRotation { get; protected set; }
-    public Tile SecondAccessTile { get; protected set; }
-    public Rotation SecondAccessTileRotation { get; protected set; }
-
+    Tile accessTile;
+    Rotation accessTileRotation;
+    Tile secondAccessTile;
+    Rotation secondAccessTileRotation;
 
     public SelectableDisplayObject DisplayObject;
 
@@ -31,14 +30,14 @@ public class Building : ISelectable
 
         if (prototype.HasAccessTile)
         {
-            AccessTile = accessTile;
-            AccessTileRotation = prototype.NormalizedAccessTileRotation.Rotate(buildingRotation);
+            this.accessTile = accessTile;
+            accessTileRotation = prototype.NormalizedAccessTileRotation.Rotate(buildingRotation);
         }
 
         if (prototype.HasSecondAccessTile && secondAccessTile != null)
         {
-            SecondAccessTile = secondAccessTile;
-            SecondAccessTileRotation = prototype.NormalizedSecondAccessTileRotation.Rotate(buildingRotation);
+            this.secondAccessTile = secondAccessTile;
+            secondAccessTileRotation = prototype.NormalizedSecondAccessTileRotation.Rotate(buildingRotation);
         }
     }
 
@@ -67,11 +66,87 @@ public class Building : ISelectable
     {
         DisplayObject = displayObject;
     }
+
+
+    public Tile GetAccessTile(bool getSecond = false)
+    {
+        if (getSecond)
+        {
+            return secondAccessTile;
+        }
+        else
+        {
+            if (accessTile == null || Tile.CheckPassability(accessTile) == false)
+            {
+                GetNewUnreservedAccessTile();
+            }
+
+            return accessTile;
+        }                
+    }
+
+    public Rotation GetAccessTileRotation(bool getSecond = false)
+    {
+        if (getSecond)
+        {
+            return secondAccessTileRotation;
+        }
+        else
+        {
+            if (accessTile == null || Tile.CheckPassability(accessTile) == false)
+            {
+                GetNewUnreservedAccessTile();
+            }
+
+            return accessTileRotation;
+        }
+    }
+
+    Tile GetNewUnreservedAccessTile()
+    {
+        foreach (Tile tileToCheck in Tiles)
+        {
+            Tile[] neighbours = tileToCheck.GetNeighbours();
+            foreach (Tile neighbour in neighbours)
+            {
+                if (Tile.CheckPassability(neighbour))
+                {
+                    Debug.Log("sprawdzam dolne");
+                    accessTile = neighbour;
+                    accessTileRotation = RotationMethods.GetRotationTowardsPosition(
+                        positionToBeRotated: neighbour.Position,
+                        positionToRotateAt: tileToCheck.Position);
+                    return accessTile;
+                }
+            }
+
+            if (prototype.CanBeAccessedFromTop == false) break;
+
+            neighbours = tileToCheck.GetUpperNeighbours();
+            foreach (Tile neighbour in neighbours)
+            {
+                if (Tile.CheckPassability(neighbour))
+                {
+                    Debug.Log("sprawdzam górne");
+                    accessTile = neighbour;
+                    accessTileRotation = RotationMethods.GetRotationTowardsPosition(
+                        positionToBeRotated: neighbour.Position,
+                        positionToRotateAt: tileToCheck.Position);
+                    return accessTile;
+                }
+            }
+        }
+
+        accessTile = null;
+        accessTileRotation = Rotation.N;
+        return null;
+    }
+   
     public string GetSelectionText()
     {
         string s = "";
         s += Type + "\n";
-        s += "Obrót: " + Rotation + ". Obrót pola dostępu: " + AccessTileRotation + "\n";
+        s += "Obrót: " + Rotation + ". Obrót pola dostępu: " + accessTileRotation + "\n";
         if (Module != null)
         {
             s += Module.GetSelectionText();
@@ -89,5 +164,5 @@ public class Building : ISelectable
         {
             return DisplayObject;
         }
-    } 
+    }     
 }

@@ -39,7 +39,7 @@ public class StorageToFill : ITargetStorage
     }
 
     public StorageToFill(Building building, Dictionary<int, int> requiredResources)
-        : this(building.AccessTile, building.AccessTileRotation, requiredResources) { }
+        : this(building.GetAccessTile(), building.GetAccessTileRotation(), requiredResources) { }
 
     public virtual bool CanReserveFreeSpace(int resourceID, Character character)
     {

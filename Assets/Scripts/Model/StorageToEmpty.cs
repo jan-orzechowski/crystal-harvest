@@ -37,7 +37,7 @@ public class StorageToEmpty : ISourceStorage
     }
 
     public StorageToEmpty(Building building, Dictionary<int, int> resourcesToRemove)
-        : this(building.AccessTile, building.AccessTileRotation, resourcesToRemove) { }
+        : this(building.GetAccessTile(), building.GetAccessTileRotation(), resourcesToRemove) { }
 
     public virtual bool CanReserveResource(int resourceID, Character character)
     {

@@ -15,8 +15,8 @@ public class BuildingPrototype
     public bool AllowRotation;
     public List<TilePosition> NormalizedTilePositions;
 
-    public TilePosition MousePivotPoint;
-    public Rotation StartingRotation;
+    public TilePosition MousePivotPoint = new TilePosition(0, 0, 0);
+    public Rotation StartingRotation = Rotation.N;
 
     public bool HasAccessTile;
     public TilePosition NormalizedAccessTilePosition;
@@ -29,6 +29,7 @@ public class BuildingPrototype
     public float MovementCost;
 
     public bool WalkableOnTop;
+    public bool CanBeAccessedFromTop;
     public float MovementCostOnTop;
 
     public int MaxStorage;
@@ -37,6 +38,9 @@ public class BuildingPrototype
     public float ProductionTime;
     public Dictionary<int, int> ConsumedResources;
     public Dictionary<int, int> ProducedResources;
+
+    public int ProductionCyclesLimitMin = -1;
+    public int ProductionCyclesLimitMax = -1;
 
     public float ConstructionTime;
     public Dictionary<int, int> ConstructionResources;

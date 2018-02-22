@@ -14,6 +14,8 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
     public int CurrentResourceCount { get; protected set; }
     public int UnreservedFreeSpace { get { return (MaxCapacity - CurrentResourceCount - FreeSpaceReservations.Count); } }
 
+
+
     public Storage(Building building, BuildingPrototype prototype)
     {
         Building = building;
@@ -180,12 +182,12 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
 
     public Tile GetAccessTile()
     {
-        return Building.AccessTile;
+        return Building.GetAccessTile();
     }
 
     public Rotation GetAccessTileRotation()
     {
-        return Building.AccessTileRotation;
+        return Building.GetAccessTileRotation();
     }
 
     public string GetSelectionText()

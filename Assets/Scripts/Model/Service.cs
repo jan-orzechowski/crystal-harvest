@@ -114,12 +114,12 @@ public class Service : IBuildingModule
 
     public Tile GetAccessTile()
     {
-        return Building.AccessTile;
+        return Building.GetAccessTile();
     }
 
     public Rotation GetAccessTileRotation()
     {
-        return Building.AccessTileRotation;
+        return Building.GetAccessTileRotation();
     }
 
     public string GetSelectionText()

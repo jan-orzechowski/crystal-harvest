@@ -119,52 +119,52 @@ namespace Pathfinding
 
                 // N
                 n = t.GetNorthNeighbour();
-                if (CheckTile(n))
+                if (Tile.CheckPassability(n))
                 {
                     tempNeighboursList.Add(tileNodeMap[n]);
                 }
 
                 // E
                 n = t.GetEastNeighbour();
-                if (CheckTile(n))
+                if (Tile.CheckPassability(n))
                 {
                     tempNeighboursList.Add(tileNodeMap[n]);
                 }
 
                 //S
                 n = t.GetSouthNeighbour();
-                if (CheckTile(n))
+                if (Tile.CheckPassability(n))
                 {
                     tempNeighboursList.Add(tileNodeMap[n]);
                 }
 
                 // W
                 n = t.GetWestNeighbour();
-                if (CheckTile(n))
+                if (Tile.CheckPassability(n))
                 {
                     tempNeighboursList.Add(tileNodeMap[n]);
                 }
 
                 // N-E
-                if (CheckTile(t.GetNorthEastNeighbour()))
+                if (Tile.CheckPassability(t.GetNorthEastNeighbour()))
                 {
                     tempNeighboursList.Add(tileNodeMap[t.GetNorthEastNeighbour()]);
                 }
 
                 // S-E
-                if (CheckTile(t.GetSouthEastNeighbour()))
+                if (Tile.CheckPassability(t.GetSouthEastNeighbour()))
                 {
                     tempNeighboursList.Add(tileNodeMap[t.GetSouthEastNeighbour()]);
                 }
 
                 // S-W
-                if (CheckTile(t.GetSouthWestNeighbour()))
+                if (Tile.CheckPassability(t.GetSouthWestNeighbour()))
                 {
                     tempNeighboursList.Add(tileNodeMap[t.GetSouthWestNeighbour()]);
                 }
 
                 // N-W
-                if (CheckTile(t.GetNorthWestNeighbour()))
+                if (Tile.CheckPassability(t.GetNorthWestNeighbour()))
                 {
                     tempNeighboursList.Add(tileNodeMap[t.GetNorthWestNeighbour()]);
                 }                
@@ -195,8 +195,8 @@ namespace Pathfinding
                 // Sprawdzanie wszystkich schodów - z listy z World
                 foreach (Building stairs in world.Stairs)
                 {
-                    Tile highTile = stairs.AccessTile;
-                    Tile lowTile = stairs.SecondAccessTile;
+                    Tile highTile = stairs.GetAccessTile();
+                    Tile lowTile = stairs.GetAccessTile(getSecond: true);
 
                     Edge egdeUp = new Edge(tileNodeMap[highTile], 6f);
                     tileNodeMap[lowTile].Edges.Add(egdeUp);
@@ -212,11 +212,6 @@ namespace Pathfinding
             }
 
             stopwatch.Stop();                  
-        }
-
-        bool CheckTile(Tile t)
-        {
-            return (t != null && t.Type != TileType.Empty && t.MovementCost != 0);
-        }
+        }       
     }
 }

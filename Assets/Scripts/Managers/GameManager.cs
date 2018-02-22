@@ -24,10 +24,14 @@ public class GameManager : MonoBehaviour
 
     public float LevelHeightOffset;
 
+    // Tablice zamiast słowników - dzięki temu można ustalić ich zawartość z poziomu edytora
+    [Space(10)]
     public ResourceDisplayInfo[] resourceDisplay;
-
-    // Tablica zamiast słownika - dzięki temu można ustalić jej zawartość z poziomu edytora
+    [Space(10)]
+    public NaturalDepositDisplayInfo[] depositDisplay;
+    [Space(10)]
     public BuildingDisplayInfo[] buildingDisplay;
+    [Space(10)]
 
     public PlatformTopsPrefabs PlatformTopsPrefabs;
 
@@ -59,7 +63,7 @@ public class GameManager : MonoBehaviour
         }
 
         World.InstantBuild(new TilePosition(0, 2, 0), Rotation.N, World.GetBuildingPrototype("Spaceship"));
-        World.InstantBuild(new TilePosition(5, 5, 0), Rotation.S, World.GetBuildingPrototype("Debug4"));
+        // World.InstantBuild(new TilePosition(5, 5, 0), Rotation.S, World.GetBuildingPrototype("Debug4"));
     }
 
     void Update ()

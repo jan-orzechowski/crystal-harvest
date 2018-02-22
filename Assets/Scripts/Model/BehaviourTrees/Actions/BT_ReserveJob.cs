@@ -7,7 +7,7 @@ public class BT_ReserveJob : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Workplace.IsJobFree() == false)
+        if (am.Workplace.CanReserveJob(am.Character) == false)
         {
             return BT_Result.FAILURE;
         }

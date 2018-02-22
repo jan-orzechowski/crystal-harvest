@@ -125,17 +125,17 @@ public class ConstructionSite : IWorkplace
         return true;        
     }
  
-    public bool IsJobFree()
+    public bool CanReserveJob(Character character)
     {
         return (WorkingCharacter == null
-                && jobReservation == null
+                && (jobReservation == null || jobReservation == character)
                 && ((ConstructionMode && ConstructionStorage.IsFilled)
                     || DeconstructionMode && DeconstructionStorage.IsEmpty));
     }
 
     public bool ReserveJob(Character character)
     {
-        if ((jobReservation == character || jobReservation == null) && WorkingCharacter == null)
+        if (CanReserveJob(character))
         {
             jobReservation = character;
             jobReservationTimer = 5f;
@@ -226,14 +226,14 @@ public class ConstructionSite : IWorkplace
     public Tile GetAccessTile()
     {
         if (Building != null)
-            return Building.AccessTile;
+            return Building.GetAccessTile();
         else return null;
     }
 
     public Rotation GetAccessTileRotation()
     {
         if (Building != null)
-            return Building.AccessTileRotation;
+            return Building.GetAccessTileRotation();
         else return Rotation.N;
     }
   

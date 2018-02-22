@@ -9,17 +9,19 @@ public class PlatformDisplayObject : SelectableDisplayObject
 
     GameObject currentTop;
 
-    void Start()
+    void Awake()
     {
         Prefabs = GameManager.Instance.PlatformTopsPrefabs;
+
+        if (currentTop == null)
+        {
+            currentTop = SimplePool.Spawn(Prefabs.Top_4Sides, this.transform.position, Quaternion.identity);
+            currentTop.transform.SetParent(this.transform);
+        }
     }
 
     void Update()
     {
-        if(currentTop == null)
-        {
-            currentTop = SimplePool.Spawn(Prefabs.Top_4Sides, this.transform.position, Quaternion.identity);
-            currentTop.transform.parent.SetParent(this.transform);
-        }
+        
     }
 }

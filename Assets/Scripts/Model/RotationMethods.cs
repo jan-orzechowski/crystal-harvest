@@ -53,4 +53,22 @@ public static class RotationMethods
         }
         return result;
     }
+
+    public static Rotation GetRotationTowardsPosition(TilePosition positionToBeRotated, TilePosition positionToRotateAt)
+    {
+        Rotation result;
+        if (positionToBeRotated.Y > positionToRotateAt.Y)
+        {
+            if      (positionToBeRotated.X < positionToRotateAt.X) { result = Rotation.E; }
+            else if (positionToBeRotated.X > positionToRotateAt.X) { result = Rotation.W; }
+            else    { result = Rotation.S; }
+        }
+        else
+        {
+            if      (positionToBeRotated.X < positionToRotateAt.X) { result = Rotation.E; }
+            else if (positionToBeRotated.X > positionToRotateAt.X) { result = Rotation.W; }
+            else    { result = Rotation.N; }
+        }
+        return result;
+    }
 }

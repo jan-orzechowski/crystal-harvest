@@ -6,7 +6,7 @@ using System;
 public interface IWorkplace
 {
     bool Work(float deltaTime, Character character);
-    bool IsJobFree();
+    bool CanReserveJob(Character character);
     bool ReserveJob(Character character);
     void RenewJobReservation(Character character);
     StorageToFill InputStorage { get; }

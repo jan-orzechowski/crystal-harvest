@@ -22,9 +22,9 @@ public class BT_GetRandomBuilding : BT_Node
         for (int i = 0; i < maxSearchesNumber; i++)
         {
             int b = UnityEngine.Random.Range(0, world.Buildings.Count);
-            if (world.Buildings[b] != null && world.Buildings[b].AccessTile != null)
+            if (world.Buildings[b] != null && world.Buildings[b].GetAccessTile() != null)
             {
-                am.SetGlobalTile(tileVarName, world.Buildings[b].AccessTile);                
+                am.SetGlobalTile(tileVarName, world.Buildings[b].GetAccessTile());                
                 return BT_Result.SUCCESS;
             }
         }
