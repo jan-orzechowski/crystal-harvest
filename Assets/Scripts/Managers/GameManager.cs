@@ -301,7 +301,7 @@ public class GameManager : MonoBehaviour
             {
                 for (int y = 0; y < World.YSize; y++)
                 {
-                    if (World.Tiles[x, y, height].Type == TileType.Dirt)
+                    if (World.Tiles[x, y, height].Type == TileType.Sand)
                     {
                         GameObject.Instantiate(
                             DebugGroundTilePrefab,

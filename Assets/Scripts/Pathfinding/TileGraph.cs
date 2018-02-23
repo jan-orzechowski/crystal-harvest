@@ -18,7 +18,7 @@ namespace Pathfinding
         int tilesPerCall;
         int tilesThisCall;
 
-        int edgesCount = 0;
+        int edgesCount;
         
         List<Edge> tempEdgesList;
         List<Node> tempNeighboursList;
@@ -27,6 +27,13 @@ namespace Pathfinding
 
         Stopwatch stopwatch;
 
+        int creatingNodesLastX;
+        int creatingNodesLastY;
+        int creatingNodesLastHeight;
+        int nodesPerCall;
+        int nodesThisCall;
+        bool nodesCreated;
+
         public TileGraph(World world)
         {
             this.world = world;
@@ -34,7 +41,8 @@ namespace Pathfinding
             stopwatch = new Stopwatch();
             
             IsReady = false;
-            
+            nodesCreated = false;
+
             stopwatch.Start();
 
             int nodesCount = world.XSize * world.YSize * world.Height;
@@ -42,18 +50,8 @@ namespace Pathfinding
             tileNodeMap = new Dictionary<Tile, Node>(nodesCount);
             tilesPerCall = nodesCount / 60;
 
-            for (int height = 0; height < world.Height; height++)
-            {
-                for (int x = 0; x < world.XSize; x++)
-                {
-                    for (int y = 0; y < world.YSize; y++)
-                    {
-                        Tile t = world.Tiles[x, y, height];
-                        Node node = new Node(t);
-                        tileNodeMap.Add(t, node);
-                    }
-                }
-            }
+            nodesPerCall = 1000;
+
             tilesToProcess = new Queue<Tile>(tileNodeMap.Keys);
 
             tempEdgesList = new List<Edge>(16);
@@ -65,6 +63,7 @@ namespace Pathfinding
         public void Reset()
         {
             IsReady = false;
+            nodesCreated = false;
 
             stopwatch.Reset();
             tilesToProcess.Clear();
@@ -72,19 +71,54 @@ namespace Pathfinding
             tempEdgesList.Clear();
             tempNeighboursList.Clear();
 
-            for (int height = 0; height < world.Height; height++)
+            edgesCount = 0;
+
+            creatingNodesLastX = 0;
+            creatingNodesLastY = 0;
+            creatingNodesLastHeight = 0;            
+        }
+
+        void CreateNodes()
+        {
+            stopwatch.Start();
+
+            nodesThisCall = 0;
+
+            for (int height = creatingNodesLastHeight; height < world.Height; height++)
             {
-                for (int x = 0; x < world.XSize; x++)
+                for (int x = creatingNodesLastX; x < world.XSize; x++)
                 {
-                    for (int y = 0; y < world.YSize; y++)
+                    for (int y = creatingNodesLastY; y < world.YSize; y++)
                     {
                         Tile t = world.Tiles[x, y, height];
-                        Node node = new Node(t);
-                        tileNodeMap.Add(t, node);
+                        if (t.Type != TileType.Empty)
+                        {
+                            Node node = new Node(t);
+                            tileNodeMap.Add(t, node);
+                        }
+
+                        nodesThisCall++;
+
+                        if (nodesThisCall >= nodesPerCall)
+                        {
+                            creatingNodesLastHeight = height;
+                            creatingNodesLastX = x;
+                            creatingNodesLastY = y + 1;
+
+                            stopwatch.Stop();
+
+                            return;
+                        }
                     }
+                    creatingNodesLastY = 0;
                 }
+                creatingNodesLastX = 0;
             }
+
+            nodesCreated = true;
             tilesToProcess = new Queue<Tile>(tileNodeMap.Keys);
+
+            stopwatch.Stop();
         }
 
         public Dictionary<Tile, Node> GetCompleteGraph()
@@ -101,7 +135,16 @@ namespace Pathfinding
 
         public void ProcessTiles()
         {
-            if (IsReady) return;
+            if (IsReady)
+            {
+                return;
+            }
+
+            if (nodesCreated == false)
+            {
+                CreateNodes();
+                return;
+            }
 
             stopwatch.Start();
 
@@ -115,60 +158,35 @@ namespace Pathfinding
 
                 // Sprawdzanie poruszania się wzdłuż osi X, Y
 
-                Tile n;
+                // Tile n;
 
-                // N
-                n = t.GetNorthNeighbour();
-                if (Tile.CheckPassability(n))
+                Tile n = t.GetNorthNeighbour();
+                Tile e = t.GetEastNeighbour();
+                Tile s = t.GetSouthNeighbour();
+                Tile w = t.GetWestNeighbour();
+                
+                if (Tile.CheckPassability(n)) { tempNeighboursList.Add(tileNodeMap[n]); }
+                if (Tile.CheckPassability(e)) { tempNeighboursList.Add(tileNodeMap[e]); }
+                if (Tile.CheckPassability(s)) { tempNeighboursList.Add(tileNodeMap[s]); }
+                if (Tile.CheckPassability(w)) { tempNeighboursList.Add(tileNodeMap[w]); }
+
+                if (t.AllowDiagonal)
                 {
-                    tempNeighboursList.Add(tileNodeMap[n]);
+                    Tile ne = t.GetNorthEastNeighbour();
+                    Tile se = t.GetSouthEastNeighbour();
+                    Tile sw = t.GetSouthWestNeighbour();
+                    Tile nw = t.GetNorthWestNeighbour();
+
+                    if (Tile.CheckDiagonalPassability(ne) && Tile.CheckDiagonalPassability(n) && Tile.CheckDiagonalPassability(e))
+                    { tempNeighboursList.Add(tileNodeMap[ne]); }
+                    if (Tile.CheckDiagonalPassability(se) && Tile.CheckDiagonalPassability(s) && Tile.CheckDiagonalPassability(e))
+                    { tempNeighboursList.Add(tileNodeMap[se]); }
+                    if (Tile.CheckDiagonalPassability(sw) && Tile.CheckDiagonalPassability(s) && Tile.CheckDiagonalPassability(w))
+                    { tempNeighboursList.Add(tileNodeMap[sw]); }
+                    if (Tile.CheckDiagonalPassability(nw) && Tile.CheckDiagonalPassability(n) && Tile.CheckDiagonalPassability(w))
+                    { tempNeighboursList.Add(tileNodeMap[nw]); }
                 }
-
-                // E
-                n = t.GetEastNeighbour();
-                if (Tile.CheckPassability(n))
-                {
-                    tempNeighboursList.Add(tileNodeMap[n]);
-                }
-
-                //S
-                n = t.GetSouthNeighbour();
-                if (Tile.CheckPassability(n))
-                {
-                    tempNeighboursList.Add(tileNodeMap[n]);
-                }
-
-                // W
-                n = t.GetWestNeighbour();
-                if (Tile.CheckPassability(n))
-                {
-                    tempNeighboursList.Add(tileNodeMap[n]);
-                }
-
-                // N-E
-                if (Tile.CheckPassability(t.GetNorthEastNeighbour()))
-                {
-                    tempNeighboursList.Add(tileNodeMap[t.GetNorthEastNeighbour()]);
-                }
-
-                // S-E
-                if (Tile.CheckPassability(t.GetSouthEastNeighbour()))
-                {
-                    tempNeighboursList.Add(tileNodeMap[t.GetSouthEastNeighbour()]);
-                }
-
-                // S-W
-                if (Tile.CheckPassability(t.GetSouthWestNeighbour()))
-                {
-                    tempNeighboursList.Add(tileNodeMap[t.GetSouthWestNeighbour()]);
-                }
-
-                // N-W
-                if (Tile.CheckPassability(t.GetNorthWestNeighbour()))
-                {
-                    tempNeighboursList.Add(tileNodeMap[t.GetNorthWestNeighbour()]);
-                }                
-
+              
                 // Tworzenie krawędzi do sąsiadów
 
                 tempEdgesList.Clear();

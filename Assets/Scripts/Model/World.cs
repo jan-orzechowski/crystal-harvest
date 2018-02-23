@@ -22,6 +22,7 @@ public class World
     public List<ConstructionSite> ConstructionSites { get; protected set; }
     public Dictionary<string, List<Service>> Services { get; protected set; }
     public List<Building> Stairs { get; protected set; }
+    public Dictionary<Tile, Building> Platforms { get; protected set; }
 
     public Pathfinder Pathfinder { get; protected set; }
 
@@ -48,7 +49,7 @@ public class World
             {
                 if (x < 15 && y < 15) // piach
                 {
-                    newTile = new Tile(x, y, 0, TileType.Dirt, this); // piach
+                    newTile = new Tile(x, y, 0, TileType.Sand, this); // piach
                     Tiles[x, y, 0] = newTile;
                     newTile = new Tile(x, y, 1, TileType.Empty, this); // puste
                     Tiles[x, y, 1] = newTile;
@@ -73,7 +74,7 @@ public class World
                 }
                 else // piach
                 {
-                    newTile = new Tile(x, y, 0, TileType.Dirt, this); // piach
+                    newTile = new Tile(x, y, 0, TileType.Sand, this); // piach
                     Tiles[x, y, 0] = newTile;
                     newTile = new Tile(x, y, 1, TileType.Empty, this); // puste
                     Tiles[x, y, 1] = newTile;
@@ -99,6 +100,7 @@ public class World
         Factories = new List<Factory>();
         Services = new Dictionary<string, List<Service>>();
         Stairs = new List<Building>();
+        Platforms = new Dictionary<Tile, Building>();
 
         ConstructionSites = new List<ConstructionSite>();
 
@@ -180,7 +182,7 @@ public class World
     {
         Tile t = GetTileFromPosition(tilePosition);
 
-        if (t != null && t.Building == null)
+        if (Tile.CheckPassability(t))
         {
             Character c = new Character("Wiesław", t, humanBehaviourTree);
             Characters.Add(c);
@@ -213,9 +215,11 @@ public class World
         {
             Tile tile = tilesToCheck[i];
             if (Tile.CheckPassability(tile)
-                && tile.Building == null
-                && (((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) 
-                     || prototype.MovementCost != 0f))
+                && ! (prototype.CanBeBuiltOnSand == false && tile.Type == TileType.Sand)
+                && ! (prototype.CanBeBuiltOnRock == false && tile.Type == TileType.Rock)
+                && ! (prototype.CanBeBuiltOnPlatform == false && tile.Type == TileType.WalkableEmpty)
+                && ! (prototype.AllowToBuildOnTop == false && Platforms.ContainsKey(tile))
+                && (((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) || prototype.MovementCost != 0f))
                 )
             {
                 continue;
@@ -246,8 +250,8 @@ public class World
     bool IsValidAccessTilePosition(Tile tile)
     {
         return (Tile.CheckPassability(tile));
-    }
-   
+    } 
+
     public Tile MapPrototypeAccessTileToWorld(TilePosition origin, Rotation rotation, 
                                               BuildingPrototype prototype, bool secondAccessTile)
     {
@@ -348,9 +352,11 @@ public class World
 
             for (int i = 0; i < tilesForBuilding.Count; i++)
             {
-                tilesForBuilding[i].Building = newBuilding;
+                //tilesForBuilding[i].Building = newBuilding;
                 tilesForBuilding[i].MovementCost = prototype.MovementCost;
-                modifiedTiles.Add(tilesForBuilding[i]);               
+                modifiedTiles.Add(tilesForBuilding[i]);
+
+                if (prototype.DisallowDiagonalMovement) tilesForBuilding[i].AllowDiagonal = false;
             }
 
             if (prototype.WalkableOnTop)
@@ -383,8 +389,11 @@ public class World
     public void InstantBuild(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
         ConstructionSite site = PlaceNewConstructionSite(origin, rotation, prototype);
-        Debug.Log("InstantBuild");
-        FinishConstruction(site);
+        if (site != null)
+        {
+            Debug.Log("InstantBuild");
+            FinishConstruction(site);
+        }
     }
 
     public bool MarkBuildingToDeconstruction(Building building)
@@ -401,8 +410,12 @@ public class World
 
             for (int i = 0; i < building.Tiles.Count; i++)
             {
-                building.Tiles[i].Building = null;
                 building.Tiles[i].MovementCost = 1f;
+                if (Platforms.ContainsKey(building.Tiles[i]) && building == Platforms[building.Tiles[i]])
+                {
+                    building.Tiles[i].AllowDiagonal = true;
+                }
+               
                 modifiedTiles.Add(building.Tiles[i]);
             }
 
@@ -419,6 +432,16 @@ public class World
                         modifiedTiles.Add(tileOnTop);
                     }
                 }
+            }
+
+            if (prototype.Type == "Stairs")
+            {
+                Stairs.Remove(building);
+            }
+            else if (prototype.Type == "Platform")
+            {
+                if (Platforms.ContainsKey(building.Tiles[0]))
+                    Platforms.Remove(building.Tiles[0]);
             }
 
             GameManager.Instance.RemoveDisplayForBuilding(building);
@@ -498,6 +521,10 @@ public class World
         if(buildingToConstruct.Type == "Stairs")
         {
             Stairs.Add(buildingToConstruct);
+        }
+        else if (buildingToConstruct.Type == "Platform")
+        {
+            Platforms.Add(buildingToConstruct.Tiles[0], buildingToConstruct);
         }
 
         IBuildingModule module = buildingToConstruct.Module;
@@ -810,7 +837,7 @@ public class World
         bp.ModelName = "Spaceship";
         bp.CanBeBuiltOnPlatform = false;
         bp.CanBeBuiltOnRock = false;
-        bp.CanBeBuiltOnSand = false;
+        bp.CanBeBuiltOnSand = true;
         bp.AllowRotation = false;
         bp.NormalizedTilePositions = new List<TilePosition>()
         {
@@ -836,7 +863,7 @@ public class World
         bp.ModelName = "Stairs";
         bp.CanBeBuiltOnPlatform = false;
         bp.CanBeBuiltOnRock = false;
-        bp.CanBeBuiltOnSand = false;
+        bp.CanBeBuiltOnSand = true;
         bp.AllowRotation = true;
         bp.NormalizedTilePositions = new List<TilePosition>()
         {
@@ -852,6 +879,10 @@ public class World
         bp.NormalizedSecondAccessTilePosition = new TilePosition(3, 0, 0);
         bp.NormalizedSecondAccessTileRotation = Rotation.W;
 
+        bp.ConstructionTime = 3f;
+        bp.ConstructionResources = new Dictionary<int, int>() { { 1, 1 } };
+        bp.ConstructionWithoutScaffolding = true;
+
         bp.MousePivotPoint = new TilePosition(1, 0, 0);
 
         buildingPrototypes.Add(bp);
@@ -862,8 +893,8 @@ public class World
         bp.Type = "Platform";
         bp.ModelName = "Platform";
         bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = false;
-        bp.CanBeBuiltOnSand = false;
+        bp.CanBeBuiltOnRock = true;
+        bp.CanBeBuiltOnSand = true;
         bp.AllowRotation = false;
         bp.NormalizedTilePositions = new List<TilePosition>()
         {
@@ -873,7 +904,12 @@ public class World
         bp.MovementCost = 2f;
         bp.WalkableOnTop = true;
         bp.CanBeAccessedFromTop = true;
+        bp.DisallowDiagonalMovement = true;
         bp.MovementCostOnTop = 2f;
+
+        bp.ConstructionTime = 3f;
+        bp.ConstructionResources = new Dictionary<int, int>() { {1, 1} };
+        bp.ConstructionWithoutScaffolding = true;
 
         buildingPrototypes.Add(bp);
     }
@@ -892,6 +928,7 @@ public class World
         bp.CanBeBuiltOnSand = true;
         bp.AllowRotation = false;
         bp.MovementCost = 0.5f;
+        bp.AllowToBuildOnTop = true;
         bp.HasAccessTile = false;
         bp.NormalizedTilePositions = new List<TilePosition>()
         {

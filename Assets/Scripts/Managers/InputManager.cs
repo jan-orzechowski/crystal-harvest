@@ -184,8 +184,8 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetMouseButton(2)) // ŚPM
         {
-            if (CurrentTile != null && CurrentTile.Building != null)
-                if (GameManager.Instance.World.MarkBuildingToDeconstruction(CurrentTile.Building)) RemoveSelection();
+            //if (CurrentTile != null && CurrentTile.Building != null)
+            //    if (GameManager.Instance.World.MarkBuildingToDeconstruction(CurrentTile.Building)) RemoveSelection();
         }
     }
 

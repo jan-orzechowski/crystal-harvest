@@ -46,13 +46,6 @@ public class InfoPanel : MonoBehaviour
 
             s += "Koszt ruchu: " + t.MovementCost.ToString() + "\n";
 
-            s += "Budynek: ";
-            if (t.Building != null)
-            {
-                s += t.Building.GetSelectionText();
-            }
-            s += "\n";
-
             text.text = s;
         }
 #endif

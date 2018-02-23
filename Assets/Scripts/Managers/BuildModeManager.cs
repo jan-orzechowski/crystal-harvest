@@ -108,16 +108,30 @@ public class BuildModeManager : MonoBehaviour
 
         if (type == "Debug1")
         {
-            BuildMode = BuildMode.Multiple;
+            // BuildMode = BuildMode.Multiple;
         }
         else if (type == "Debug2")
         {
             BuildMode = BuildMode.Single;
         }
-        else if (type == "Stairs" || type == "Platform" || type == "OreDeposit")
+        else if (type == "Stairs" || type == "OreDeposit")
         {
             BuildMode = BuildMode.SingleInstant;
         }
+    }
+
+    public void ToggleInstantBuildMode()
+    {
+        if (BuildMode == BuildMode.Single)
+        {
+            Debug.Log("BuildMode - Single Instant");
+            BuildMode = BuildMode.SingleInstant;
+        }
+        else if (BuildMode == BuildMode.SingleInstant)
+        {
+            Debug.Log("BuildMode - Single");
+            BuildMode = BuildMode.Single;
+        }        
     }
 
     public void Rotate()

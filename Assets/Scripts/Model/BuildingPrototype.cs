@@ -27,6 +27,8 @@ public class BuildingPrototype
     public Rotation NormalizedSecondAccessTileRotation;
 
     public float MovementCost;
+    public bool AllowToBuildOnTop;
+    public bool DisallowDiagonalMovement;
 
     public bool WalkableOnTop;
     public bool CanBeAccessedFromTop;
@@ -45,6 +47,7 @@ public class BuildingPrototype
     public float ConstructionTime;
     public Dictionary<int, int> ConstructionResources;
     public Dictionary<int, int> ResourcesFromDeconstruction;
+    public bool ConstructionWithoutScaffolding;
 
     public string NeedFulfilled;
     public float NeedFulfillmentPerSecond;

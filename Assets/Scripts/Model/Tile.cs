@@ -7,7 +7,7 @@ public enum TileType
 {
     Empty,
     WalkableEmpty,
-    Dirt,
+    Sand,
     Rock    
 }
 
@@ -23,9 +23,9 @@ public class Tile
 
     public bool ReservedForAccess;
 
-    public Building Building;
+    public bool AllowDiagonal = true;
 
-    World World;
+    static World World;
 
     public Tile (int x, int y, int height, TileType type, World world)
     {
@@ -37,6 +37,11 @@ public class Tile
     public static bool CheckPassability(Tile t)
     {
         return (t != null && t.Type != TileType.Empty && t.MovementCost != 0);
+    }
+
+    public static bool CheckDiagonalPassability(Tile t)
+    {
+        return CheckPassability(t) && t.AllowDiagonal;
     }
 
     public Tile GetNorthNeighbour()

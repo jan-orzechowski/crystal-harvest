@@ -51,9 +51,18 @@ public class ConstructionSite : IWorkplace
         constructionTime = Prototype.ConstructionTime;
         deconstructionTime = constructionTime / 2;
 
-        Stage = ConstructionStage.ScaffoldingConstruction;
-        LoadResourcesForScaffoldingConstruction();
-        stageTimeLeft = scaffoldingStageTime;
+        if (Prototype.ConstructionWithoutScaffolding)
+        {
+            Stage = ConstructionStage.Construction;
+            LoadResourcesForConstruction();
+            stageTimeLeft = constructionTime;
+        }
+        else
+        {
+            Stage = ConstructionStage.ScaffoldingConstruction;
+            LoadResourcesForScaffoldingConstruction();
+            stageTimeLeft = scaffoldingStageTime;
+        }        
     }
 
     public void UpdateConstructionSite(float deltaTime)
@@ -113,8 +122,15 @@ public class ConstructionSite : IWorkplace
             }
             else if (Stage == ConstructionStage.Deconstruction)
             {
-                Stage = ConstructionStage.ScaffoldingDeconstruction;
-                stageTimeLeft = scaffoldingStageTime;
+                if (Prototype.ConstructionWithoutScaffolding)
+                {
+                    world.FinishDeconstruction(this);
+                }
+                else
+                {
+                    Stage = ConstructionStage.ScaffoldingDeconstruction;
+                    stageTimeLeft = scaffoldingStageTime;
+                }                
             }
             else if (Stage == ConstructionStage.ScaffoldingDeconstruction)
             {
@@ -176,6 +192,20 @@ public class ConstructionSite : IWorkplace
     public float GetCompletionPercentage()
     {
         float result;
+
+        if (Prototype.ConstructionWithoutScaffolding)
+        {
+            if (Stage == ConstructionStage.Construction)
+            {
+                result = (constructionTime - stageTimeLeft) / constructionTime;
+            }
+            else
+            {
+                result = (deconstructionTime - stageTimeLeft) / deconstructionTime;
+            }
+            return result;
+        }
+
         if (ConstructionMode)
         {
             float totalTime = constructionTime + scaffoldingStageTime;
