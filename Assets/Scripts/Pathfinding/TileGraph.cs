@@ -50,7 +50,7 @@ namespace Pathfinding
             tileNodeMap = new Dictionary<Tile, Node>(nodesCount);
             tilesPerCall = nodesCount / 60;
 
-            nodesPerCall = 1000;
+            nodesPerCall = 750;
 
             tilesToProcess = new Queue<Tile>(tileNodeMap.Keys);
 

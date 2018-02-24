@@ -21,8 +21,8 @@ public class NaturalDepositDisplay : SelectableDisplayObject
         }
         else
         {
-            if (Model.activeSelf) Model.SetActive(false);
-            if (DepletedModel.activeSelf == false) DepletedModel.SetActive(true);
+            if (Model.activeSelf == false) Model.SetActive(true);
+            if (DepletedModel.activeSelf) DepletedModel.SetActive(false);
         }
     }
 

@@ -111,7 +111,6 @@ public class Building : ISelectable
             {
                 if (Tile.CheckPassability(neighbour))
                 {
-                    Debug.Log("sprawdzam dolne");
                     accessTile = neighbour;
                     accessTileRotation = RotationMethods.GetRotationTowardsPosition(
                         positionToBeRotated: neighbour.Position,
@@ -127,7 +126,6 @@ public class Building : ISelectable
             {
                 if (Tile.CheckPassability(neighbour))
                 {
-                    Debug.Log("sprawdzam górne");
                     accessTile = neighbour;
                     accessTileRotation = RotationMethods.GetRotationTowardsPosition(
                         positionToBeRotated: neighbour.Position,

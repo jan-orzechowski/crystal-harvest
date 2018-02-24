@@ -13,4 +13,5 @@ public class PlatformTopsPrefabs
     public GameObject Top_4Sides;
     public GameObject Top_Corner;
     public GameObject Top_InnerCorner;
+    public GameObject Top_SingleCorner;
 }

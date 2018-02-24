@@ -121,6 +121,19 @@ public class GameManager : MonoBehaviour
         selectableDisplayObject.AssignModelObject(building);
         building.AssignDisplayObject(selectableDisplayObject);
 
+        if (building.Type == "Platform" && selectableDisplayObject is PlatformDisplayObject)
+        {
+            ((PlatformDisplayObject)selectableDisplayObject).AssignPlatform(building);
+            UpdatePlatformDisplay(building.Tiles[0]);
+        }
+
+        if (building.Module != null && building.Module is Factory 
+            && selectableDisplayObject is NaturalDepositDisplay)
+        {
+            ((NaturalDepositDisplay)selectableDisplayObject).AssignDeposit((Factory)building.Module);
+        }
+
+
         return selectableDisplayObject;
     }
 
@@ -349,5 +362,28 @@ public class GameManager : MonoBehaviour
                 Quaternion.Euler(new Vector3(0, 270, 0))
                 );
         }
+    }
+
+    void UpdateSinglePlatformDisplay(Tile t)
+    {
+        if (World.Platforms.ContainsKey(t))
+        {
+            ((PlatformDisplayObject)World.Platforms[t].DisplayObject).UpdatePlatformDisplay();
+        }
+    }
+
+    void UpdatePlatformDisplay(Tile t)
+    {
+        UpdateSinglePlatformDisplay(t);
+
+        UpdateSinglePlatformDisplay(t.GetNorthNeighbour());
+        UpdateSinglePlatformDisplay(t.GetEastNeighbour());
+        UpdateSinglePlatformDisplay(t.GetSouthNeighbour());
+        UpdateSinglePlatformDisplay(t.GetWestNeighbour());
+
+        UpdateSinglePlatformDisplay(t.GetNorthEastNeighbour());
+        UpdateSinglePlatformDisplay(t.GetSouthEastNeighbour());
+        UpdateSinglePlatformDisplay(t.GetSouthWestNeighbour());
+        UpdateSinglePlatformDisplay(t.GetNorthWestNeighbour());
     }
 }
