@@ -49,6 +49,8 @@ public class BuildingPrototype
     public Dictionary<int, int> ResourcesFromDeconstruction;
     public bool ConstructionWithoutScaffolding;
 
+    public Dictionary<int, int> ResourcesForScaffoldingConstruction = new Dictionary<int, int>() { { 1, 1 } };
+
     public string NeedFulfilled;
     public float NeedFulfillmentPerSecond;
     public float ServiceDuration;

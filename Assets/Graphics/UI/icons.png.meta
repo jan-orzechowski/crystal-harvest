@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 5300128027881914eb974e2d164791b7
-timeCreated: 1517659871
+timeCreated: 1520607224
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -59,7 +59,7 @@ TextureImporter:
     21300104: icons_52
     21300106: icons_53
     21300108: icons_54
-    21300110: icons_55
+    21300110: arrowRight
     21300112: icons_56
     21300114: icons_57
     21300116: icons_58
@@ -976,7 +976,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_55
+      name: arrowRight
       rect:
         serializedVersion: 2
         x: 0

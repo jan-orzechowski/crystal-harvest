@@ -5,7 +5,7 @@ using System;
 
 public class ConstructionSiteDisplayObject : SelectableDisplayObject
 {
-    ConstructionSite constructionSite;
+    public ConstructionSite ConstructionSite;
 
     public GameObject ConstructionPlane;
 
@@ -66,30 +66,30 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
 
     void Update()
     {
-        if (constructionSite == null) return;
+        if (ConstructionSite == null) return;
 
-        if (ConstructionPlane.activeSelf && constructionSite.GetCompletionPercentage() > 0.05f) ConstructionPlane.SetActive(false);
+        if (ConstructionPlane.activeSelf && ConstructionSite.GetCompletionPercentage() > 0.05f) ConstructionPlane.SetActive(false);
 
-        if (constructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
+        if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
         {
-            float y = Mathf.Lerp(minY, maxY, constructionSite.GetStageCompletionPercentage());
+            float y = Mathf.Lerp(minY, maxY, ConstructionSite.GetStageCompletionPercentage());
             MoveScaffolding(y);
             ResizeCollider();
         }
-        else if (constructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
+        else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
         {
-            float y = Mathf.Lerp(maxY, minY, constructionSite.GetStageCompletionPercentage());
+            float y = Mathf.Lerp(maxY, minY, ConstructionSite.GetStageCompletionPercentage());
             MoveScaffolding(y);
             ResizeCollider();
         }
-        else if (constructionSite.Stage == ConstructionStage.Construction)
+        else if (ConstructionSite.Stage == ConstructionStage.Construction)
         {
-            float y = Mathf.Lerp(minY, maxY, constructionSite.GetStageCompletionPercentage() * 1.42f);
+            float y = Mathf.Lerp(minY, maxY, ConstructionSite.GetStageCompletionPercentage() * 1.42f);
             MoveBuilding(y);
         }
-        else if (constructionSite.Stage == ConstructionStage.Deconstruction)
+        else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
         {
-            float y = Mathf.Lerp(maxY, minY, constructionSite.GetStageCompletionPercentage());
+            float y = Mathf.Lerp(maxY, minY, ConstructionSite.GetStageCompletionPercentage());
             MoveBuilding(y);
         }      
     }
@@ -128,7 +128,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
 
     void ResizeCollider()
     {
-        float newColliderHeight = Mathf.Lerp(0, colliderMaxUpperPlane, constructionSite.GetStageCompletionPercentage());
+        float newColliderHeight = Mathf.Lerp(0, colliderMaxUpperPlane, ConstructionSite.GetStageCompletionPercentage());
         if (newColliderHeight < minColliderHeight) { newColliderHeight = minColliderHeight; }
 
         float newYSize = newColliderHeight;
@@ -140,7 +140,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
 
     public void AssignConstructionSite(ConstructionSite constructionSite, bool builtOnSecondLevel)
     {
-        this.constructionSite = constructionSite;
+        this.ConstructionSite = constructionSite;
         this.builtOnSecondLevel = builtOnSecondLevel;
         ModelObject = constructionSite.Building;
 
@@ -167,4 +167,6 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
             constructionSite.Building.Tiles[0].Height,
             Collider.transform.position.z);
     }
+
+
 }

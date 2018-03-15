@@ -9,4 +9,7 @@ public class ResourceDisplayInfo
     public string ResourceName;
     public GameObject Model;
     public GameObject HeldModel;
+
+    public GameObject Icon;
+    public GameObject RequiredIcon;
 }

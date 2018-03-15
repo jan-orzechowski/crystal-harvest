@@ -117,7 +117,7 @@ public class ConstructionSite : IWorkplace
                 LoadResourcesForConstruction();
             }
             else if (Stage == ConstructionStage.Construction)
-            {                
+            {
                 world.FinishConstruction(this);
             }
             else if (Stage == ConstructionStage.Deconstruction)
@@ -185,7 +185,7 @@ public class ConstructionSite : IWorkplace
 
     void LoadResourcesForScaffoldingConstruction()
     {
-        ConstructionStorage = new StorageToFill(Building, new Dictionary<int, int>() { { 1, 1 } });
+        ConstructionStorage = new StorageToFill(Building, Prototype.ResourcesForScaffoldingConstruction);
         DeconstructionStorage = new StorageToEmpty(Building, null);
     }
 

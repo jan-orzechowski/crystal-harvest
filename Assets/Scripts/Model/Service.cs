@@ -6,7 +6,7 @@ using System;
 public class Service : IBuildingModule
 {
     public Building Building { get; protected set; }
-    BuildingPrototype prototype;
+    public BuildingPrototype Prototype { get; protected set; }
 
     public StorageToFill InputStorage;
 
@@ -23,7 +23,7 @@ public class Service : IBuildingModule
     public Service(Building building, BuildingPrototype prototype)
     {
         Building = building;
-        this.prototype = prototype;
+        this.Prototype = prototype;
 
         InputStorage = new StorageToFill(building, prototype.ConsumedResources);
 
@@ -61,7 +61,7 @@ public class Service : IBuildingModule
     {
         if (InputStorage.IsFilled)
         {
-            InputStorage = new StorageToFill(Building, prototype.ConsumedResources);
+            InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
             return true;
         }
         else
@@ -76,7 +76,7 @@ public class Service : IBuildingModule
         {
             ServicedCharacter = character;
             ServicedCharacter.UsingService = true;
-            serviceDuration = prototype.ServiceDuration;
+            serviceDuration = Prototype.ServiceDuration;
             return true;
         }
         else
@@ -110,6 +110,11 @@ public class Service : IBuildingModule
         {
             reservationTimer = 5f;
         }
+    }
+
+    public float GetServicePercentage()
+    {
+        return ((Prototype.ServiceDuration - serviceDuration) / Prototype.ServiceDuration);
     }
 
     public Tile GetAccessTile()

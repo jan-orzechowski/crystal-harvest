@@ -14,7 +14,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
     public int CurrentResourceCount { get; protected set; }
     public int UnreservedFreeSpace { get { return (MaxCapacity - CurrentResourceCount - FreeSpaceReservations.Count); } }
 
-
+    public bool Changed = true;
 
     public Storage(Building building, BuildingPrototype prototype)
     {
@@ -133,6 +133,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
             ReservedResources.Remove(character);
             character.AddResource(resourceID);
             CurrentResourceCount--;
+            Changed = true;
             return true;
         }
         else
@@ -158,6 +159,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
             CurrentResourceCount++;
             character.RemoveResource();
             character.ReservationUsed();
+            Changed = true;
             return true;
         }
         return false;

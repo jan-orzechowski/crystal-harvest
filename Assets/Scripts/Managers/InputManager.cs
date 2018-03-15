@@ -27,6 +27,8 @@ public class InputManager : MonoBehaviour
 
     public ISelectable SelectedObject;
 
+    public SelectionPanel SelectionPanel;
+
     public GameObject debugPreviewPrefab;
     GameObject debugPreview;
 
@@ -171,7 +173,7 @@ public class InputManager : MonoBehaviour
         || Input.GetKeyDown(KeyCode.Escape))
         {
             SetBuildMode(false);
-            SelectedObject = null;
+            RemoveSelection();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -184,8 +186,7 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetMouseButton(2)) // ŚPM
         {
-            //if (CurrentTile != null && CurrentTile.Building != null)
-            //    if (GameManager.Instance.World.MarkBuildingToDeconstruction(CurrentTile.Building)) RemoveSelection();
+            
         }
     }
 
@@ -215,7 +216,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    Collider DoRaycast()
+    void DoRaycast()
     {
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -243,8 +244,6 @@ public class InputManager : MonoBehaviour
             }
         }
 
-        Collider selectedObjectCollider = null;
-
         if (charactersHit.Count > 0)
         {
             Character selectedCharacter = null;
@@ -262,8 +261,7 @@ public class InputManager : MonoBehaviour
             }
             
             // Mamy postać!
-            selectedObjectCollider = selectedCharacter.GetDisplayObject().Collider;
-            SelectedObject = selectedCharacter;
+            Select(selectedCharacter);
         }
         else if (buildingsHit.Count > 0)
         {
@@ -283,16 +281,13 @@ public class InputManager : MonoBehaviour
             }
 
             // Mamy budynek!
-            selectedObjectCollider = selectedBuilding.GetDisplayObject().Collider;
-            SelectedObject = selectedBuilding;
+            Select(selectedBuilding);
         }
         else
         {
             // Nie trafiliśmy nic
-            SelectedObject = null;
+            RemoveSelection();
         }
-       
-        return selectedObjectCollider;
     }
 
     void UpdateCurrentTileHighlight()
@@ -330,7 +325,7 @@ public class InputManager : MonoBehaviour
     {
         if (SelectedObject != null)
         {
-            BoxCollider selectedObjectCollider = (BoxCollider)SelectedObject.GetDisplayObject().Collider;
+            BoxCollider selectedObjectCollider = SelectedObject.GetDisplayObject().Collider;
 
             if (selectedObjectCollider != null)
             {
@@ -348,14 +343,30 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            selectionBox.SetActive(false);
+            RemoveSelection();
         }
     }
 
-    void RemoveSelection()
+    void Select(ISelectable selectedObject)
+    {        
+        if (selectedObject != null)
+        {
+            SelectedObject = selectedObject;
+            SelectionPanel.gameObject.SetActive(true);
+            SelectionPanel.AssignSelectedObject(selectedObject);
+        }
+        else
+        {
+            RemoveSelection();
+        }
+    }
+
+    public void RemoveSelection()
     {
         SelectedObject = null;
-        UpdateSelection();
+        selectionBox.SetActive(false);
+        SelectionPanel.gameObject.SetActive(false);
+        SelectionPanel.HidePanels();        
     }
 
     public void SetBuildMode(bool buildMode)

@@ -578,19 +578,6 @@ public class World
         //DeleteBuilding(buildingToDeconstruct);
     }
 
-    public bool RegisterConstructionSite(ConstructionSite site)
-    {
-        if (ConstructionSites.Contains(site))
-        {
-            return false;        
-        }
-        else
-        {
-            ConstructionSites.Add(site);
-            return true;
-        }
-    }
-
     public bool GetReservationForFillingInput(Character character)
     {
         foreach (Factory factory in Factories)

@@ -6,7 +6,7 @@ using System;
 public class Factory : IWorkplace, IBuildingModule
 {
     public Building Building { get; protected set; }
-    BuildingPrototype prototype;
+    public BuildingPrototype Prototype { get; protected set; }
 
     public StorageToFill InputStorage { get; protected set; }
     public StorageToEmpty OutputStorage { get; protected set; }
@@ -25,7 +25,7 @@ public class Factory : IWorkplace, IBuildingModule
     public Factory(Building building, BuildingPrototype prototype)
     {
         Building = building;
-        this.prototype = prototype;
+        this.Prototype = prototype;
         productionTime = prototype.ProductionTime;
         ProductionStarted = false;
 
@@ -127,7 +127,7 @@ public class Factory : IWorkplace, IBuildingModule
     {
         if (OutputStorage.IsEmpty)
         {
-            OutputStorage = new StorageToEmpty(Building, prototype.ProducedResources);           
+            OutputStorage = new StorageToEmpty(Building, Prototype.ProducedResources);           
             return true;
         }
         else
@@ -140,7 +140,7 @@ public class Factory : IWorkplace, IBuildingModule
     {
         if (InputStorage.IsFilled)
         {
-            InputStorage = new StorageToFill(Building, prototype.ConsumedResources);
+            InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
             return true;            
         }
         else
@@ -176,6 +176,18 @@ public class Factory : IWorkplace, IBuildingModule
         if (jobReservation == character)
         {
             jobReservationTimer = 5f;
+        }
+    }
+
+    public float GetCompletionPercentage()
+    {
+        if (ProductionStarted == false || productionTimeLeft <= 0)
+        {
+            return 0f;
+        }
+        else
+        {
+            return ((productionTime - productionTimeLeft) / productionTime);
         }
     }
 
