@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4490211564443266}
   - component: {fileID: 33315556089710328}
   - component: {fileID: 23937258426620468}
-  - component: {fileID: 114835652253262924}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -149,7 +148,6 @@ GameObject:
   - component: {fileID: 4437398383613484}
   - component: {fileID: 33620159860332196}
   - component: {fileID: 23698477447120760}
-  - component: {fileID: 114354436148873490}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -242,7 +240,6 @@ GameObject:
   - component: {fileID: 4935058477425990}
   - component: {fileID: 33264522649327628}
   - component: {fileID: 23570479932554342}
-  - component: {fileID: 114016408901057420}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -277,7 +274,6 @@ GameObject:
   - component: {fileID: 4096825875733796}
   - component: {fileID: 33895711084883702}
   - component: {fileID: 23251912059896740}
-  - component: {fileID: 114718487292049224}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -342,7 +338,6 @@ GameObject:
   - component: {fileID: 4679706802671068}
   - component: {fileID: 33653027045389542}
   - component: {fileID: 23052231801539050}
-  - component: {fileID: 114471931846987386}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -1276,63 +1271,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114016408901057420
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1460435561853208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 672d343a43f8e7d4d85929c2c38c7c82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clipPlanes: 1
-  planePreviewSize: 5
-  plane1Position: {x: 0, y: 0, z: 0}
-  plane1Rotation: {x: 0, y: 0, z: 0}
-  plane2Position: {x: 0, y: 0, z: 0}
-  plane2Rotation: {x: 0, y: 90, z: 90}
-  plane3Position: {x: 0, y: 0, z: 0}
-  plane3Rotation: {x: 0, y: 0, z: 90}
---- !u!114 &114354436148873490
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1373887277940118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 672d343a43f8e7d4d85929c2c38c7c82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clipPlanes: 1
-  planePreviewSize: 5
-  plane1Position: {x: 0, y: 0, z: 0}
-  plane1Rotation: {x: 0, y: 0, z: 0}
-  plane2Position: {x: 0, y: 0, z: 0}
-  plane2Rotation: {x: 0, y: 90, z: 90}
-  plane3Position: {x: 0, y: 0, z: 0}
-  plane3Rotation: {x: 0, y: 0, z: 90}
---- !u!114 &114471931846987386
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1790050837072372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 672d343a43f8e7d4d85929c2c38c7c82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clipPlanes: 1
-  planePreviewSize: 5
-  plane1Position: {x: 0, y: 0, z: 0}
-  plane1Rotation: {x: 0, y: 0, z: 0}
-  plane2Position: {x: 0, y: 0, z: 0}
-  plane2Rotation: {x: 0, y: 90, z: 90}
-  plane3Position: {x: 0, y: 0, z: 0}
-  plane3Rotation: {x: 0, y: 0, z: 90}
 --- !u!114 &114597478387754166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1350,41 +1288,3 @@ MonoBehaviour:
   ClippableScaffolding: {fileID: 1588892166070684}
   Building: {fileID: 1182067605832056}
   ClippableBuilding: {fileID: 1427529121291838}
---- !u!114 &114718487292049224
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1504390785754548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 672d343a43f8e7d4d85929c2c38c7c82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clipPlanes: 1
-  planePreviewSize: 5
-  plane1Position: {x: 0, y: 0, z: 0}
-  plane1Rotation: {x: 0, y: 0, z: 0}
-  plane2Position: {x: 0, y: 0, z: 0}
-  plane2Rotation: {x: 0, y: 90, z: 90}
-  plane3Position: {x: 0, y: 0, z: 0}
-  plane3Rotation: {x: 0, y: 0, z: 90}
---- !u!114 &114835652253262924
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1028670290985894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 672d343a43f8e7d4d85929c2c38c7c82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clipPlanes: 1
-  planePreviewSize: 5
-  plane1Position: {x: 0, y: 0, z: 0}
-  plane1Rotation: {x: 0, y: 0, z: 0}
-  plane2Position: {x: 0, y: 0, z: 0}
-  plane2Rotation: {x: 0, y: 90, z: 90}
-  plane3Position: {x: 0, y: 0, z: 0}
-  plane3Rotation: {x: 0, y: 0, z: 90}
