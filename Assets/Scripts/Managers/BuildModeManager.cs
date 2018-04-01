@@ -13,9 +13,10 @@ public enum BuildMode
 public class BuildModeManager : MonoBehaviour 
 {
     public BuildMode BuildMode { get; protected set; }
-  
-    BuildingPrototype currentPrototype;
-   
+
+    public InputManager InputManager;
+
+    BuildingPrototype currentPrototype;   
     Rotation currentRotation;
 
     World world;
@@ -104,20 +105,21 @@ public class BuildModeManager : MonoBehaviour
     public void SetBuildingType(string type)
     {
         currentPrototype = world.GetBuildingPrototype(type);
+
+        if (currentPrototype == null) return;
+
         currentRotation = currentPrototype.StartingRotation;
 
-        if (type == "Debug1")
+        if (currentPrototype.MultipleBuildMode)
         {
-            // BuildMode = BuildMode.Multiple;
+            BuildMode = BuildMode.Multiple;
         }
-        else if (type == "Debug2")
+        else
         {
             BuildMode = BuildMode.Single;
         }
-        else if (type == "Stairs" || type == "OreDeposit")
-        {
-            BuildMode = BuildMode.SingleInstant;
-        }
+
+        InputManager.SetBuildMode(true);        
     }
 
     public void ToggleInstantBuildMode()

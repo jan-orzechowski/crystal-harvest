@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System;
 
 public class InputManager : MonoBehaviour 
@@ -28,6 +29,7 @@ public class InputManager : MonoBehaviour
     public ISelectable SelectedObject;
 
     public SelectionPanel SelectionPanel;
+    public SidePanel SidePanel;
 
     public GameObject debugPreviewPrefab;
     GameObject debugPreview;
@@ -117,9 +119,11 @@ public class InputManager : MonoBehaviour
     }
 
     void HandleUserInput()
-    {
+    {        
         if (Input.GetMouseButtonDown(0)) // LPM
         {
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+
             if (buildMode)
             {
                 if (CurrentTile != null)
@@ -172,6 +176,8 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1) // PPM
         || Input.GetKeyDown(KeyCode.Escape))
         {
+            if (SidePanel.PanelVisible) SidePanel.HidePanels();
+
             SetBuildMode(false);
             RemoveSelection();
         }
@@ -329,6 +335,8 @@ public class InputManager : MonoBehaviour
 
             if (selectedObjectCollider != null)
             {
+                SidePanel.HidePanels();
+
                 selectionBox.SetActive(true);
                 selectionBox.transform.SetPositionAndRotation(
                     selectedObjectCollider.transform.position + selectedObjectCollider.center,
@@ -374,8 +382,9 @@ public class InputManager : MonoBehaviour
         this.buildMode = buildMode;
         if (buildMode)
         {
+            SidePanel.HidePanels();
             showingHighlight = false;
-            RemoveSelection();
+            RemoveSelection();                        
         }
         else
         {
