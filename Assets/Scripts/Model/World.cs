@@ -24,9 +24,16 @@ public class World
     public List<Building> Stairs { get; protected set; }
     public Dictionary<Tile, Building> Platforms { get; protected set; }
 
+    public Dictionary<int, int> AllResources { get; protected set; }
+
+    public int ResourceToGather { get; protected set; }
+    public int AmountToGather { get; protected set; }
+
+
     public Pathfinder Pathfinder { get; protected set; }
 
     BT_Tree humanBehaviourTree;
+    BT_Tree robotBehaviourTree;
 
     List<Tile> modifiedTiles;
     bool mapChangedThisFrame;
@@ -85,10 +92,17 @@ public class World
         Buildings = new List<Building>(1024);
         Characters = new List<Character>(32);
 
-        buildingPrototypes = new List<BuildingPrototype>();
-        LoadSpecialPrototypes();
-        DEBUG_LoadPrototypes();
-        DEBUG_LoadResources();
+        buildingPrototypes = StaticData.LoadPrototypes();
+        ResourcesInfo = StaticData.LoadResources();
+
+        AllResources = new Dictionary<int, int>();
+        foreach (int resourceID in ResourcesInfo.Keys)
+        {
+            AllResources.Add(resourceID, 0);
+        }
+
+        ResourceToGather = 0;
+        AmountToGather = 100;
 
         Pathfinder = new Pathfinder(this);
         modifiedTiles = new List<Tile>();
@@ -96,11 +110,14 @@ public class World
         humanBehaviourTree = new BT_Tree();
         humanBehaviourTree.DEBUG_LoadTestTree();
 
+        robotBehaviourTree = new BT_Tree();
+        robotBehaviourTree.DEBUG_LoadTestTree();
+
         Storages = new List<Storage>();
         Factories = new List<Factory>();
         Services = new Dictionary<string, List<Service>>();
         Stairs = new List<Building>();
-        Platforms = new Dictionary<Tile, Building>();
+        Platforms = new Dictionary<Tile, Building>();        
 
         ConstructionSites = new List<ConstructionSite>();
 
@@ -178,13 +195,21 @@ public class World
         }
     }
 
-    public bool CreateNewCharacter(TilePosition tilePosition)
+    public bool CreateNewCharacter(TilePosition tilePosition, bool isRobot)
     {
         Tile t = GetTileFromPosition(tilePosition);
 
         if (Tile.CheckPassability(t))
         {
-            Character c = new Character("Wiesław", t, humanBehaviourTree);
+            Character c;
+            if (isRobot)
+            {
+                c = new Character("Robot", t, robotBehaviourTree);
+            }
+            else
+            {
+                c = new Character("Wiesław", t, humanBehaviourTree);
+            }
             Characters.Add(c);
 
             GameManager.Instance.GenerateDisplayForCharacter(c);
@@ -193,7 +218,7 @@ public class World
         }
         return false;
     }
-
+   
     public bool IsCharacterOnTile(Tile tile)
     {
         for (int i = 0; i < Characters.Count; i++)
@@ -577,7 +602,7 @@ public class World
 
         //DeleteBuilding(buildingToDeconstruct);
     }
-
+    
     public bool GetReservationForFillingInput(Character character)
     {
         foreach (Factory factory in Factories)
@@ -757,7 +782,7 @@ public class World
                 if (storageToCheck.UnreservedFreeSpace > 0)
                 {
                     if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
-                        && storageToCheck.CanReserveFreeSpace(character))
+                        && storageToCheck.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
                             workplaceWithOutput.OutputStorage, 
@@ -814,227 +839,30 @@ public class World
         return result;
     }
 
-    void LoadSpecialPrototypes()
+    public void RegisterResources(Dictionary<int, int> newResources)
     {
-        BuildingPrototype bp;
+        if (newResources == null) return;
 
-        // SPACESHIP
-        bp = new BuildingPrototype();
-        bp.Type = "Spaceship";
-        bp.ModelName = "Spaceship";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = false;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = false;
-        bp.NormalizedTilePositions = new List<TilePosition>()
+        foreach(int resourceID in newResources.Keys)
         {
-            new TilePosition(0,0,0),                          new TilePosition(2,0,0),
-            new TilePosition(0,1,0), new TilePosition(1,1,0), new TilePosition(2,1,0),
-            new TilePosition(0,2,0), new TilePosition(1,2,0), new TilePosition(2,2,0),
-            new TilePosition(0,3,0), new TilePosition(1,3,0), new TilePosition(2,3,0),
-            new TilePosition(0,4,0), new TilePosition(1,4,0), new TilePosition(2,4,0),
-        };
-        bp.HasAccessTile = true;
-        bp.MovementCost = 0f;
-        bp.NormalizedAccessTilePosition = new TilePosition(1, 0, 0);
-        bp.NormalizedAccessTileRotation = Rotation.N;
-
-        bp.MaxStorage = 30;
-        bp.InitialStorage = new Dictionary<int, int>() { { 1, 10 }, { 2, 10 } };
-
-        buildingPrototypes.Add(bp);
-
-        // STAIRS
-        bp = new BuildingPrototype();
-        bp.Type = "Stairs";
-        bp.ModelName = "Stairs";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = false;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = true;
-        bp.NormalizedTilePositions = new List<TilePosition>()
-        {
-            new TilePosition(1,0,0), new TilePosition(2,0,0)
-        };
-
-        bp.MovementCost = 0f;
-
-        bp.HasAccessTile = true;
-        bp.NormalizedAccessTilePosition = new TilePosition(0, 0, 1);
-        bp.NormalizedAccessTileRotation = Rotation.E;
-        bp.HasSecondAccessTile = true;
-        bp.NormalizedSecondAccessTilePosition = new TilePosition(3, 0, 0);
-        bp.NormalizedSecondAccessTileRotation = Rotation.W;
-
-        bp.ConstructionTime = 3f;
-        bp.ConstructionResources = new Dictionary<int, int>() { { 1, 1 } };
-        bp.ConstructionWithoutScaffolding = true;
-
-        bp.MousePivotPoint = new TilePosition(1, 0, 0);
-
-        buildingPrototypes.Add(bp);
-
-        // PLATFORM
-
-        bp = new BuildingPrototype();
-        bp.Type = "Platform";
-        bp.ModelName = "Platform";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = true;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = false;
-        bp.NormalizedTilePositions = new List<TilePosition>()
-        {
-            new TilePosition(0,0,0)
-        };
-
-        bp.MovementCost = 2f;
-        bp.WalkableOnTop = true;
-        bp.CanBeAccessedFromTop = true;
-        bp.DisallowDiagonalMovement = true;
-        bp.MovementCostOnTop = 2f;
-
-        bp.ConstructionTime = 3f;
-        bp.ConstructionResources = new Dictionary<int, int>() { {1, 1} };
-        bp.ConstructionWithoutScaffolding = true;
-
-        buildingPrototypes.Add(bp);
+            AllResources[resourceID] = AllResources[resourceID] + newResources[resourceID];
+        }
     }
 
-    void DEBUG_LoadPrototypes()
+    public void UnregisterResources(Dictionary<int, int> resourcesToRemove)
     {
-        
+        if (resourcesToRemove == null) return;
 
-        BuildingPrototype bp;
-
-        bp = new BuildingPrototype();
-        bp.Type = "Debug1";
-        bp.ModelName = "Debug1";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = true;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = false;
-        bp.MovementCost = 0.5f;
-        bp.AllowToBuildOnTop = true;
-        bp.HasAccessTile = false;
-        bp.NormalizedTilePositions = new List<TilePosition>()
+        foreach (int resourceID in resourcesToRemove.Keys)
         {
-            new TilePosition(0,0,0),
-        };
-        buildingPrototypes.Add(bp);
-                
-        bp = new BuildingPrototype();
-        bp.Type = "Debug2";
-        bp.ModelName = "Debug2";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = true;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = true;
-        bp.NormalizedTilePositions = new List<TilePosition>()
-        {
-            new TilePosition(0,0,0),
-            new TilePosition(0,1,0),
-        };
-        bp.HasAccessTile = true;
-        bp.MovementCost = 0f;
-        bp.NormalizedAccessTilePosition = new TilePosition(1, 1, 0);
-        bp.NormalizedAccessTileRotation = Rotation.W;
-
-        bp.ProductionTime = 5f;
-        bp.ProducedResources = new Dictionary<int, int>() { { 2, 1 } };
-
-        bp.ConstructionTime = 5f;
-        bp.ConstructionResources = new Dictionary<int, int>() { { 2, 3 } };
-        bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 2, 2 } };
-
-        buildingPrototypes.Add(bp);
-
-        bp = new BuildingPrototype();
-        bp.Type = "Debug3";
-        bp.ModelName = "Debug1";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = true;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = true;
-        bp.NormalizedTilePositions = new List<TilePosition>()
-        {
-            new TilePosition(0,0,0),
-        };
-        bp.HasAccessTile = true;
-        bp.MovementCost = 0f;
-        bp.NormalizedAccessTilePosition = new TilePosition(0, 1, 0);
-        bp.NormalizedAccessTileRotation = Rotation.S;
-
-        bp.MaxStorage = 5;
-
-        buildingPrototypes.Add(bp);
-
-        bp = new BuildingPrototype();
-        bp.Type = "Debug4";
-        bp.ModelName = "Debug4";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = true;
-        bp.CanBeBuiltOnSand = true;
-        bp.AllowRotation = true;
-        bp.NormalizedTilePositions = new List<TilePosition>()
-        {
-            new TilePosition(0,0,0), new TilePosition(1,0,0),
-            new TilePosition(0,1,0), new TilePosition(1,1,0),
-        };
-        bp.MovementCost = 0f;
-
-        bp.HasAccessTile = true;
-        bp.NormalizedAccessTilePosition = new TilePosition(0, 2, 0);
-        bp.NormalizedAccessTileRotation = Rotation.S;
-        bp.HasSecondAccessTile = true;
-        bp.NormalizedSecondAccessTilePosition = new TilePosition(1, 2, 0);
-        bp.NormalizedSecondAccessTileRotation = Rotation.S;
-
-        //bp.ProductionTime = 2f;
-        bp.ConsumedResources = new Dictionary<int, int>() { {2, 1 } };
-        //bp.ProducedResources = new Dictionary<int, int>() { {3, 1 } };
-
-        bp.NeedFulfilled = "Hunger";
-        bp.NeedFulfillmentPerSecond = 1f;
-        bp.ServiceDuration = 5f;
-
-        bp.ConstructionTime = 5f;
-        bp.ConstructionResources = new Dictionary<int, int>() { { 2, 3 } };
-        bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 2, 2 } };
-
-        bp.MousePivotPoint = new TilePosition(1, 1, 0);
-        bp.StartingRotation = Rotation.S;
-
-        buildingPrototypes.Add(bp);
-
-
-        bp = new BuildingPrototype();
-        bp.Type = "OreDeposit";
-        bp.ModelName = "OreDeposit";
-        bp.CanBeBuiltOnPlatform = false;
-        bp.CanBeBuiltOnRock = true;
-        bp.CanBeBuiltOnSand = false;
-        bp.AllowRotation = true;
-        bp.NormalizedTilePositions = new List<TilePosition>()
-        {
-            new TilePosition(0,0,0)
-        };
-        bp.MovementCost = 0f;
-
-        bp.HasAccessTile = false;
-        bp.ProductionTime = 2f;
-        bp.ProducedResources = new Dictionary<int, int>() { {3, 1 } };
-        bp.ProductionCyclesLimitMin = 3;
-        bp.ProductionCyclesLimitMax = 10;
-
-        buildingPrototypes.Add(bp);
-    }
-
-    void DEBUG_LoadResources()
-    {
-        ResourcesInfo = new Dictionary<int, ResourceInfo>();
-        ResourcesInfo.Add(1, new ResourceInfo() { Name = "Metal" });
-        ResourcesInfo.Add(2, new ResourceInfo() { Name = "Gaz" });
-        ResourcesInfo.Add(3, new ResourceInfo() { Name = "Kryształy" });
+            if (AllResources[resourceID] >= resourcesToRemove[resourceID])
+            {
+                AllResources[resourceID] = AllResources[resourceID] - resourcesToRemove[resourceID];
+            }
+            else
+            {
+                Debug.Log("Próbujemy usuwać zasoby, których nie dodaliśmy");
+            }
+        }
     }
 }

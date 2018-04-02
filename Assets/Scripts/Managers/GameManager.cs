@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public GameObject PreviewsParent;
     public GameObject ConstructionSitesParent;
 
+    public Tooltip Tooltip;
+
     public GameObject AccessArrowPrefab;
 
     public GameObject DebugBuildingPreviewPrefab;
@@ -56,14 +58,13 @@ public class GameManager : MonoBehaviour
 
         for (int x = 3; x < 4; x++)
         {
-            for (int y = 0; y < 1; y++)
+            for (int y = 0; y < 7; y++)
             {
-                World.CreateNewCharacter(new TilePosition(x, y, 0));
+                World.CreateNewCharacter(new TilePosition(x, y, 0), false);
             }
         }
 
         World.InstantBuild(new TilePosition(0, 2, 0), Rotation.N, World.GetBuildingPrototype("Spaceship"));
-        // World.InstantBuild(new TilePosition(5, 5, 0), Rotation.S, World.GetBuildingPrototype("Debug4"));
     }
 
     void Update ()
@@ -191,7 +192,7 @@ public class GameManager : MonoBehaviour
         GameObject model = null;
         for (int i = 0; i < buildingDisplay.Length; i++)
         {
-            if (buildingDisplay[i] != null && buildingDisplay[i].Type == prototype.ModelName)
+            if (buildingDisplay[i] != null && buildingDisplay[i].Type == prototype.Type)
             {
                 if (isPositionValid)
                 {
@@ -277,20 +278,10 @@ public class GameManager : MonoBehaviour
 
     public ResourceDisplayInfo GetResourceDisplayInfo(int resourceID)
     {
-        string resourceName;
-        if (World.ResourcesInfo.ContainsKey(resourceID))
-        {
-            resourceName = World.ResourcesInfo[resourceID].Name;
-        }
-        else
-        {
-            return null;
-        }
-        
         ResourceDisplayInfo result = null;
         for (int i = 0; i < resourceDisplay.Length; i++)
         {
-            if (resourceDisplay[i] != null && resourceDisplay[i].ResourceName == resourceName)
+            if (resourceDisplay[i] != null && resourceDisplay[i].ResourceID == resourceID)
             {
                 result = resourceDisplay[i];
                 break;

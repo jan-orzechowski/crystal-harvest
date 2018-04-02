@@ -13,7 +13,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
     public int MaxCapacity { get; protected set; }
     public int CurrentResourceCount { get; protected set; }
     public int UnreservedFreeSpace { get { return (MaxCapacity - CurrentResourceCount - FreeSpaceReservations.Count); } }
-
+  
     public bool Changed = true;
 
     public Storage(Building building, BuildingPrototype prototype)
@@ -35,6 +35,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
             if (initialStorageCount <= MaxCapacity)
             {
                 Resources = new Dictionary<int, int>(prototype.InitialStorage);
+                GameManager.Instance.World.RegisterResources(prototype.InitialStorage);
                 CurrentResourceCount = initialStorageCount;
                 return;
             }           
@@ -44,14 +45,16 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         CurrentResourceCount = 0;
     }
     
-    public bool CanReserveFreeSpace(Character character)
+    public bool CanReserveFreeSpace(int resourceID, Character character)
     {
         return (UnreservedFreeSpace > 0
-                && FreeSpaceReservations.Contains(character) == false);
+                && FreeSpaceReservations.Contains(character) == false
+                && Building.Prototype.RestrictedResources.Contains(resourceID) == false);
     }
+
     public bool ReserveFreeSpace(int resourceID, Character character)
     {
-        if (CanReserveFreeSpace(character))
+        if (CanReserveFreeSpace(resourceID, character))
         {
             FreeSpaceReservations.Add(character);
             return true;
@@ -74,6 +77,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
             return false;
         }
     }
+
     public bool CanReserveResource(int resourceID, Character character)
     {
         return (character.Reservation == null
@@ -81,6 +85,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
                 && Resources.ContainsKey(resourceID)
                 && Resources[resourceID] > 0);        
     }
+
     public bool ReserveResource(int resourceID, Character character)
     {
         if (CanReserveResource(resourceID, character))

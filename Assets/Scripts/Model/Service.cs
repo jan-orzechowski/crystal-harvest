@@ -29,6 +29,8 @@ public class Service : IBuildingModule
 
         NeedFulfilled = prototype.NeedFulfilled;
         NeedFulfillmentPerSecond = prototype.NeedFulfillmentPerSecond;
+
+        serviceDuration = Prototype.ServiceDuration;
     }
 
     public void UpdateService(float deltaTime)
@@ -62,6 +64,7 @@ public class Service : IBuildingModule
         if (InputStorage.IsFilled)
         {
             InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
+            GameManager.Instance.World.UnregisterResources(Prototype.ConsumedResources);
             return true;
         }
         else
@@ -106,7 +109,7 @@ public class Service : IBuildingModule
 
     public void RenewServiceReservation(Character character)
     {
-        if(reservation == character)
+        if (reservation == character)
         {
             reservationTimer = 5f;
         }

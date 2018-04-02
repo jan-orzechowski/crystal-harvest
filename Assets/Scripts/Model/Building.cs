@@ -5,7 +5,7 @@ using System;
 
 public class Building : ISelectable 
 {
-    public string Type { get { return prototype.Type; } }
+    public string Type { get { return Prototype.Type; } }
     public List<Tile> Tiles { get; protected set; }
     public Rotation Rotation { get; protected set; }
 
@@ -18,42 +18,42 @@ public class Building : ISelectable
 
     public IBuildingModule Module;
 
-    BuildingPrototype prototype;
+    public BuildingPrototype Prototype { get; protected set; }
 
     public Building(BuildingPrototype buildingPrototype, Rotation buildingRotation, 
                     List<Tile> tiles, Tile accessTile, Tile secondAccessTile)
     {
-        prototype = buildingPrototype;
+        Prototype = buildingPrototype;
 
         Rotation = buildingRotation;
         Tiles = tiles;
 
-        if (prototype.HasAccessTile)
+        if (Prototype.HasAccessTile)
         {
             this.accessTile = accessTile;
-            accessTileRotation = prototype.NormalizedAccessTileRotation.Rotate(buildingRotation);
+            accessTileRotation = Prototype.NormalizedAccessTileRotation.Rotate(buildingRotation);
         }
 
-        if (prototype.HasSecondAccessTile && secondAccessTile != null)
+        if (Prototype.HasSecondAccessTile && secondAccessTile != null)
         {
             this.secondAccessTile = secondAccessTile;
-            secondAccessTileRotation = prototype.NormalizedSecondAccessTileRotation.Rotate(buildingRotation);
+            secondAccessTileRotation = Prototype.NormalizedSecondAccessTileRotation.Rotate(buildingRotation);
         }
     }
 
     public void LoadDataForFinishedBuilding()
     {
-        if (prototype.ProductionTime > 0f)
+        if (Prototype.ProductionTime > 0f)
         {
-            Module = new Factory(this, prototype);
+            Module = new Factory(this, Prototype);
         }
-        else if (prototype.NeedFulfilled != null)
+        else if (Prototype.NeedFulfilled != null)
         {
-            Module = new Service(this, prototype);
+            Module = new Service(this, Prototype);
         }
-        else if (prototype.MaxStorage > 0)
+        else if (Prototype.MaxStorage > 0)
         {
-            Module = new Storage(this, prototype);
+            Module = new Storage(this, Prototype);
         }
     }
 
@@ -119,7 +119,7 @@ public class Building : ISelectable
                 }
             }
 
-            if (prototype.CanBeAccessedFromTop == false) break;
+            if (Prototype.CanBeAccessedFromTop == false) break;
 
             neighbours = tileToCheck.GetUpperNeighbours();
             foreach (Tile neighbour in neighbours)

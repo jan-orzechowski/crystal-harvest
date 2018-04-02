@@ -27,34 +27,19 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
 
     void Awake()
     {
-        if (ClippableBuilding == null)
+        if (ClippableBuilding == null && Building == null)
         {
-            Debug.Log("Brak ClippableBuilding");
-            ClippableBuilding = Building;
+            Debug.LogError("Brak modelu budynku");     
         }
+        else if (ClippableBuilding == null) ClippableBuilding = Building;
+        else if (Building == null) Building = ClippableBuilding;
 
-        if (Scaffolding == null)
+        if (ClippableScaffolding == null && Scaffolding == null)
         {
-            Debug.Log("Brak Scaffolding");
-            Scaffolding = new GameObject();
+            Debug.LogError("Brak rusztowania");
         }
-
-        if (ClippableScaffolding == null)
-        {
-            Debug.Log("Brak ClippableScaffolding");
-            ClippableScaffolding = Scaffolding;
-        }
-        else
-        {
-            ClippableObject[] clippableObjects = ClippableScaffolding.GetComponentsInChildren<ClippableObject>();
-            for (int i = 0; i < clippableObjects.Length; i++)
-            {
-                clippableObjects[i].plane1Position = new Vector3(0, GameManager.Instance.LevelHeightOffset, 0);
-            }
-
-            ClippableBuilding.GetComponentInChildren<ClippableObject>().plane1Position =
-                new Vector3(0, GameManager.Instance.LevelHeightOffset, 0);
-        }
+        else if (ClippableScaffolding == null) ClippableScaffolding = Scaffolding;
+        else if (Scaffolding == null) Scaffolding = ClippableScaffolding;
        
         colliderBottomPlane = Collider.transform.position.y + Collider.center.y - (Collider.size.y / 2);
         colliderMaxUpperPlane = Collider.transform.position.y + Collider.center.y + (Collider.size.y / 2);

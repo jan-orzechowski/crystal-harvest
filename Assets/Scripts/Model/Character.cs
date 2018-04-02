@@ -14,11 +14,11 @@ public class Character : ISelectable
     public Tile DestinationTile { get; protected set; }
 
     public float MovementPercentage { get; protected set; }
-    float movementSpeed = 6f; //3f
+    float movementSpeed = 9f; // 3f
 
     public Quaternion CurrentRotation { get; protected set; }
     Quaternion targetRotation;
-    float degreesPerSecond = 270f;
+    float degreesPerSecond = 360f; // 270
 
     bool isLastTileRotationSet;
     Quaternion lastTileRotation;

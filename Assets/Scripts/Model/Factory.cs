@@ -20,6 +20,8 @@ public class Factory : IWorkplace, IBuildingModule
     float jobReservationTimer;
     float timeWithoutWork;
 
+    public bool ProducesRobot { get; protected set; }
+
     public int RemainingProductionCycles { get; protected set; }
 
     public Factory(Building building, BuildingPrototype prototype)
@@ -29,7 +31,9 @@ public class Factory : IWorkplace, IBuildingModule
         productionTime = prototype.ProductionTime;
         ProductionStarted = false;
 
-        if(prototype.ProductionCyclesLimitMax < 0)
+        ProducesRobot = prototype.ProducesRobot;
+
+        if (prototype.ProductionCyclesLimitMax < 0)
         {
             RemainingProductionCycles = -1;
         }
@@ -127,7 +131,16 @@ public class Factory : IWorkplace, IBuildingModule
     {
         if (OutputStorage.IsEmpty)
         {
-            OutputStorage = new StorageToEmpty(Building, Prototype.ProducedResources);           
+            OutputStorage = new StorageToEmpty(Building, Prototype.ProducedResources);
+            GameManager.Instance.World.RegisterResources(Prototype.ProducedResources);
+
+            if (ProducesRobot)
+            {
+                Tile tile = Building.GetAccessTile(getSecond: true);
+                if (tile == null) tile = Building.GetAccessTile(getSecond: false);
+                return GameManager.Instance.World.CreateNewCharacter(tile.Position, true);
+            }
+
             return true;
         }
         else
@@ -141,6 +154,7 @@ public class Factory : IWorkplace, IBuildingModule
         if (InputStorage.IsFilled)
         {
             InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
+            GameManager.Instance.World.UnregisterResources(Prototype.ConsumedResources);
             return true;            
         }
         else

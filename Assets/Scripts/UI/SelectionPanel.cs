@@ -142,6 +142,13 @@ public class SelectionPanel : MonoBehaviour
     public static void ShowResourceIcon(int resourceID, ResourceIconSlot slot, bool requiredIcon, List<GameObject> icons)
     {
         ResourceDisplayInfo rdi = GameManager.Instance.GetResourceDisplayInfo(resourceID);
+
+        if (rdi == null)
+        {
+            Debug.LogWarning("Brakuje ResourceDisplayInfo dla zasobu: " + resourceID);
+            return;
+        }
+
         GameObject iconPrefab;
         if (requiredIcon)
         {

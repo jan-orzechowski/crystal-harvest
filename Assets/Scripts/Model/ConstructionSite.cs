@@ -118,6 +118,7 @@ public class ConstructionSite : IWorkplace
             }
             else if (Stage == ConstructionStage.Construction)
             {
+                world.UnregisterResources(InputStorage.Resources);
                 world.FinishConstruction(this);
             }
             else if (Stage == ConstructionStage.Deconstruction)
@@ -181,6 +182,7 @@ public class ConstructionSite : IWorkplace
     {
         ConstructionStorage = new StorageToFill(Building, null);
         DeconstructionStorage = new StorageToEmpty(Building, Prototype.ResourcesFromDeconstruction);
+        GameManager.Instance.World.RegisterResources(Prototype.ResourcesFromDeconstruction);
     }
 
     void LoadResourcesForScaffoldingConstruction()

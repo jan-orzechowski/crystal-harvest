@@ -6,7 +6,7 @@ using System;
 [Serializable]
 public class ResourceDisplayInfo
 {
-    public string ResourceName;
+    public int ResourceID;
     public GameObject Model;
     public GameObject HeldModel;
 

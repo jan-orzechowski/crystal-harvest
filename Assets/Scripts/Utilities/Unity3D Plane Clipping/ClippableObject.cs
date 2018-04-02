@@ -55,7 +55,7 @@ public class ClippableObject : MonoBehaviour {
         }
     }
 
-    //Ideally the planes do not need to be updated every frame, but we'll just keep the logic here for simplicity purposes.
+    // Ideally the planes do not need to be updated every frame, but we'll just keep the logic here for simplicity purposes.
     public void Update()
     {
         var sharedMaterials = GetComponent<MeshRenderer>().sharedMaterials;
@@ -109,6 +109,6 @@ public class ClippableObject : MonoBehaviour {
                 sharedMaterial.SetVector("_planePos3", plane3Position);
                 sharedMaterial.SetVector("_planeNorm3", Quaternion.Euler(plane3Rotation) * Vector3.up);
             }
-        }       
+        }
     }
 }

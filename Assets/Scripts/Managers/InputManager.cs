@@ -21,7 +21,7 @@ public class InputManager : MonoBehaviour
 
     public GameObject SelectionBoxPrefab;
     GameObject selectionBox;
-    MeshRenderer seletionBoxMeshRenderer;
+    MeshRenderer selectionBoxMeshRenderer;
 
     BuildModeManager buildModeManager;
     bool buildMode;
@@ -49,7 +49,7 @@ public class InputManager : MonoBehaviour
         raycastResults = new RaycastHit[maxRaycastResultsNumber];
 
         selectionBox = GameObject.Instantiate(SelectionBoxPrefab);
-        seletionBoxMeshRenderer = selectionBox.transform.GetComponentInChildren<MeshRenderer>();
+        selectionBoxMeshRenderer = selectionBox.transform.GetComponentInChildren<MeshRenderer>();
         debugPreview = GameObject.Instantiate(debugPreviewPrefab);
 
         world = GameManager.Instance.World;
@@ -341,8 +341,11 @@ public class InputManager : MonoBehaviour
                 selectionBox.transform.SetPositionAndRotation(
                     selectedObjectCollider.transform.position + selectedObjectCollider.center,
                     selectedObjectCollider.transform.rotation);
-                seletionBoxMeshRenderer.transform.localScale = 
-                    selectedObjectCollider.size * 1.05f;
+
+                selectionBox.transform.localScale = new Vector3(
+                    selectedObjectCollider.size.x * selectedObjectCollider.transform.localScale.x,
+                    selectedObjectCollider.size.y * selectedObjectCollider.transform.localScale.y,
+                    selectedObjectCollider.size.z * selectedObjectCollider.transform.localScale.z);
             }
             else
             {

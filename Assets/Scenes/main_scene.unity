@@ -4511,7 +4511,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1781474332796300, guid: 8c00025a95ed50747b10caa3350e603b, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114231451844097170, guid: 8c00025a95ed50747b10caa3350e603b,
         type: 2}
@@ -4552,6 +4552,11 @@ Prefab:
         type: 2}
       propertyPath: m_Color.a
       value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 224000803960163450, guid: 8c00025a95ed50747b10caa3350e603b,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8c00025a95ed50747b10caa3350e603b, type: 2}
@@ -5297,23 +5302,65 @@ MonoBehaviour:
     type: 2}
   LevelHeightOffset: 1
   resourceDisplay:
-  - ResourceName: Metal
-    Model: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b, type: 2}
+  - ResourceID: 1
+    Model: {fileID: 1910400602359560, guid: f1ad62504a9df1e458ebff7562a6b55e, type: 2}
     HeldModel: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b,
       type: 2}
     Icon: {fileID: 1965754638058592, guid: 0dfac1e7794c44847a247af828a926b8, type: 2}
     RequiredIcon: {fileID: 1965754638058592, guid: 3485717e592dbbd4c9f4bd8d7cceaf51,
       type: 2}
-  - ResourceName: Gaz
-    Model: {fileID: 1423872702665596, guid: c10d3c2ee86619c46ae62c04cf0c4f43, type: 2}
+  - ResourceID: 2
+    Model: {fileID: 1927074477168358, guid: 8379be47c50ec044691363071f57b6d6, type: 2}
     HeldModel: {fileID: 1423872702665596, guid: c10d3c2ee86619c46ae62c04cf0c4f43,
       type: 2}
     Icon: {fileID: 1965754638058592, guid: 5a04967939bc1be43af0c79f447811fc, type: 2}
     RequiredIcon: {fileID: 1965754638058592, guid: 36814421c227e50459f8bd2e0db45df5,
       type: 2}
-  - ResourceName: "Kryszta\u0142y"
-    Model: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b, type: 2}
-    HeldModel: {fileID: 1970869807617422, guid: 4722f45a4e0b71a4b84d20c36769165b,
+  - ResourceID: 3
+    Model: {fileID: 1032887445183112, guid: 45e59a47c53920f45a7b3f59200ea05a, type: 2}
+    HeldModel: {fileID: 1470332919229070, guid: c46fbdc86f76ecf45bc13632418a20ab,
+      type: 2}
+    Icon: {fileID: 1965754638058592, guid: a73a1112ec9c7694d841d22b886ee163, type: 2}
+    RequiredIcon: {fileID: 1965754638058592, guid: 96b62350ee0656b458cb5300be4705eb,
+      type: 2}
+  - ResourceID: 4
+    Model: {fileID: 1898546135320094, guid: 155ba065a5d036d40bb6431ce4044236, type: 2}
+    HeldModel: {fileID: 1234656413012640, guid: 8a37cd94adc685c4aad798766350ee2f,
+      type: 2}
+    Icon: {fileID: 1965754638058592, guid: 85466b611480ff141bcdf131a1f6b29a, type: 2}
+    RequiredIcon: {fileID: 1965754638058592, guid: 1a6dad08e28d92840bbed5d80c53dde3,
+      type: 2}
+  - ResourceID: 5
+    Model: {fileID: 1842443446183746, guid: 92463b098598a854d8db49ff3690e9b4, type: 2}
+    HeldModel: {fileID: 1368009544631732, guid: 65a14ed8f14962e45b0aafcb8889ce8d,
+      type: 2}
+    Icon: {fileID: 1965754638058592, guid: 93f9884438c59814abf7db663c486cef, type: 2}
+    RequiredIcon: {fileID: 1965754638058592, guid: 3f2838cbb2f41344e9e47bce04d82b27,
+      type: 2}
+  - ResourceID: 6
+    Model: {fileID: 1855333416330630, guid: 660617972b721e144b45d210bc54b7a1, type: 2}
+    HeldModel: {fileID: 1086899101432220, guid: 6f5bdc3e9a638d344bfb78dc8f835f8f,
+      type: 2}
+    Icon: {fileID: 1965754638058592, guid: 9ac153e3bbb11da48b119bf2deddc6d5, type: 2}
+    RequiredIcon: {fileID: 1965754638058592, guid: 4e29f9a035ca36c4fb48e8f21277b364,
+      type: 2}
+  - ResourceID: 7
+    Model: {fileID: 1370990097116590, guid: 99500b6cee324eb45a92d920920fbea4, type: 2}
+    HeldModel: {fileID: 1157096307211260, guid: 1e6489cb574b8a74180f502579cde49f,
+      type: 2}
+    Icon: {fileID: 1965754638058592, guid: ba67d7dab91dde247b9d0d8689f6ffb4, type: 2}
+    RequiredIcon: {fileID: 1965754638058592, guid: 0dfcf0485583ec64584a3021d7d03e0d,
+      type: 2}
+  - ResourceID: 8
+    Model: {fileID: 1143688982523690, guid: 3ae4398dfbc05b4459653c5b2c03ca04, type: 2}
+    HeldModel: {fileID: 1597833684142308, guid: c56337b1626aa27428da2db47b492d4e,
+      type: 2}
+    Icon: {fileID: 1965754638058592, guid: 44dd44aa53d005342977c311bee519a4, type: 2}
+    RequiredIcon: {fileID: 1965754638058592, guid: e85a22f78e1002b4291598ad54c90fb4,
+      type: 2}
+  - ResourceID: 0
+    Model: {fileID: 1460210597957186, guid: 959ce0157cd3e334cb244f8bc029170b, type: 2}
+    HeldModel: {fileID: 1141882248111082, guid: cae1db9aa3963474baf62a33a99b571a,
       type: 2}
     Icon: {fileID: 1965754638058592, guid: 53100c28404a301409922c2798f07da1, type: 2}
     RequiredIcon: {fileID: 1965754638058592, guid: 3885f9eb872aaf24ab713a4419151bfb,
@@ -6640,7 +6687,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1063482763
 RectTransform:
   m_ObjectHideFlags: 0
