@@ -5432,7 +5432,7 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1196710934979466, guid: 70414ad235cea5c42963b6a5cd528d19,
       type: 2}
-    ConstructionSiteObject: {fileID: 1226485674601198, guid: 735c7af4d120d8a40b985a104772b323,
+    ConstructionSiteObject: {fileID: 1584546404345070, guid: db5ad38b53ca2044585400dd5c46be71,
       type: 2}
   - Type: OreDeposit
     Model: {fileID: 1692267618236294, guid: 0a2c3a12a37867e4386aac3844d0c0bf, type: 2}
@@ -5488,7 +5488,7 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1407838509241894, guid: e0744251f9a78c84caa100fe88b73229,
       type: 2}
-    ConstructionSiteObject: {fileID: 1569417230093956, guid: 450b30319a44d9541a91d692c09fa60c,
+    ConstructionSiteObject: {fileID: 1094977862579048, guid: 450b30319a44d9541a91d692c09fa60c,
       type: 2}
   - Type: Metalworks
     Model: {fileID: 1554761783813072, guid: 6e2c575dccd93a646a11eb7396beb5cc, type: 2}
@@ -5536,7 +5536,8 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1031653621254846, guid: 2f694046e8e1fd84e9372a53dc15097c,
       type: 2}
-    ConstructionSiteObject: {fileID: 0}
+    ConstructionSiteObject: {fileID: 1894504185982576, guid: d95090b5781c99944a715ca5fefd382a,
+      type: 2}
   - Type: Storage
     Model: {fileID: 1455231007858968, guid: 34b2a1adf3d12db4eb4320973a041e19, type: 2}
     PreviewModel: {fileID: 1977790761383418, guid: a9dfcf46a39604c42b4e747ee3d3aab8,

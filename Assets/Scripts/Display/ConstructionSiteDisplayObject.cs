@@ -15,12 +15,14 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     public GameObject Building;
     public GameObject ClippableBuilding;
 
+    public float HeightOffset = 0f;
+
     float minColliderHeight = 0.1f;
 
     float colliderBottomPlane;
     float colliderMaxUpperPlane;
 
-    bool builtOnSecondLevel = false;
+    bool builtOnSecondLevel = false;  
 
     float maxY;
     float minY;
@@ -44,7 +46,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
         colliderBottomPlane = Collider.transform.position.y + Collider.center.y - (Collider.size.y / 2);
         colliderMaxUpperPlane = Collider.transform.position.y + Collider.center.y + (Collider.size.y / 2);
 
-        minY = colliderBottomPlane - colliderMaxUpperPlane - 0.21f;
+        minY = colliderBottomPlane - colliderMaxUpperPlane - 0.21f - HeightOffset;
 
         maxY = colliderBottomPlane;
     }
@@ -53,7 +55,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     {
         if (ConstructionSite == null) return;
 
-        if (ConstructionPlane.activeSelf && ConstructionSite.GetCompletionPercentage() > 0.05f) ConstructionPlane.SetActive(false);
+        // if (ConstructionPlane.activeSelf && ConstructionSite.GetCompletionPercentage() > 0.05f) ConstructionPlane.SetActive(false);
 
         if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
         {
