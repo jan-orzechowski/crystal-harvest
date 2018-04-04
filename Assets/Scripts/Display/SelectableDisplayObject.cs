@@ -18,6 +18,6 @@ public class SelectableDisplayObject : MonoBehaviour
         
     public virtual void AssignModelObject(ISelectable modelObject)
     {
-        ModelObject = modelObject;
+        ModelObject = modelObject;        
     }
 }

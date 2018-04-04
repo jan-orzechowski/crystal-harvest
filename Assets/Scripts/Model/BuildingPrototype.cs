@@ -59,6 +59,8 @@ public class BuildingPrototype
     public string NeedFulfilled = null;
     public float NeedFulfillmentPerSecond;
     public float ServiceDuration;
+
+    public bool HidesCharacter = false;
     
     public string Description = "NO DESCRIPTION \n NO DESCRIPTION \n NO DESCRIPTION";
 

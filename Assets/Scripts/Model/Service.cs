@@ -6,7 +6,7 @@ using System;
 public class Service : IBuildingModule
 {
     public Building Building { get; protected set; }
-    public BuildingPrototype Prototype { get; protected set; }
+    public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
     public StorageToFill InputStorage;
 
@@ -20,15 +20,16 @@ public class Service : IBuildingModule
     public string NeedFulfilled { get; protected set; }
     float NeedFulfillmentPerSecond;
 
-    public Service(Building building, BuildingPrototype prototype)
+    public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
+
+    public Service(Building building)
     {
         Building = building;
-        this.Prototype = prototype;
 
-        InputStorage = new StorageToFill(building, prototype.ConsumedResources);
+        InputStorage = new StorageToFill(building, Prototype.ConsumedResources);
 
-        NeedFulfilled = prototype.NeedFulfilled;
-        NeedFulfillmentPerSecond = prototype.NeedFulfillmentPerSecond;
+        NeedFulfilled = Prototype.NeedFulfilled;
+        NeedFulfillmentPerSecond = Prototype.NeedFulfillmentPerSecond;
 
         serviceDuration = Prototype.ServiceDuration;
     }

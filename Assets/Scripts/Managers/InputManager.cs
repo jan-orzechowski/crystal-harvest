@@ -333,7 +333,7 @@ public class InputManager : MonoBehaviour
         {
             BoxCollider selectedObjectCollider = SelectedObject.GetDisplayObject().Collider;
 
-            if (selectedObjectCollider != null)
+            if (selectedObjectCollider != null && selectedObjectCollider.gameObject.activeSelf)
             {
                 SidePanel.HidePanels();
 

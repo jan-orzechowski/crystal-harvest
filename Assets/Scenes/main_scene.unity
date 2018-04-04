@@ -3699,8 +3699,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 150108845}
-  - {fileID: 1384986430}
   - {fileID: 783981120}
+  - {fileID: 1384986430}
   - {fileID: 633886237}
   - {fileID: 520428124}
   - {fileID: 1130380819}
@@ -3711,7 +3711,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 365, y: -325}
+  m_AnchoredPosition: {x: 365, y: -290}
   m_SizeDelta: {x: 360, y: 285}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &640097436
@@ -4511,7 +4511,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1781474332796300, guid: 8c00025a95ed50747b10caa3350e603b, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114231451844097170, guid: 8c00025a95ed50747b10caa3350e603b,
         type: 2}
@@ -4600,11 +4600,11 @@ RectTransform:
   m_Children:
   - {fileID: 866732146}
   m_Father: {fileID: 640097435}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 5, y: -105}
+  m_AnchoredPosition: {x: 5, y: -70}
   m_SizeDelta: {x: 350, y: 30}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &783981121
@@ -5290,6 +5290,8 @@ MonoBehaviour:
     type: 2}
   CharacterPrefab: {fileID: 1962228261635874, guid: cb0e71ee1b817784ea6a3ce7d5a0fdc1,
     type: 2}
+  RobotPrefab: {fileID: 1375826919998954, guid: a369b2da4a2c773468705c2bc246fb57,
+    type: 2}
   TilesParent: {fileID: 1923286425}
   BuildingsParent: {fileID: 1256720390}
   CharactersParent: {fileID: 2048119415}
@@ -5450,7 +5452,7 @@ MonoBehaviour:
       type: 2}
     ConstructionSiteObject: {fileID: 1063681881794236, guid: 0ffda200f2fe78543897d4b87f60fa30,
       type: 2}
-  - Type: BrainsFactory
+  - Type: PartsFactory
     Model: {fileID: 1728789343642076, guid: da4588dbcf4f75d438eb25da5af480d7, type: 2}
     PreviewModel: {fileID: 1219229949695842, guid: c4e8ad37e16eada4c998fe28e4d3025f,
       type: 2}
@@ -5482,7 +5484,7 @@ MonoBehaviour:
       type: 2}
     ConstructionSiteObject: {fileID: 1144676222160638, guid: ebca9ec68a0331640bb6767aa2aa3a9c,
       type: 2}
-  - Type: PartsFactory
+  - Type: RobotFactory
     Model: {fileID: 1502742563739246, guid: 97cb3330bf817314ebc94855367621be, type: 2}
     PreviewModel: {fileID: 1698116446713782, guid: 5bbe650deeda4f245925bb7501ec018e,
       type: 2}
@@ -5514,13 +5516,13 @@ MonoBehaviour:
       type: 2}
     ConstructionSiteObject: {fileID: 1990414758226860, guid: 2c246d1440e909e498addb3cf2e40e85,
       type: 2}
-  - Type: RobotFactory
-    Model: {fileID: 1892668211081632, guid: 7e4ded4a24b8b2d4194a092f6e5faedf, type: 2}
-    PreviewModel: {fileID: 1053069262729096, guid: 02f79318d96a4704480e15bae2c780c3,
+  - Type: RepairStation
+    Model: {fileID: 1074076335094944, guid: d59c3d0632bdc354eb45db78812ce3b2, type: 2}
+    PreviewModel: {fileID: 1616531736460964, guid: 12f8ab4da243e784d8f6e8da1aa115bd,
       type: 2}
-    InvalidPreviewModel: {fileID: 1797727006355934, guid: 2d681895058f4a942bc8098e19b26ac4,
+    InvalidPreviewModel: {fileID: 1054882344730782, guid: 44cd1dd4ea37bb247ab9135176775add,
       type: 2}
-    ConstructionSiteObject: {fileID: 1430935005590512, guid: d79596fa9e8d9f04aa003a383c458352,
+    ConstructionSiteObject: {fileID: 1868940281382108, guid: 843bf8e064c6c7a43b71fd6e37a3d92b,
       type: 2}
   - Type: Laboratory
     Model: {fileID: 1977261122492824, guid: 6f216426030ab944394ad01a3d744908, type: 2}
@@ -6752,7 +6754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 5, y: -325}
+  m_AnchoredPosition: {x: 5, y: -290}
   m_SizeDelta: {x: 360, y: 285}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1090257147
@@ -8021,7 +8023,7 @@ GameObject:
   - component: {fileID: 1384986434}
   - component: {fileID: 1384986435}
   m_Layer: 5
-  m_Name: BrainFactory
+  m_Name: RepairStation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8040,11 +8042,11 @@ RectTransform:
   m_Children:
   - {fileID: 1895572441}
   m_Father: {fileID: 640097435}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 5, y: -70}
+  m_AnchoredPosition: {x: 5, y: -105}
   m_SizeDelta: {x: 350, y: 30}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1384986431
@@ -8147,7 +8149,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: BrainsFactory
+          m_StringArgument: RepairStation
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -8163,7 +8165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47a4a505f28c17d499bd6eeb1946d202, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PrototypeName: BrainsFactory
+  PrototypeName: RepairStation
 --- !u!1 &1387406124
 GameObject:
   m_ObjectHideFlags: 0
@@ -9513,7 +9515,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Fabryka m\xF3zg\xF3w elektronowych"
+  m_Text: Stacja naprawcza
 --- !u!222 &1895572443
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10331,7 +10333,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 730, y: 330}
+  m_SizeDelta: {x: 730, y: 295}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &2071196423
 MonoBehaviour:

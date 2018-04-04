@@ -6,7 +6,7 @@ using System;
 public class Factory : IWorkplace, IBuildingModule
 {
     public Building Building { get; protected set; }
-    public BuildingPrototype Prototype { get; protected set; }
+    public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
     public StorageToFill InputStorage { get; protected set; }
     public StorageToEmpty OutputStorage { get; protected set; }
@@ -24,26 +24,27 @@ public class Factory : IWorkplace, IBuildingModule
 
     public int RemainingProductionCycles { get; protected set; }
 
-    public Factory(Building building, BuildingPrototype prototype)
+    public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
+
+    public Factory(Building building)
     {
         Building = building;
-        this.Prototype = prototype;
-        productionTime = prototype.ProductionTime;
+        productionTime = Prototype.ProductionTime;
         ProductionStarted = false;
 
-        ProducesRobot = prototype.ProducesRobot;
+        ProducesRobot = Prototype.ProducesRobot;
 
-        if (prototype.ProductionCyclesLimitMax < 0)
+        if (Prototype.ProductionCyclesLimitMax < 0)
         {
             RemainingProductionCycles = -1;
         }
         else
         {
-            RemainingProductionCycles = UnityEngine.Random.Range(prototype.ProductionCyclesLimitMin,
-                                                                 prototype.ProductionCyclesLimitMax + 1);
+            RemainingProductionCycles = UnityEngine.Random.Range(Prototype.ProductionCyclesLimitMin,
+                                                                 Prototype.ProductionCyclesLimitMax + 1);
         }        
 
-        InputStorage = new StorageToFill(Building, prototype.ConsumedResources);
+        InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
         OutputStorage = new StorageToEmpty(Building, null);
     }
 

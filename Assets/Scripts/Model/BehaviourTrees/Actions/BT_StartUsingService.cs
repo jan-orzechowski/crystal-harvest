@@ -16,6 +16,7 @@ public class BT_StartUsingService : BT_Node
             bool result = am.Service.StartService(am.Character);
             if (result)
             {
+                am.Character.DisplayObject.CharacterUsesModule(am.Service);
                 return BT_Result.SUCCESS;
             }
             else

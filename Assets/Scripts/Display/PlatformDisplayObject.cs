@@ -213,9 +213,23 @@ public class PlatformDisplayObject : SelectableDisplayObject
         models.Add(cornerObject);
     }
 
-    public void AssignPlatform(Building building)
+    public override void AssignModelObject(ISelectable modelObject)
     {
-        tile = building.Tiles[0];
+        base.AssignModelObject(modelObject);
+
+        if (modelObject != null && modelObject is Building)
+        {
+            Building building = (Building)modelObject;
+            building.AssignDisplayObject(this);
+            if (building.Type == "Platform")
+            {
+                tile = building.Tiles[0];
+                GameManager.Instance.UpdatePlatformDisplay(building.Tiles[0]);
+                return;
+            }
+        }
+
+        Debug.LogWarning("Stworzono instancję PlatformDisplayObject bez przypisanego budynku");
     }
 }
 

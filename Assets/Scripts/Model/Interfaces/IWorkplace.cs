@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public interface IWorkplace
+public interface IWorkplace : IBuildingModule
 {
     bool Work(float deltaTime, Character character);
     bool CanReserveJob(Character character);

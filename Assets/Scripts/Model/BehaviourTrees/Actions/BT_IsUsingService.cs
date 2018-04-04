@@ -9,6 +9,7 @@ public class BT_IsUsingService : BT_Node
     {
         if (am.Character.UsingService)
         {
+            am.Character.DisplayObject.CharacterUsesModule(am.Service);
             return BT_Result.SUCCESS;
         }
         else

@@ -38,6 +38,12 @@ public class World
     List<Tile> modifiedTiles;
     bool mapChangedThisFrame;
 
+    int humanCounter;
+    int robotCounter;
+
+    public int HumanNumber { get; protected set; }
+    public int RobotNumber { get; protected set; }
+
     public World(int width, int length)
     {
         XSize = width;
@@ -108,10 +114,10 @@ public class World
         modifiedTiles = new List<Tile>();
 
         humanBehaviourTree = new BT_Tree();
-        humanBehaviourTree.DEBUG_LoadTestTree();
+        humanBehaviourTree.LoadHumanTree();
 
         robotBehaviourTree = new BT_Tree();
-        robotBehaviourTree.DEBUG_LoadTestTree();
+        robotBehaviourTree.LoadRobotTree();
 
         Storages = new List<Storage>();
         Factories = new List<Factory>();
@@ -138,10 +144,6 @@ public class World
         for (int i = 0; i < Characters.Count; i++)
         {
             Characters[i].UpdateCharacter(deltaTime);
-        }
-        for (int i = 0; i < Buildings.Count; i++)
-        {
-            Buildings[i].UpdateBuilding(deltaTime);
         }
         for (int i = 0; i < Factories.Count; i++)
         {
@@ -204,15 +206,19 @@ public class World
             Character c;
             if (isRobot)
             {
-                c = new Character("Robot", t, robotBehaviourTree);
+                c = new Character(("Robot #" + robotCounter), t, robotBehaviourTree, isRobot);
+                robotCounter++;
+                RobotNumber++;
             }
             else
             {
-                c = new Character("Wiesław", t, humanBehaviourTree);
+                c = new Character(("Human #" + humanCounter), t, humanBehaviourTree, isRobot);
+                humanCounter++;
+                HumanNumber++;
             }
             Characters.Add(c);
 
-            GameManager.Instance.GenerateDisplayForCharacter(c);
+            GameManager.Instance.GenerateDisplayForCharacter(c, isRobot);
             Debug.Log("Dodano postać: " + c.CurrentTile.Position.ToString());
             return true;
         }
@@ -244,7 +250,7 @@ public class World
                 && ! (prototype.CanBeBuiltOnRock == false && tile.Type == TileType.Rock)
                 && ! (prototype.CanBeBuiltOnPlatform == false && tile.Type == TileType.WalkableEmpty)
                 && ! (prototype.AllowToBuildOnTop == false && Platforms.ContainsKey(tile))
-                && (((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) || prototype.MovementCost != 0f))
+                && ((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) || prototype.MovementCost != 0f)
                 )
             {
                 continue;
@@ -375,30 +381,10 @@ public class World
             Building newBuilding = new Building(prototype, rotation, tilesForBuilding, accessTile, secondAccessTile);
             Buildings.Add(newBuilding);
 
-            for (int i = 0; i < tilesForBuilding.Count; i++)
+            if (prototype.ConstructionWithoutScaffolding == false)
             {
-                //tilesForBuilding[i].Building = newBuilding;
-                tilesForBuilding[i].MovementCost = prototype.MovementCost;
-                modifiedTiles.Add(tilesForBuilding[i]);
-
-                if (prototype.DisallowDiagonalMovement) tilesForBuilding[i].AllowDiagonal = false;
+                ApplyNewMovementCostsToTiles(newBuilding);
             }
-
-            if (prototype.WalkableOnTop)
-            {
-                for (int i = 0; i < tilesForBuilding.Count; i++)
-                {
-                    Tile tileOnTop = tilesForBuilding[i].GetUpperNeighbour();
-                    if(tileOnTop != null)
-                    {
-                        tileOnTop.Type = TileType.WalkableEmpty;
-                        tileOnTop.MovementCost = prototype.MovementCostOnTop;
-                        modifiedTiles.Add(tileOnTop);
-                    }
-                }
-            }
-
-            mapChangedThisFrame = true;
             
             ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype);
             ConstructionSites.Add(newConstructionSite);
@@ -409,6 +395,36 @@ public class World
 
             return newConstructionSite;
         }       
+    }
+
+    public void ApplyNewMovementCostsToTiles(Building building)
+    {
+        for (int i = 0; i < building.Tiles.Count; i++)
+        {
+            building.Tiles[i].MovementCost = building.Prototype.MovementCost;
+            modifiedTiles.Add(building.Tiles[i]);
+
+            if (building.Prototype.DisallowDiagonalMovement)
+            {
+                building.Tiles[i].AllowDiagonal = false;
+            }
+        }
+
+        if (building.Prototype.WalkableOnTop)
+        {
+            for (int i = 0; i < building.Tiles.Count; i++)
+            {
+                Tile tileOnTop = building.Tiles[i].GetUpperNeighbour();
+                if (tileOnTop != null)
+                {
+                    tileOnTop.Type = TileType.WalkableEmpty;
+                    tileOnTop.MovementCost = building.Prototype.MovementCostOnTop;
+                    modifiedTiles.Add(tileOnTop);
+                }
+            }
+        }
+
+        mapChangedThisFrame = true;
     }
 
     public void InstantBuild(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
@@ -543,7 +559,12 @@ public class World
 
         buildingToConstruct.LoadDataForFinishedBuilding();
 
-        if(buildingToConstruct.Type == "Stairs")
+        if (buildingToConstruct.Prototype.ConstructionWithoutScaffolding)
+        {
+            ApplyNewMovementCostsToTiles(buildingToConstruct);
+        }
+
+        if (buildingToConstruct.Type == "Stairs")
         {
             Stairs.Add(buildingToConstruct);
         }

@@ -25,7 +25,7 @@ public class InfoPanel : MonoBehaviour
         s += "ZAZNACZENIE: \n";
         if(mouseManager.SelectedObject != null)
         {
-            s += mouseManager.SelectedObject.GetSelectionText() + "\n \n";
+            s += mouseManager.SelectedObject.DEBUG_GetSelectionText() + "\n \n";
         }
         else
         {

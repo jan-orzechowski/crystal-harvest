@@ -6,7 +6,7 @@ using System;
 public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
 {
     public Building Building { get; protected set; }
-
+    public BuildingPrototype Prototype { get { return Building.Prototype; } }
     public Dictionary<int, int> Resources { get; protected set; }
     public Dictionary<Character, int> ReservedResources { get; protected set; }
     public List<Character> FreeSpaceReservations { get; protected set; }
@@ -16,26 +16,28 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
   
     public bool Changed = true;
 
-    public Storage(Building building, BuildingPrototype prototype)
+    public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
+
+    public Storage(Building building)
     {
         Building = building;
        
         ReservedResources = new Dictionary<Character, int>();
         FreeSpaceReservations = new List<Character>();
 
-        MaxCapacity = prototype.MaxStorage;
+        MaxCapacity = Prototype.MaxStorage;
         
-        if(prototype.InitialStorage != null)
+        if (Prototype.InitialStorage != null)
         {
             int initialStorageCount = 0;
-            foreach (int id in prototype.InitialStorage.Keys)
+            foreach (int id in Prototype.InitialStorage.Keys)
             {
-                initialStorageCount += prototype.InitialStorage[id];
+                initialStorageCount += Prototype.InitialStorage[id];
             }
             if (initialStorageCount <= MaxCapacity)
             {
-                Resources = new Dictionary<int, int>(prototype.InitialStorage);
-                GameManager.Instance.World.RegisterResources(prototype.InitialStorage);
+                Resources = new Dictionary<int, int>(Prototype.InitialStorage);
+                GameManager.Instance.World.RegisterResources(Prototype.InitialStorage);
                 CurrentResourceCount = initialStorageCount;
                 return;
             }           

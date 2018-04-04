@@ -7,7 +7,7 @@ public class BT_Work : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if(am.Workplace == null || am.Workplace.GetAccessTile() != am.Character.CurrentTile)
+        if (am.Workplace == null || am.Workplace.GetAccessTile() != am.Character.CurrentTile)
         {
             return BT_Result.ERROR;
         }
@@ -16,14 +16,7 @@ public class BT_Work : BT_Node
             bool result = am.Workplace.Work(am.DeltaTime, am.Character);
             if (result)
             {
-                //if(am.Workplace.ProductionStarted == false)
-                //{
-                //    return BT_Result.SUCCESS;
-                //}
-                //else
-                //{
-                //    return BT_Result.RUNNING;
-                //}      
+                am.Character.DisplayObject.CharacterUsesModule(am.Workplace);
                 return BT_Result.RUNNING;
             }
             else

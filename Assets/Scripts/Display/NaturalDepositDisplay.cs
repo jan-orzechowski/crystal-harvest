@@ -26,9 +26,20 @@ public class NaturalDepositDisplay : SelectableDisplayObject
         }
     }
 
-    public void AssignDeposit(Factory deposit)
+    public override void AssignModelObject(ISelectable modelObject)
     {
-        this.deposit = deposit;
-        AssignModelObject((ISelectable)deposit.Building);
+        base.AssignModelObject(modelObject);
+
+        if (modelObject != null && modelObject is Building)
+        {
+            Building building = (Building)modelObject;
+            if (building.Module != null && building.Module is Factory)
+            {
+                deposit = (Factory)building.Module;
+                return;
+            }
+        }
+
+        Debug.LogWarning("Stworzono instancję NaturalDepositDisplay bez przypisanej fabryki");
     }
 }

@@ -8,7 +8,6 @@ using Pathfinding;
 public class Character : ISelectable 
 {
     public string Name { get; protected set; }
-
     public Tile CurrentTile { get; protected set; }
     public Tile NextTile { get; protected set; }
     public Tile DestinationTile { get; protected set; }
@@ -18,7 +17,7 @@ public class Character : ISelectable
 
     public Quaternion CurrentRotation { get; protected set; }
     Quaternion targetRotation;
-    float degreesPerSecond = 360f; // 270
+    float degreesPerSecond = 450f; // 270
 
     bool isLastTileRotationSet;
     Quaternion lastTileRotation;
@@ -35,21 +34,24 @@ public class Character : ISelectable
 
     public ResourceReservation Reservation { get; protected set; }
 
-    public Dictionary<string, float> Needs { get; protected set; }
-    public Dictionary<string, float> NeedGrowthPerSecond { get; protected set; }
+    public Dictionary<string, float> Needs;
+    public Dictionary<string, float> NeedGrowthPerSecond;
 
-    SelectableDisplayObject DisplayObject;
+    public CharacterDisplayObject DisplayObject { get; protected set; }
 
     World world;
 
     public bool UsingService;
 
-    public Character(string name, Tile currentTile, BT_Tree behaviourTree)
-    {
-        world = GameManager.Instance.World;
+    public bool IsRobot { get; protected set; }
 
-        Name = name;
+    public Character(string name, Tile currentTile, BT_Tree behaviourTree, bool isRobot)
+    {
+        this.Name = name;
+        world = GameManager.Instance.World;
+        
         CurrentTile = currentTile;
+        IsRobot = isRobot;
         
         pathfinder = world.Pathfinder;
         MovementPercentage = 0f;
@@ -57,7 +59,7 @@ public class Character : ISelectable
         this.behaviourTree = behaviourTree;
         agentMemory = new BT_AgentMemory(this);
 
-        LoadNeeds();
+        StaticData.LoadNeeds(this);
 
         CurrentRotation = Quaternion.identity;
         targetRotation = Quaternion.identity;
@@ -70,7 +72,7 @@ public class Character : ISelectable
         agentMemory.DeltaTime = deltaTime;
         behaviourTree.Tick(agentMemory);
         UpdateNeeds(deltaTime);
-        if(UsingService == false)
+        if (UsingService == false)
         {
             Move(deltaTime);
         }
@@ -292,12 +294,9 @@ public class Character : ISelectable
         }
     }
 
-    void LoadNeeds()
+    void LoadNeeds(bool isRobot)
     {
-        Needs = new Dictionary<string, float>()
-        { {"Sleep", 0f}, {"Hunger", 0f} };
-        NeedGrowthPerSecond = new Dictionary<string, float>()
-        { {"Sleep", 0.05f}, {"Hunger", 0.05f} };
+        
     }
 
     Quaternion GetRotationForNextTile(Tile nextTile)
@@ -324,15 +323,27 @@ public class Character : ISelectable
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
     {
-        DisplayObject = displayObject;
+        if (displayObject is CharacterDisplayObject)
+        {
+            DisplayObject = (CharacterDisplayObject)displayObject;
+        }
+        else
+        {
+            Debug.LogWarning("Niewłaściwy SelectableDisplayObject dla postaci");
+        }
+        
     }
 
-    public string GetSelectionText()
+    public string DEBUG_GetSelectionText()
     {
         string s = "";
         s += Name + "\n";
-        s += "Sen: " + Needs["Sleep"] + "\n";
-        s += "Głód: " + Needs["Hunger"] + "\n";
+
+        foreach(string need in Needs.Keys)
+        {
+            s += need + ": " + Needs[need] + "\n";
+        }
+        
         if (DestinationTile != null)
         {
             s += "DestinationTile: " + DestinationTile.Position.ToString() + "\n";
@@ -368,7 +379,7 @@ public class Character : ISelectable
     {
         if (DisplayObject == null)
         {
-            Debug.Log("Postać nie ma swojego modelu na mapie! " + Name + ", " + CurrentTile.Position.ToString());
+            Debug.Log("Postać nie ma swojego modelu na mapie! Pozycja: " + CurrentTile.Position.ToString());
             return null;
         } 
         else

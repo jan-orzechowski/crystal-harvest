@@ -45,28 +45,22 @@ public class Building : ISelectable
     {
         if (Prototype.ProductionTime > 0f)
         {
-            Module = new Factory(this, Prototype);
+            Module = new Factory(this);
         }
         else if (Prototype.NeedFulfilled != null)
         {
-            Module = new Service(this, Prototype);
+            Module = new Service(this);
         }
         else if (Prototype.MaxStorage > 0)
         {
-            Module = new Storage(this, Prototype);
+            Module = new Storage(this);
         }
     }
-
-    public void UpdateBuilding(float deltaTime)
-    {
-
-    }    
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
     {
         DisplayObject = displayObject;
     }
-
 
     public Tile GetAccessTile(bool getSecond = false)
     {
@@ -140,7 +134,7 @@ public class Building : ISelectable
         return null;
     }
    
-    public string GetSelectionText()
+    public string DEBUG_GetSelectionText()
     {
         string s = "";
         s += Type + "\n";

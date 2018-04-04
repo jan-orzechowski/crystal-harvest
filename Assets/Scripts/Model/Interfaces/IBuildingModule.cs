@@ -6,4 +6,5 @@ using System;
 public interface IBuildingModule
 {
     string GetSelectionText();
+    bool HidesCharacter { get; }
 }

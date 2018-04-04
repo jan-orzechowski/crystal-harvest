@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject DebugGroundTilePrefab;
     public GameObject DebugRockTilePrefab;
     public GameObject CharacterPrefab;
+    public GameObject RobotPrefab;
 
     public GameObject TilesParent;
     public GameObject BuildingsParent;
@@ -72,10 +73,10 @@ public class GameManager : MonoBehaviour
         World.UpdateModel(Time.deltaTime);
     }
 
-    public CharacterDisplayObject GenerateDisplayForCharacter(Character c)
+    public CharacterDisplayObject GenerateDisplayForCharacter(Character c, bool isRobot)
     {
         GameObject gameObject = GameObject.Instantiate(
-            CharacterPrefab,
+            isRobot ? RobotPrefab : CharacterPrefab,
             new Vector3(c.CurrentTile.X, 0, c.CurrentTile.Y),
             Quaternion.identity,
             CharactersParent.transform
@@ -87,6 +88,11 @@ public class GameManager : MonoBehaviour
         c.AssignDisplayObject(displayObject);
 
         return displayObject;
+    }
+
+    public void AssignDisplayToBuilding(Building building, GameObject display)
+    {
+
     }
 
     public SelectableDisplayObject ShowBuilding(Building building, TilePosition positionForDisplay)
@@ -120,20 +126,7 @@ public class GameManager : MonoBehaviour
         SelectableDisplayObject selectableDisplayObject = gameObject.GetComponentInChildren<SelectableDisplayObject>();
 
         selectableDisplayObject.AssignModelObject(building);
-        building.AssignDisplayObject(selectableDisplayObject);
-
-        if (building.Type == "Platform" && selectableDisplayObject is PlatformDisplayObject)
-        {
-            ((PlatformDisplayObject)selectableDisplayObject).AssignPlatform(building);
-            UpdatePlatformDisplay(building.Tiles[0]);
-        }
-
-        if (building.Module != null && building.Module is Factory 
-            && selectableDisplayObject is NaturalDepositDisplay)
-        {
-            ((NaturalDepositDisplay)selectableDisplayObject).AssignDeposit((Factory)building.Module);
-        }
-
+        building.AssignDisplayObject(selectableDisplayObject);        
 
         return selectableDisplayObject;
     }
@@ -172,8 +165,8 @@ public class GameManager : MonoBehaviour
 
         ConstructionSiteDisplayObject selectableObject = gameObject.GetComponentInChildren<ConstructionSiteDisplayObject>();
 
-        selectableObject.AssignConstructionSite(newSite, builtOnSecondLevel);
         building.AssignDisplayObject(selectableObject);
+        selectableObject.AssignConstructionSite(newSite, builtOnSecondLevel);
 
         return selectableObject;
     }
@@ -357,13 +350,13 @@ public class GameManager : MonoBehaviour
 
     void UpdateSinglePlatformDisplay(Tile t)
     {
-        if (World.Platforms.ContainsKey(t))
+        if (t != null && World.Platforms.ContainsKey(t))
         {
             ((PlatformDisplayObject)World.Platforms[t].DisplayObject).UpdatePlatformDisplay();
         }
     }
 
-    void UpdatePlatformDisplay(Tile t)
+    public void UpdatePlatformDisplay(Tile t)
     {
         UpdateSinglePlatformDisplay(t);
 

@@ -42,6 +42,8 @@ public class ConstructionSite : IWorkplace
     public BuildingPrototype Prototype { get; protected set; }
     World world;
 
+    public bool HidesCharacter { get { return false; } }
+
     public ConstructionSite(Building building, BuildingPrototype buildingPrototype)
     {
         Prototype = buildingPrototype;

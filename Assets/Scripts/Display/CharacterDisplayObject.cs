@@ -11,9 +11,45 @@ public class CharacterDisplayObject : SelectableDisplayObject
     public GameObject CharacterHoldingModel;
     GameObject heldResource;
 
+    public bool Hidden { get; private set; }
+    float hideTimer;
+    bool gameObjectsDeactivated;
+
+    void Awake()
+    {
+        CharacterModel.SetActive(false);
+        CharacterHoldingModel.SetActive(false);
+    }
+
     void Update()
     {
         if (character == null) { return; }
+
+        if (Hidden)
+        {
+            if (gameObjectsDeactivated == false)
+            {
+                CharacterModel.SetActive(false);
+                CharacterHoldingModel.SetActive(false);
+                Collider.gameObject.SetActive(false);
+
+                gameObjectsDeactivated = true;
+            }
+            
+            
+            hideTimer -= Time.deltaTime;
+
+            if (hideTimer > 0f)
+            {
+                return;
+            }
+            else
+            {
+                Collider.gameObject.SetActive(true);
+                Hidden = false;
+                gameObjectsDeactivated = false;
+            }
+        }
 
         if (character.HasResource)
         {
@@ -72,5 +108,14 @@ public class CharacterDisplayObject : SelectableDisplayObject
     {
         this.character = character;
         ModelObject = character;
+    }
+
+    public void CharacterUsesModule(IBuildingModule module)
+    {
+        if (module.HidesCharacter)
+        {
+            hideTimer = 0.1f;
+            Hidden = true;
+        }
     }
 }

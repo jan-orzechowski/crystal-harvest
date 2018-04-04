@@ -6,5 +6,5 @@ using System;
 public interface ISelectable
 {
     SelectableDisplayObject GetDisplayObject();
-    string GetSelectionText();
+    string DEBUG_GetSelectionText();
 }
