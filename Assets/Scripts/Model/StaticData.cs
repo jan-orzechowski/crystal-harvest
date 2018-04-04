@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 public static class StaticData
-{
+{ 
     public static Dictionary<int, ResourceInfo> LoadResources()
     {
         Dictionary<int, ResourceInfo> resources = new Dictionary<int, ResourceInfo>();
@@ -85,6 +85,29 @@ public static class StaticData
         bp.CanBeBuiltOnRock = true;
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 1);
+
+        bp.ConstructionWithoutScaffolding = true;
+
+        bp.ProductionTime = 2f;
+        bp.ProducedResources = new Dictionary<int, int>() { { 0, 1 } };
+        bp.ProductionCyclesLimitMin = 3;
+        bp.ProductionCyclesLimitMax = 10;
+
+        prototypes.Add(bp);
+
+
+        // -----------------------------------
+        // CRYSTALS DEPOSIT
+        // -----------------------------------
+
+        bp = new BuildingPrototype();
+        bp.Type = "CrystalsDeposit";
+
+        bp.CanBeBuiltOnRock = true;
+
+        bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 1);
+
+        bp.ConstructionWithoutScaffolding = true;
 
         bp.ProductionTime = 2f;
         bp.ProducedResources = new Dictionary<int, int>() { { 0, 1 } };

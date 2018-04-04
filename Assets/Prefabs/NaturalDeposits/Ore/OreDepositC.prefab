@@ -243,3 +243,4 @@ MonoBehaviour:
   Collider: {fileID: 65209236263953264}
   Model: {fileID: 1916064874339286}
   DepletedModel: {fileID: 1604531226075422}
+  DepletedCollider: {fileID: 0}

@@ -8,7 +8,28 @@ public class NaturalDepositDisplay : SelectableDisplayObject
     public GameObject Model;
     public GameObject DepletedModel;
 
+    public BoxCollider DepletedCollider;
+
     Factory deposit;
+
+    bool resourcesDepleted;
+
+    void Awake()
+    {
+        Model.SetActive(true);
+        DepletedModel.SetActive(false);
+        
+        if (DepletedCollider == null)
+        {
+            DepletedCollider = Collider;
+        }
+        else
+        {
+            DepletedCollider.gameObject.SetActive(false);
+        }
+
+        Collider.gameObject.SetActive(true);
+    }
 
     void Update () 
     {
@@ -16,13 +37,17 @@ public class NaturalDepositDisplay : SelectableDisplayObject
 
         if (deposit.RemainingProductionCycles <= 0)
         {
-            if (Model.activeSelf) Model.SetActive(false);
-            if (DepletedModel.activeSelf == false) DepletedModel.SetActive(true);
-        }
-        else
-        {
-            if (Model.activeSelf == false) Model.SetActive(true);
-            if (DepletedModel.activeSelf) DepletedModel.SetActive(false);
+            if (resourcesDepleted == false)
+            {
+                Model.SetActive(false);
+                DepletedModel.SetActive(true);
+
+                Collider.gameObject.SetActive(false);
+                DepletedCollider.gameObject.SetActive(true);
+
+                Collider = DepletedCollider;
+                resourcesDepleted = true;
+            }
         }
     }
 

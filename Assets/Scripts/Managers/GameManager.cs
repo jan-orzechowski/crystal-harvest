@@ -90,11 +90,6 @@ public class GameManager : MonoBehaviour
         return displayObject;
     }
 
-    public void AssignDisplayToBuilding(Building building, GameObject display)
-    {
-
-    }
-
     public SelectableDisplayObject ShowBuilding(Building building, TilePosition positionForDisplay)
     {
         GameObject model = null;
