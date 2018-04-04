@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 using System;
 
@@ -19,6 +20,8 @@ public class ConstructionPanel : MonoBehaviour
     List<int> tempResources;
 
     public InputManager InputManager;
+
+    public Text TextSubpanel; 
 
     void Start ()
     {
@@ -94,5 +97,6 @@ public class ConstructionPanel : MonoBehaviour
     public void SetConstructionSite(ConstructionSite cs)
     {
         ConstructionSite = cs;
+        if (cs != null && cs.Building != null) TextSubpanel.text = cs.Building.Type;
     }
 }

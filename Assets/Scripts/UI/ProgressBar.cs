@@ -7,9 +7,11 @@ using System;
 public class ProgressBar : MonoBehaviour 
 {
     public Image FillImage;
+    public Text Text;
 
     public void SetFillPercentage(float percentage)
     {
         FillImage.fillAmount = percentage;
+        Text.text = Mathf.FloorToInt(percentage * 100) + "%";
     }
 }

@@ -46,6 +46,7 @@ public class Service : IBuildingModule
             if (ServicedCharacter.Needs[NeedFulfilled] <= 0f && serviceDuration <= 0f)
             {
                 ServicedCharacter.ServiceEnded();
+                serviceDuration = Prototype.ServiceDuration;
                 ServicedCharacter = null;
                 reservation = null;
             }

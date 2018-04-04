@@ -15,10 +15,6 @@ public class StatPanel : MonoBehaviour
 
     public ResourceCounterInfo[] ResourceCounters;
 
-    public Text RobotCounter;
-    public Text HumanCounter;
-    public Text ElectricityCounter;
-
     void Update()
     {
         foreach (ResourceCounterInfo rci in ResourceCounters)

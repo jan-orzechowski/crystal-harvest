@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class ServicePanel : MonoBehaviour 
@@ -13,10 +14,11 @@ public class ServicePanel : MonoBehaviour
     List<GameObject> icons;
 
     public ResourceIconSlot InputSlot;
-    public ResourceIconSlot CharacterSlot;
 
     List<int> tempRequiredResources;
     List<int> tempResources;
+
+    public Text TextSubpanel; 
 
     void Start()
     {
@@ -46,5 +48,6 @@ public class ServicePanel : MonoBehaviour
     public void SetService(Service s)
     {
         Service = s;
+        if (s != null && s.Building != null) TextSubpanel.text = s.Building.Type;
     }
 }

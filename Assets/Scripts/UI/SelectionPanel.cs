@@ -18,6 +18,8 @@ public class SelectionPanel : MonoBehaviour
     public FactoryPanel FactoryPanel;
     public StoragePanel StoragePanel;
     public ConstructionPanel ConstructionPanel;
+    public CharacterPanel CharacterPanel;
+    public RobotPanel RobotPanel;
 
     void Start()
     {
@@ -63,7 +65,17 @@ public class SelectionPanel : MonoBehaviour
         else
         if (obj is Character)
         {
-            Debug.Log("Selected: Character");
+            Character c = (Character)obj;
+            if (c.IsRobot)
+            {
+                RobotPanel.gameObject.SetActive(true);
+                RobotPanel.SetRobot(c);
+            }
+            else
+            {
+                CharacterPanel.gameObject.SetActive(true);
+                CharacterPanel.SetCharacter(c);
+            }
         }
     }
 
@@ -80,6 +92,12 @@ public class SelectionPanel : MonoBehaviour
 
         ConstructionPanel.gameObject.SetActive(false);
         ConstructionPanel.SetConstructionSite(null);
+
+        CharacterPanel.gameObject.SetActive(false);
+        CharacterPanel.SetCharacter(null);
+
+        RobotPanel.gameObject.SetActive(false);
+        RobotPanel.SetRobot(null);
     }
 
     public static List<int> GetResourcesList(Dictionary<int, int> resources)

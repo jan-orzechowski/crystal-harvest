@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 using System;
 
@@ -18,6 +19,10 @@ public class FactoryPanel : MonoBehaviour
 
     List<int> tempRequiredResources;  
     List<int> tempResources;
+
+    public Text TextSubpanel;
+
+    public GameObject RobotIconPrefab;
 
     void Awake()
     {
@@ -81,10 +86,20 @@ public class FactoryPanel : MonoBehaviour
 
             SelectionPanel.ShowIconsWithRequirements(outputSlots, tempRequiredResources, tempResources, icons);
         }
+
+        if (Factory.ProducesRobot)
+        {
+            GameObject icon = SimplePool.Spawn(RobotIconPrefab,
+                                           outputSlots[0].transform.position,
+                                           Quaternion.identity);
+            icon.transform.SetParent(outputSlots[0].transform);
+            icons.Add(icon);
+        }
     }
 
     public void SetFactory(Factory f)
     {
         Factory = f;
+        if (f != null && f.Building != null) TextSubpanel.text = f.Building.Type;
     }
 }

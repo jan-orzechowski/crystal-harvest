@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 224028408911837174}
   - component: {fileID: 114448196985530154}
   m_Layer: 5
-  m_Name: StoragePanel
+  m_Name: OldStoragePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -762,7 +762,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceec6db36bc52324dbf3cbfa2edf6abb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Slots: []
 --- !u!114 &114461226543406154
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -1,31 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using System;
 
 public class StoragePanel : MonoBehaviour 
 {
-    List<ResourceIconSlot> slots;
-
     [HideInInspector]
     public Storage Storage { get; protected set; }
 
-    List<GameObject> icons;
+    public StorageSubpanel TwoRowsSubpanel;
+    public StorageSubpanel ThreeRowsSubpanel;
+    public StorageSubpanel FourRowsSubpanel;
+
+    StorageSubpanel activePanel;
+
     List<int> tempResourcesList;
 
-    void Awake () 
+    void Awake()
     {
-        ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
-        if (slotsArray == null || slotsArray.Length == 0)
-        {
-            Debug.Log("Panel nie ma żadnych slotów na zasoby!");
-        }
-        slots = new List<ResourceIconSlot>(slotsArray);
-        slots.OrderBy(slot => slot.Order);
-
         tempResourcesList = new List<int>();
-        icons = new List<GameObject>();
     }
 
     void Update()
@@ -45,6 +38,8 @@ public class StoragePanel : MonoBehaviour
 
     public void ShowResourcesInStorage()
     {
+        if (activePanel == null || activePanel.gameObject.activeSelf == false) return;
+
         tempResourcesList.Clear();
         foreach (int id in Storage.Resources.Keys)
         {
@@ -60,48 +55,32 @@ public class StoragePanel : MonoBehaviour
 
         tempResourcesList.Sort();
 
-        HideResourceIcons();
+        activePanel.HideResourceIcons();
 
         for (int index = 0; index < tempResourcesList.Count; index++)
         {
-            ShowResourceIcon(tempResourcesList[index], index);
+            activePanel.ShowResourceIcon(tempResourcesList[index], index);
         }
-    }
-
-    void ShowResourceIcon(int resourceID, int slotNumber)
-    {
-        if (slotNumber >= slots.Count)
-        {
-            Debug.Log("Chcemy pokazać więcej zasobów niż panel na to pozwala!");
-            return;
-        }
-
-        ResourceDisplayInfo rdi = GameManager.Instance.GetResourceDisplayInfo(resourceID);
-        GameObject iconPrefab = rdi.Icon;
-
-        GameObject slot = slots[slotNumber].gameObject;
-
-        GameObject icon = SimplePool.Spawn(iconPrefab, 
-                                           slot.transform.position, 
-                                           Quaternion.identity);
-        icon.transform.SetParent(slot.transform);
-        icons.Add(icon);
-    }
-
-    void HideResourceIcons()
-    {
-        foreach(GameObject icon in icons)
-        {
-            SimplePool.Despawn(icon);
-        }
-        icons.Clear();
     }
 
     public void SetStorage(Storage s)
     {
         Storage = s;
+
+        TwoRowsSubpanel.gameObject.SetActive(false);
+        ThreeRowsSubpanel.gameObject.SetActive(false);
+        FourRowsSubpanel.gameObject.SetActive(false);
+
         if (Storage != null)
         {
+            if (Storage.MaxCapacity <= 12) activePanel = TwoRowsSubpanel;
+            else if (Storage.MaxCapacity <= 18) activePanel = ThreeRowsSubpanel;
+            else activePanel = FourRowsSubpanel;
+
+            activePanel.gameObject.SetActive(true);
+
+            activePanel.TextSubpanel.text = Storage.Building.Type;
+
             ShowResourcesInStorage();
         }
     }
