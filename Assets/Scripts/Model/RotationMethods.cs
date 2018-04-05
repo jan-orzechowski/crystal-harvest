@@ -71,4 +71,15 @@ public static class RotationMethods
         }
         return result;
     }
+
+    public static Rotation GetRandomRotation()
+    {
+        Rotation result = Rotation.N;
+        int numberOfRotations = UnityEngine.Random.Range(0, 3);
+        for (int i = 0; i <= numberOfRotations; i++)
+        {
+            result = result.Rotate(Rotation.E);
+        }
+        return result;
+    }
 }

@@ -48,13 +48,12 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null) { Debug.LogError("Dwie instancje klasy GameManager!"); }
         Instance = this;
-
-        int worldSize = 50;
-
+       
         int startingAreaXSize = 5;
         int startingAreaYSize = 8;
 
-        World = new World(worldSize, worldSize, startingAreaXSize, startingAreaYSize);
+        World = new World(StaticData.WorldWidth, StaticData.WorldLenght,
+                          startingAreaXSize, startingAreaYSize);
 
         constructionSitesDisplay = new Dictionary<ConstructionSite, GameObject>();
 
@@ -70,6 +69,8 @@ public class GameManager : MonoBehaviour
 
         World.InstantBuild(new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
                            Rotation.N, World.GetBuildingPrototype("Spaceship"));
+
+        World.PlaceNaturalResources();
     }
 
     void Update ()

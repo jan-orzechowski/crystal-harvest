@@ -46,7 +46,8 @@ public class World
     public int StartingAreaX { get; protected set; }
     public int StartingAreaY { get; protected set; }
 
-    float characterFirstUpdateTimer = 5f;
+    Dictionary<TilePosition, int> oreDeposits;
+    Dictionary<TilePosition, int> crystalsDeposits;
 
     public World(int width, int length, int startingAreaXSize, int startingAreaYSize)
     {
@@ -56,9 +57,12 @@ public class World
 
         MapGenerator mapGenerator = new MapGenerator();
         Tiles = mapGenerator.GenerateMap(XSize, YSize, startingAreaXSize, startingAreaYSize);
-       
+        
         StartingAreaX = mapGenerator.StartingAreaX;
         StartingAreaY = mapGenerator.StartingAreaY;
+
+        oreDeposits = mapGenerator.Ore;
+        crystalsDeposits = mapGenerator.Crystals;
 
         Tile.SetWorldForTiles(this);
 
@@ -77,7 +81,7 @@ public class World
         }
 
         ResourceToGather = 0;
-        AmountToGather = 100;
+        AmountToGather = StaticData.CrystalsAmountToGather;
 
         Pathfinder = new Pathfinder(this);
         modifiedTiles = new List<Tile>();
@@ -396,13 +400,17 @@ public class World
         mapChangedThisFrame = true;
     }
 
-    public void InstantBuild(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
+    public Building InstantBuild(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
         ConstructionSite site = PlaceNewConstructionSite(origin, rotation, prototype);
         if (site != null)
         {
-            Debug.Log("InstantBuild");
-            FinishConstruction(site);
+            // Debug.Log("InstantBuild");
+            return FinishConstruction(site);
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -516,12 +524,12 @@ public class World
         }
     }
 
-    public void FinishConstruction(ConstructionSite site)
+    public Building FinishConstruction(ConstructionSite site)
     {
         if (ConstructionSites.Contains(site) == false || site.Building == null)
         {
             Debug.Log("Próba ukończenia konstrukcji przez niezarejestrowany plac budowy");
-            return;
+            return null;
         }
 
         Building buildingToConstruct = site.Building;
@@ -575,6 +583,8 @@ public class World
         ConstructionSites.Remove(site);
 
         GameManager.Instance.ShowBuilding(buildingToConstruct, positionForBuildingDisplay);
+
+        return buildingToConstruct;
     }
 
     public void FinishDeconstruction(ConstructionSite site)
@@ -854,5 +864,35 @@ public class World
                 Debug.Log("Próbujemy usuwać zasoby, których nie dodaliśmy");
             }
         }
+    }
+
+    public void PlaceNaturalResources()
+    {
+        if (oreDeposits != null)
+        {
+            BuildingPrototype orePrototype = GetBuildingPrototype("OreDeposit");
+            foreach (TilePosition position in oreDeposits.Keys)
+            {
+                Building deposit;
+                deposit = InstantBuild(position, RotationMethods.GetRandomRotation(), orePrototype);
+                if (deposit != null)
+                {
+                    ((Factory)deposit.Module).SetRemainingProductionCycles(oreDeposits[position]);
+                }
+            }
+        }
+        if (crystalsDeposits != null)
+        {
+            BuildingPrototype crystalsPrototype = GetBuildingPrototype("CrystalsDeposit");
+            foreach (TilePosition position in crystalsDeposits.Keys)
+            {
+                Building deposit;
+                deposit = InstantBuild(position, RotationMethods.GetRandomRotation(), crystalsPrototype);
+                if (deposit != null)
+                {
+                    ((Factory)deposit.Module).SetRemainingProductionCycles(crystalsDeposits[position]);
+                }
+            }
+        }        
     }
 }

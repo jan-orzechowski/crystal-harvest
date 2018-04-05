@@ -25,13 +25,13 @@ public class Factory : IWorkplace, IBuildingModule
     public int RemainingProductionCycles { get; protected set; }
 
     public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
-
+    
     public Factory(Building building)
     {
         Building = building;
         productionTime = Prototype.ProductionTime;
         ProductionStarted = false;
-
+        
         ProducesRobot = Prototype.ProducesRobot;
 
         if (Prototype.ProductionCyclesLimitMax < 0)
@@ -204,6 +204,11 @@ public class Factory : IWorkplace, IBuildingModule
         {
             return ((productionTime - productionTimeLeft) / productionTime);
         }
+    }
+
+    public void SetRemainingProductionCycles(int number)
+    {
+        RemainingProductionCycles = number;
     }
 
     public Tile GetAccessTile()

@@ -109,7 +109,8 @@ public class Character : ISelectable
             TryGetNewPath();
         }
         
-        if(path.GetLength() == 0 && NextTile != DestinationTile)
+        // Tutaj raz na jakiś czas pojawia się NullReferenceException - ??
+        if (path.GetLength() == 0 && NextTile != DestinationTile)
         {
             path = null;
             return;

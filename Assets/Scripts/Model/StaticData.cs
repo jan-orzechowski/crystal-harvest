@@ -4,7 +4,24 @@ using UnityEngine;
 using System;
 
 public static class StaticData
-{ 
+{
+    public const int WorldWidth = 50;
+    public const int WorldLenght = 50;
+
+    public const int MinOreAmountOnMap = 100;
+    public const int MaxOreAmountOnMap = 200;
+
+    public const int MinOreAmountInDeposit = 4;
+    public const int MaxOreAmountInDeposit = 10;
+
+    public const int MinCrystalsAmountOnMap = 100;
+    public const int MaxCrystalsAmountOnMap = 200;
+
+    public const int MinCrystalsAmountInDeposit = 1;
+    public const int MaxCrystalsAmountInDeposit = 15;
+
+    public const int CrystalsAmountToGather = 100;
+
     public static Dictionary<int, ResourceInfo> LoadResources()
     {
         Dictionary<int, ResourceInfo> resources = new Dictionary<int, ResourceInfo>();
@@ -89,9 +106,9 @@ public static class StaticData
         bp.ConstructionWithoutScaffolding = true;
 
         bp.ProductionTime = 2f;
-        bp.ProducedResources = new Dictionary<int, int>() { { 0, 1 } };
-        bp.ProductionCyclesLimitMin = 3;
-        bp.ProductionCyclesLimitMax = 10;
+        bp.ProducedResources = new Dictionary<int, int>() { { 3, 1 } };
+        bp.ProductionCyclesLimitMin = MinOreAmountInDeposit;
+        bp.ProductionCyclesLimitMax = MaxOreAmountInDeposit;
 
         prototypes.Add(bp);
 
@@ -111,8 +128,8 @@ public static class StaticData
 
         bp.ProductionTime = 2f;
         bp.ProducedResources = new Dictionary<int, int>() { { 0, 1 } };
-        bp.ProductionCyclesLimitMin = 3;
-        bp.ProductionCyclesLimitMax = 10;
+        bp.ProductionCyclesLimitMin = MinCrystalsAmountInDeposit;
+        bp.ProductionCyclesLimitMax = MaxCrystalsAmountInDeposit;
 
         prototypes.Add(bp);
 

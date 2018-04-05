@@ -4,18 +4,7 @@ using UnityEngine;
 using System;
 
 public class MapGenerator
-{
-    // Rodzaje pól:
-    // - piach
-    // - skała
-    // - skała z kryształami
-    // - skała z rudą
-    // - skała z postacią (?)
-    // - skała ze statkiem kosmicznym (?)
-
-    // Na statek kosmiczny potrzeba minimum 3x5 + miejsce na 6 postaci
-    // czyli powiedzmy prostokąt 5x8 i postaci w dwóch szeregach przed statkiem
-
+{    
     int rockPercentage = 45;
     float minFinalRockPercentage = 0.10f;
     float maxFinalRockPercentage = 0.15f;
@@ -33,9 +22,8 @@ public class MapGenerator
 
     int sand = 0;
     int rock = 1;
-    int sandWithCrystals = 2;
-    int rockWithOre = 3;
 
+    // Statek kosmiczny i postaci
     int startingAreaXSize;
     int startingAreaYSize;
 
@@ -43,11 +31,16 @@ public class MapGenerator
 
     int checkedAreaOffset = 3;
     int minRockTilesInCheckedArea = (5*8);
-    
+
+    public Tile[,,] Tiles { get; protected set; }
     public int StartingAreaX { get; protected set; }
     public int StartingAreaY { get; protected set; }
 
-    public Tile[,,] GenerateMap(int xSize, int ySize, int startingAreaXSize, int startingAreaYSize)
+    public Dictionary<TilePosition, int> Ore { get; protected set; }
+    public Dictionary<TilePosition, int> Crystals { get; protected set; }
+
+    public Tile[,,] GenerateMap(int xSize, int ySize, 
+                                int startingAreaXSize, int startingAreaYSize)
     {     
         this.xSize = xSize;
         this.ySize = ySize;
@@ -76,7 +69,11 @@ public class MapGenerator
             }
         }
 
-        return GetGeneratedTiles();
+        Tiles = GetGeneratedTiles();
+
+        GenerateResources();
+
+        return Tiles;
     }
 
     void TryGenerateMap()
@@ -259,6 +256,143 @@ public class MapGenerator
         }
     }
     
+    void GenerateResources()
+    {        
+        int oreAmountToPlace = prng.Next(StaticData.MinOreAmountOnMap, 
+                                         StaticData.MaxOreAmountOnMap);
+        int crystalsAmountToPlace = prng.Next(StaticData.MinCrystalsAmountOnMap, 
+                                              StaticData.MaxCrystalsAmountOnMap);
+        
+        Ore = new Dictionary<TilePosition, int>();
+
+        int orePlaced = 0;
+
+        int attempts = 200;
+        for (int i = 0; i < attempts; i++)
+        {
+            TilePosition randomTile = GetRandomTile();
+            if (CheckTileValue(randomTile, rock) 
+                && Ore.ContainsKey(randomTile) == false
+                && IsTileInStartingArea(randomTile) == false)
+            {
+                int randomDepositSize = prng.Next(StaticData.MinOreAmountInDeposit,
+                                                  StaticData.MaxOreAmountInDeposit);
+
+                Ore.Add(randomTile, randomDepositSize);
+                orePlaced += randomDepositSize;
+
+                if (orePlaced >= oreAmountToPlace)
+                {
+                    break;
+                }
+            }
+        }
+
+        Crystals = new Dictionary<TilePosition, int>();
+
+        int numberOfCrystalSites = 4;
+        int minNumberOfCrystalsPerSite = 3;
+        int maxNumberOfCrystalsPerSite = 6;
+        int siteRadius = 2;
+
+        int crystalsPlaced = 0;
+
+        for (int s = 0; s < numberOfCrystalSites; s++)
+        {
+            TilePosition sitePosition;
+            while (true)
+            {
+                sitePosition = GetRandomTile();
+                if (CheckTileValue(sitePosition, sand))
+                {
+                    break;
+                }
+            }
+
+            int numberOfCrystalsForThisSite = prng.Next(minNumberOfCrystalsPerSite, 
+                                                        maxNumberOfCrystalsPerSite);
+
+            attempts = 100;
+            for (int i = 0; i < attempts; i++)
+            {
+                TilePosition crystalsPosition = GetRandomTileInRadius(sitePosition, siteRadius);
+                if (CheckTileValue(crystalsPosition, sand)
+                    && Crystals.ContainsKey(crystalsPosition) == false)
+                {
+                    int randomDepositSize = prng.Next(StaticData.MinCrystalsAmountInDeposit,
+                                                      StaticData.MaxCrystalsAmountInDeposit);
+
+                    Crystals.Add(crystalsPosition, randomDepositSize);
+                    crystalsPlaced += randomDepositSize;
+
+                    if (crystalsPlaced >= crystalsAmountToPlace)
+                    {
+                        return;
+                    }
+
+                    numberOfCrystalsForThisSite--;
+                    if(numberOfCrystalsForThisSite <= 0)
+                    {
+                        break;
+                    }
+                }
+            }            
+        }
+    }
+
+    TilePosition GetRandomTile()
+    {
+        int x = prng.Next(0, xSize - 1);
+        int y = prng.Next(0, ySize - 1);
+        if (tiles[x,y] == rock)
+        {
+            return new TilePosition(x, y, 1);
+        }
+        else
+        {
+            return new TilePosition(x, y, 0);
+        }
+    }
+
+    TilePosition GetRandomTileInRadius(TilePosition center, int radius)
+    {
+        int minX = Math.Max(0, center.X - radius);
+        int maxX = Math.Min(xSize - 1, center.X + radius);
+        int minY = Math.Max(0, center.Y - radius);
+        int maxY = Math.Min(ySize - 1, center.Y + radius);
+
+        int x = prng.Next(minX, maxX);
+        int y = prng.Next(minY, maxY);
+
+        if (tiles[x, y] == rock)
+        {
+            return new TilePosition(x, y, 1);
+        }
+        else
+        {
+            return new TilePosition(x, y, 0);
+        }
+    }
+
+    bool CheckTileValue(TilePosition position, int value)
+    {
+        int valueAtPosition = tiles[position.X, position.Y];
+        return (value == valueAtPosition);
+    }
+
+    bool IsTileInStartingArea(TilePosition position)
+    {
+        if (position.X >= StartingAreaX && position.X <= (StartingAreaX + startingAreaXSize - 1)
+            && position.Y >= StartingAreaY && position.Y <= (StartingAreaY + startingAreaYSize - 1))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     int CountRocksOnMap()
     {
         int result = 0;
