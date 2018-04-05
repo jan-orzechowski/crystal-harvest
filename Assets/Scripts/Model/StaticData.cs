@@ -52,7 +52,7 @@ public static class StaticData
         bp = new BuildingPrototype();
         bp.Type = "Spaceship";
 
-        bp.CanBeBuiltOnSand = true;
+        bp.CanBeBuiltOnRock = true;
 
         bp.NormalizedTilePositions = new List<TilePosition>()
         {

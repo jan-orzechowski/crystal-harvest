@@ -51,21 +51,25 @@ public class GameManager : MonoBehaviour
 
         int worldSize = 50;
 
-        World = new World(worldSize, worldSize);
+        int startingAreaXSize = 5;
+        int startingAreaYSize = 8;
+
+        World = new World(worldSize, worldSize, startingAreaXSize, startingAreaYSize);
 
         constructionSitesDisplay = new Dictionary<ConstructionSite, GameObject>();
 
         GenerateDisplayForTiles();
-
-        for (int x = 3; x < 4; x++)
+       
+        for (int x = World.StartingAreaX + 1; x < World.StartingAreaX + 4; x++)
         {
-            for (int y = 0; y < 7; y++)
+            for (int y = World.StartingAreaY; y < World.StartingAreaY + 2; y++)
             {
-                World.CreateNewCharacter(new TilePosition(x, y, 0), false);
+                World.CreateNewCharacter(new TilePosition(x, y, 1), false);
             }
         }
 
-        World.InstantBuild(new TilePosition(0, 2, 0), Rotation.N, World.GetBuildingPrototype("Spaceship"));
+        World.InstantBuild(new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
+                           Rotation.N, World.GetBuildingPrototype("Spaceship"));
     }
 
     void Update ()

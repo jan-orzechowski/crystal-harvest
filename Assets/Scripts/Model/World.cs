@@ -29,7 +29,6 @@ public class World
     public int ResourceToGather { get; protected set; }
     public int AmountToGather { get; protected set; }
 
-
     public Pathfinder Pathfinder { get; protected set; }
 
     BT_Tree humanBehaviourTree;
@@ -44,56 +43,26 @@ public class World
     public int HumanNumber { get; protected set; }
     public int RobotNumber { get; protected set; }
 
-    public World(int width, int length)
+    public int StartingAreaX { get; protected set; }
+    public int StartingAreaY { get; protected set; }
+
+    float characterFirstUpdateTimer = 5f;
+
+    public World(int width, int length, int startingAreaXSize, int startingAreaYSize)
     {
         XSize = width;
         YSize = length;
         Height = 2;
-               
-        Tiles = new Tile[XSize, YSize, Height];
 
-        Debug.Log("Stworzono mapę posiadającą " + XSize * YSize * Height + " pól.");
-      
-        // Generowanie losowej mapy
-        Tile newTile;
-        for (int x = 0; x < XSize; x++)
-        {
-            for (int y = 0; y < YSize; y++)
-            {
-                if (x < 15 && y < 15) // piach
-                {
-                    newTile = new Tile(x, y, 0, TileType.Sand, this); // piach
-                    Tiles[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Empty, this); // puste
-                    Tiles[x, y, 1] = newTile;
-                    continue;
-                }
+        MapGenerator mapGenerator = new MapGenerator();
+        Tiles = mapGenerator.GenerateMap(XSize, YSize, startingAreaXSize, startingAreaYSize);
+       
+        StartingAreaX = mapGenerator.StartingAreaX;
+        StartingAreaY = mapGenerator.StartingAreaY;
 
-                if (y > 17) // skały
-                {
-                    newTile = new Tile(x, y, 0, TileType.Empty, this); // puste
-                    Tiles[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Rock, this); // skały
-                    Tiles[x, y, 1] = newTile;
-                    continue;
-                }
+        Tile.SetWorldForTiles(this);
 
-                if (UnityEngine.Random.Range(0,3) == 0) // skały
-                {
-                    newTile = new Tile(x, y, 0, TileType.Empty, this); // puste
-                    Tiles[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Rock, this); // skały
-                    Tiles[x, y, 1] = newTile;
-                }
-                else // piach
-                {
-                    newTile = new Tile(x, y, 0, TileType.Sand, this); // piach
-                    Tiles[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Empty, this); // puste
-                    Tiles[x, y, 1] = newTile;
-                }                
-            }
-        }
+        Debug.Log("Stworzono mapę posiadającą " + XSize * YSize + " pól.");
 
         Buildings = new List<Building>(1024);
         Characters = new List<Character>(32);
@@ -140,7 +109,7 @@ public class World
         }
 
         Pathfinder.Process();
-
+        
         for (int i = 0; i < Characters.Count; i++)
         {
             Characters[i].UpdateCharacter(deltaTime);

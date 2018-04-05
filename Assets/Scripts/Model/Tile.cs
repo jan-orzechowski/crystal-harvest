@@ -25,12 +25,11 @@ public class Tile
 
     public bool AllowDiagonal = true;
 
-    static World World;
+    static World world;
 
-    public Tile (int x, int y, int height, TileType type, World world)
+    public Tile (int x, int y, int height, TileType type)
     {
         Position = new TilePosition(x, y, height);
-        World = world;
         Type = type;
     }
 
@@ -46,52 +45,52 @@ public class Tile
 
     public Tile GetNorthNeighbour()
     {
-        return World.GetTileFromPosition(X, Y + 1, Height);
+        return world.GetTileFromPosition(X, Y + 1, Height);
     }
 
     public Tile GetSouthNeighbour()
     {
-        return World.GetTileFromPosition(X, Y - 1, Height);
+        return world.GetTileFromPosition(X, Y - 1, Height);
     }
 
     public Tile GetEastNeighbour()
     {
-        return World.GetTileFromPosition(X + 1, Y, Height);
+        return world.GetTileFromPosition(X + 1, Y, Height);
     }
 
     public Tile GetWestNeighbour()
     {
-        return World.GetTileFromPosition(X - 1, Y, Height);
+        return world.GetTileFromPosition(X - 1, Y, Height);
     }
 
     public Tile GetNorthEastNeighbour()
     {
-        return World.GetTileFromPosition(X + 1, Y + 1, Height);
+        return world.GetTileFromPosition(X + 1, Y + 1, Height);
     }
 
     public Tile GetSouthEastNeighbour()
     {
-        return World.GetTileFromPosition(X + 1, Y - 1, Height);
+        return world.GetTileFromPosition(X + 1, Y - 1, Height);
     }
 
     public Tile GetSouthWestNeighbour()
     {
-        return World.GetTileFromPosition(X - 1, Y - 1, Height);
+        return world.GetTileFromPosition(X - 1, Y - 1, Height);
     }
 
     public Tile GetNorthWestNeighbour()
     {
-        return World.GetTileFromPosition(X - 1, Y + 1, Height);
+        return world.GetTileFromPosition(X - 1, Y + 1, Height);
     }
 
     public Tile GetUpperNeighbour()
     {
-        return World.GetTileFromPosition(X, Y, Height + 1);
+        return world.GetTileFromPosition(X, Y, Height + 1);
     }
 
     public Tile GetLowerNeighbour()
     {
-        return World.GetTileFromPosition(X, Y, Height - 1);
+        return world.GetTileFromPosition(X, Y, Height - 1);
     }
 
     public bool IsNeighbour(Tile tile, bool diagonal)
@@ -167,6 +166,11 @@ public class Tile
         if (GetSouthNeighbour() != null) result[2] = GetSouthNeighbour().GetUpperNeighbour();
         if (GetWestNeighbour() != null)  result[3] = GetWestNeighbour().GetUpperNeighbour();
         return result;
+    }
+
+    public static void SetWorldForTiles(World world)
+    {
+        Tile.world = world;
     }
 }
 
