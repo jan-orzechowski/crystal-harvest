@@ -24,6 +24,8 @@ public class World
     public List<Building> Stairs { get; protected set; }
     public Dictionary<Tile, Building> Platforms { get; protected set; }
 
+    List<Building> buildingsMarkedForDeconstruction;
+
     public Dictionary<int, int> AllResources { get; protected set; }
 
     public int ResourceToGather { get; protected set; }
@@ -96,7 +98,9 @@ public class World
         Factories = new List<Factory>();
         Services = new Dictionary<string, List<Service>>();
         Stairs = new List<Building>();
-        Platforms = new Dictionary<Tile, Building>();        
+        Platforms = new Dictionary<Tile, Building>();
+
+        buildingsMarkedForDeconstruction = new List<Building>();
 
         ConstructionSites = new List<ConstructionSite>();
 
@@ -131,6 +135,18 @@ public class World
             for (int i = 0; i < Services[need].Count; i++)
             {
                 Services[need][i].UpdateService(deltaTime);
+            }
+        }
+
+        for (int i = buildingsMarkedForDeconstruction.Count - 1;
+             i >= 0;
+             i--)
+        {
+            Building b = buildingsMarkedForDeconstruction[i];
+            if (CheckIfBuildingIsReadyForDeconstruction(b))
+            {
+                StartBuildingDeconstruction(b);
+                buildingsMarkedForDeconstruction.RemoveAt(i);
             }
         }
     }
@@ -359,7 +375,7 @@ public class World
                 ApplyNewMovementCostsToTiles(newBuilding);
             }
             
-            ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype);
+            ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype, false);
             ConstructionSites.Add(newConstructionSite);
 
             GameManager.Instance.ShowConstructionSite(newConstructionSite);
@@ -414,10 +430,31 @@ public class World
         }
     }
 
-    public bool MarkBuildingToDeconstruction(Building building)
+    public void MarkBuildingToDenconstruction(Building building)
     {
+        if (buildingsMarkedForDeconstruction.Contains(building) == false)
+        {
+            buildingsMarkedForDeconstruction.Add(building);
+        }
+        else
+        {
+            Debug.Log("Próbowano dwa razy zarządzić dekonstrukcję tego samego budynku");
+        }
+    }
 
+    bool CheckIfBuildingIsReadyForDeconstruction(Building building)
+    {
         return false;
+
+    }
+
+    void StartBuildingDeconstruction(Building building)
+    {
+        ConstructionSite deconstructionSite =
+            new ConstructionSite(building, building.Prototype, true);
+        ConstructionSites.Add(deconstructionSite);
+
+        // Powiadomienie GameManagera o zmianie grafiki
     }
 
     bool DeleteBuilding(Building building)
@@ -714,6 +751,15 @@ public class World
                 return true;
             }
         }
+
+        foreach (ConstructionSite site in ConstructionSites)
+        {
+            if (GetReservationForHandlingOutput(character, site))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 

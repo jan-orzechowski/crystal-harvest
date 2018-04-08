@@ -109,7 +109,7 @@ public class Character : ISelectable
             TryGetNewPath();
         }
         
-        // Tutaj raz na jakiś czas pojawia się NullReferenceException - ??
+        // Tutaj występuje NullReferenceException gdy budynek jest niedostępny
         if (path.GetLength() == 0 && NextTile != DestinationTile)
         {
             path = null;
@@ -181,9 +181,9 @@ public class Character : ISelectable
         {
             if (newPath.IsImpossible)
             {
-                Debug.Log("Ścieżka z " 
-                    + newPath.Start.Position.ToString() + " do " 
-                    + newPath.Goal.Position.ToString() + " niemożliwa.");
+                //Debug.Log("Ścieżka z " 
+                //    + newPath.Start.Position.ToString() + " do " 
+                //    + newPath.Goal.Position.ToString() + " niemożliwa.");
 
                 DestinationTile = null;
                 isLastTileRotationSet = false;
@@ -222,7 +222,7 @@ public class Character : ISelectable
         }
         else
         {
-            Debug.Log("Nowy cel: " + tile.Position.ToString());
+            //Debug.Log("Nowy cel: " + tile.Position.ToString());
             DestinationTile = tile;
             NextTile = null;
             MovementPercentage = 0f;
@@ -320,6 +320,12 @@ public class Character : ISelectable
                 || (isLastTileRotationSet && CurrentTile == DestinationTile
                         && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
                 );
+    }
+
+    public void InterruptActivity()
+    {
+        agentMemory.SetNewWorkplace(null);
+        agentMemory.SetNewService(null);
     }
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)

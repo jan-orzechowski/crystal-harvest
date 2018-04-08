@@ -14,4 +14,15 @@ public class ProgressBar : MonoBehaviour
         FillImage.fillAmount = percentage;
         Text.text = Mathf.FloorToInt(percentage * 100) + "%";
     }
+
+    public void SetFillPercentageWithoutText(float percentage)
+    {
+        FillImage.fillAmount = percentage;
+    }
+
+    public void SetText(string text)
+    {
+        Text.text = text;
+    }
+
 }

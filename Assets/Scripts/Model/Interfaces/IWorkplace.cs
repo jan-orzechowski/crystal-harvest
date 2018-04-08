@@ -6,6 +6,8 @@ using System;
 public interface IWorkplace : IBuildingModule
 {
     bool Work(float deltaTime, Character character);
+    bool Halted { get; }
+    void SetHaltStatus(bool halt);
     bool CanReserveJob(Character character);
     bool ReserveJob(Character character);
     void RenewJobReservation(Character character);

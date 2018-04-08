@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public enum SelectedObjectType
 {
@@ -16,11 +17,12 @@ public class SelectionPanel : MonoBehaviour
 {
     public ServicePanel ServicePanel;
     public FactoryPanel FactoryPanel;
+    public NaturalDepositPanel NaturalDepositPanel;
     public StoragePanel StoragePanel;
     public ConstructionPanel ConstructionPanel;
     public CharacterPanel CharacterPanel;
     public RobotPanel RobotPanel;
-
+    
     void Start()
     {
         HidePanels();
@@ -40,10 +42,10 @@ public class SelectionPanel : MonoBehaviour
                 {
                     ConstructionSiteDisplayObject cds = (ConstructionSiteDisplayObject)building.GetDisplayObject();
                     ConstructionPanel.gameObject.SetActive(true);
-                    ConstructionPanel.SetConstructionSite(cds.ConstructionSite);
+                    ConstructionPanel.SetConstructionSite(cds.ConstructionSite);                   
                 }
             }
-
+            else 
             if (building.Module is Storage)
             {
                 StoragePanel.gameObject.SetActive(true);
@@ -52,8 +54,16 @@ public class SelectionPanel : MonoBehaviour
             else
             if (building.Module is Factory)
             {
-                FactoryPanel.gameObject.SetActive(true);
-                FactoryPanel.SetFactory((Factory)building.Module);
+                if (((Factory)building.Module).IsNaturalDeposit)
+                {
+                    NaturalDepositPanel.gameObject.SetActive(true);
+                    NaturalDepositPanel.SetDeposit((Factory)building.Module);
+                }
+                else
+                {
+                    FactoryPanel.gameObject.SetActive(true);
+                    FactoryPanel.SetFactory((Factory)building.Module);
+                }                                  
             }
             else
             if (building.Module is Service)
@@ -87,6 +97,9 @@ public class SelectionPanel : MonoBehaviour
         FactoryPanel.gameObject.SetActive(false);
         FactoryPanel.SetFactory(null);
 
+        NaturalDepositPanel.gameObject.SetActive(false);
+        NaturalDepositPanel.SetDeposit(null);
+
         StoragePanel.gameObject.SetActive(false);
         StoragePanel.SetStorage(null);
 
@@ -95,7 +108,7 @@ public class SelectionPanel : MonoBehaviour
 
         CharacterPanel.gameObject.SetActive(false);
         CharacterPanel.SetCharacter(null);
-
+        
         RobotPanel.gameObject.SetActive(false);
         RobotPanel.SetRobot(null);
     }
@@ -111,6 +124,19 @@ public class SelectionPanel : MonoBehaviour
             {
                 result.Add(id);
             }
+        }
+
+        return result;
+    }
+
+    public static List<int> GetResourcesList(Dictionary<Character, int> resources)
+    {
+        if (resources == null) { return null; }
+
+        List<int> result = new List<int>();
+        foreach (Character c in resources.Keys)
+        {
+            result.Add(resources[c]);
         }
 
         return result;

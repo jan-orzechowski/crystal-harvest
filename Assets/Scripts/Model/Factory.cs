@@ -23,8 +23,13 @@ public class Factory : IWorkplace, IBuildingModule
     public bool ProducesRobot { get; protected set; }
 
     public int RemainingProductionCycles { get; protected set; }
+    public int StartingProductionCycles { get; protected set; }
+
+    public bool IsNaturalDeposit { get; protected set; }
 
     public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
+    
+    public bool Halted { get; protected set; }
     
     public Factory(Building building)
     {
@@ -33,6 +38,7 @@ public class Factory : IWorkplace, IBuildingModule
         ProductionStarted = false;
         
         ProducesRobot = Prototype.ProducesRobot;
+        IsNaturalDeposit = Prototype.IsNaturalDeposit;
 
         if (Prototype.ProductionCyclesLimitMax < 0)
         {
@@ -43,6 +49,7 @@ public class Factory : IWorkplace, IBuildingModule
             RemainingProductionCycles = UnityEngine.Random.Range(Prototype.ProductionCyclesLimitMin,
                                                                  Prototype.ProductionCyclesLimitMax + 1);
         }        
+        StartingProductionCycles = RemainingProductionCycles;
 
         InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
         OutputStorage = new StorageToEmpty(Building, null);
@@ -167,6 +174,7 @@ public class Factory : IWorkplace, IBuildingModule
     public bool CanReserveJob(Character character)
     {
         return (WorkingCharacter == null
+                && Halted == false
                 && (jobReservation == null || jobReservation == character)
                 && RemainingProductionCycles != 0
                 && (ProductionStarted || (InputStorage.IsFilled && OutputStorage.IsEmpty)));
@@ -206,9 +214,32 @@ public class Factory : IWorkplace, IBuildingModule
         }
     }
 
+    public void SetHaltStatus(bool halted)
+    {
+        Halted = halted;
+        InputStorage.Halted = halted;
+    }
+
     public void SetRemainingProductionCycles(int number)
     {
         RemainingProductionCycles = number;
+        StartingProductionCycles = number;
+    }
+
+    public float GetRemainingProductionCyclesPercentage()
+    {
+        float result = 1f - ((float)(StartingProductionCycles - RemainingProductionCycles) / StartingProductionCycles);
+        return result;
+    }
+
+    public void Deconstruct()
+    {
+        WorkingCharacter.InterruptActivity();
+        WorkingCharacter = null;
+        jobReservation = null;
+        Halted = true;
+        GameManager.Instance.World.UnregisterResources(InputStorage.Resources);
+        GameManager.Instance.World.UnregisterResources(OutputStorage.ResourcesToRemove);
     }
 
     public Tile GetAccessTile()
@@ -224,6 +255,8 @@ public class Factory : IWorkplace, IBuildingModule
     public string GetSelectionText()
     {
         string s = "";
+
+        s += "Wstrzymane: " + Halted.ToString() + "\n";
 
         s += "Pracująca postać: ";
         if (WorkingCharacter != null)

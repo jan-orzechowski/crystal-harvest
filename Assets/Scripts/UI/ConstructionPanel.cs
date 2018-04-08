@@ -21,7 +21,12 @@ public class ConstructionPanel : MonoBehaviour
 
     public InputManager InputManager;
 
-    public Text TextSubpanel; 
+    public Text Text;
+    public Text SubText;
+
+    public GameObject StartButton;
+    public GameObject StopButton;
+    public GameObject AbortButton;
 
     void Start ()
     {
@@ -37,6 +42,10 @@ public class ConstructionPanel : MonoBehaviour
 
         tempRequiredResources = new List<int>();
         tempResources = new List<int>();
+
+        AbortButton.SetActive(true);
+        StopButton.SetActive(false);
+        StartButton.SetActive(false);
     }
 
     void Update()
@@ -46,15 +55,40 @@ public class ConstructionPanel : MonoBehaviour
             return;
         }
         else 
-        if ((ConstructionSite.ConstructionMode && ConstructionSite.GetStageCompletionPercentage() >= 1f)
-             || (ConstructionSite.DeconstructionMode && ConstructionSite.GetStageCompletionPercentage() <= 0f))
+        if (ConstructionSite.GetStageCompletionPercentage() >= 1f)
         {
             ConstructionSite = null;
             InputManager.RemoveSelection();
             return;
-        }     
+        }
 
-        ProgressBar.SetFillPercentage(ConstructionSite.GetStageCompletionPercentage());
+        if (ConstructionSite.Building != null)
+        {
+            Text.text = ConstructionSite.Building.Type;
+
+            if (ConstructionSite.Stage == ConstructionStage.Construction)
+                SubText.text = "Plac budowy";
+            else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
+                SubText.text = "Budowa rusztowania";
+            else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
+                SubText.text = "Rozbiórka";
+            else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
+                SubText.text = "Rozbiórka rusztowania";
+        }
+
+        float percentage = ConstructionSite.GetStageCompletionPercentage();
+
+        if (ConstructionSite.DeconstructionMode) percentage = 1f - percentage;
+
+        if (ConstructionSite.Halted)
+        {
+            ProgressBar.SetFillPercentageWithoutText(percentage);
+            ProgressBar.SetText("Wstrzymane");
+        }
+        else
+        {
+            ProgressBar.SetFillPercentage(percentage);
+        }
 
         SelectionPanel.HideResourceIcons(icons);
 
@@ -77,26 +111,59 @@ public class ConstructionPanel : MonoBehaviour
             }           
         }
         else 
-        if (ConstructionSite.DeconstructionMode
-            && ConstructionSite.Stage != ConstructionStage.ScaffoldingDeconstruction
-            && ConstructionSite.Prototype.ResourcesFromDeconstruction != null)
-        {
-            tempRequiredResources = SelectionPanel.GetResourcesList(ConstructionSite.Prototype.ResourcesFromDeconstruction);
-            tempRequiredResources.Sort();
-
+        if (ConstructionSite.DeconstructionMode)
+        {            
             tempResources = SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.ResourcesToRemove);
-            foreach (Character c in ConstructionSite.OutputStorage.ReservedResources.Keys)
-            {
-                tempResources.Add(ConstructionSite.OutputStorage.ReservedResources[c]);
-            }
+            tempResources.AddRange(SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.ReservedResources));
+            tempResources.Sort();
 
-            SelectionPanel.ShowIconsWithRequirements(slots, tempRequiredResources, tempResources, icons);            
+            for (int index = 0; index < tempResources.Count; index++)
+            {
+                SelectionPanel.ShowResourceIcon(tempResources[index], slots[index], false, icons);
+            }           
         }
     }
 
     public void SetConstructionSite(ConstructionSite cs)
     {
         ConstructionSite = cs;
-        if (cs != null && cs.Building != null) TextSubpanel.text = cs.Building.Type;
+        if (cs != null)
+        {            
+            AbortButton.SetActive(cs.CanAbort);           
+
+            if (cs.Halted)
+            {
+                StartButton.SetActive(true);
+                StopButton.SetActive(false);
+            }
+            else
+            {
+                StartButton.SetActive(false);
+                StopButton.SetActive(true);
+            }
+        } 
+    }
+
+    public void AbortButtonAction()
+    {
+        if (ConstructionSite == null) return;
+        ConstructionSite.CancelConstruction();
+        AbortButton.SetActive(false);
+    }
+
+    public void StopButtonAction()
+    {
+        if (ConstructionSite == null) return;
+        ConstructionSite.SetHaltStatus(true);
+        StopButton.SetActive(false);
+        StartButton.SetActive(true);
+    }
+
+    public void StartButtonAction()
+    {
+        if (ConstructionSite == null) return;
+        ConstructionSite.SetHaltStatus(false);
+        StopButton.SetActive(true);
+        StartButton.SetActive(false);
     }
 }

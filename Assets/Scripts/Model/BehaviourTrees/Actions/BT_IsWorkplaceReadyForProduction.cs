@@ -12,7 +12,9 @@ public class BT_IsWorkplaceReadyForProduction : BT_Node
             return BT_Result.ERROR;
         }
 
-        if (am.Workplace.InputStorage.IsFilled == false || am.Workplace.OutputStorage.IsEmpty == false)
+        if (am.Workplace.Halted == true 
+            || am.Workplace.InputStorage.IsFilled == false 
+            || am.Workplace.OutputStorage.IsEmpty == false)
         {
             return BT_Result.FAILURE;
         }

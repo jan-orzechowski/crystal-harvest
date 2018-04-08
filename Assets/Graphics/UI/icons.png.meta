@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 5300128027881914eb974e2d164791b7
-timeCreated: 1520607224
+timeCreated: 1523119153
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -18,13 +18,13 @@ TextureImporter:
     21300022: icons_11
     21300024: icons_12
     21300026: icons_13
-    21300028: icons_14
+    21300028: save
     21300030: icons_15
     21300032: icons_16
     21300034: icons_17
     21300036: icons_18
     21300038: icons_19
-    21300040: icons_20
+    21300040: start
     21300042: icons_21
     21300044: icons_22
     21300046: icons_23
@@ -66,7 +66,7 @@ TextureImporter:
     21300118: icons_59
     21300120: icons_60
     21300122: icons_61
-    21300124: icons_62
+    21300124: stop
     21300126: icons_63
     21300128: icons_64
     21300130: icons_65
@@ -81,12 +81,12 @@ TextureImporter:
     21300148: icons_74
     21300150: icons_75
     21300152: icons_76
-    21300154: icons_77
-    21300156: icons_78
+    21300154: sound
+    21300156: info
     21300158: icons_79
     21300160: icons_80
     21300162: icons_81
-    21300164: icons_82
+    21300164: no_sound
     21300166: icons_83
     21300168: icons_84
     21300170: icons_85
@@ -106,7 +106,7 @@ TextureImporter:
     21300198: icons_99
     21300200: icons_100
     21300202: icons_101
-    21300204: icons_102
+    21300204: minus
     21300206: icons_103
     21300208: icons_104
     21300210: icons_50
@@ -402,7 +402,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_14
+      name: save
       rect:
         serializedVersion: 2
         x: 200
@@ -486,7 +486,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_20
+      name: start
       rect:
         serializedVersion: 2
         x: 200
@@ -1074,7 +1074,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_62
+      name: stop
       rect:
         serializedVersion: 2
         x: 200
@@ -1284,7 +1284,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_77
+      name: sound
       rect:
         serializedVersion: 2
         x: 200
@@ -1298,7 +1298,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_78
+      name: info
       rect:
         serializedVersion: 2
         x: 300
@@ -1354,7 +1354,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_82
+      name: no_sound
       rect:
         serializedVersion: 2
         x: 200
@@ -1634,7 +1634,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_102
+      name: minus
       rect:
         serializedVersion: 2
         x: 200

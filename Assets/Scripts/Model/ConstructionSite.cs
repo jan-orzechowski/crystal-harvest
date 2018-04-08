@@ -22,8 +22,7 @@ public class ConstructionSite : IWorkplace
     public StorageToEmpty OutputStorage { get { return DeconstructionStorage; } }
 
     float constructionTime;
-    float deconstructionTime;
-
+    
     float stageTimeLeft;
     static float scaffoldingStageTime = 5f;
 
@@ -44,31 +43,72 @@ public class ConstructionSite : IWorkplace
 
     public bool HidesCharacter { get { return false; } }
 
-    public ConstructionSite(Building building, BuildingPrototype buildingPrototype)
+    public bool Halted { get; protected set; }
+    public bool CanAbort { get; protected set; }
+    public bool TransitionToDeconstructionStage { get; protected set; }
+
+    public ConstructionSite(Building building, BuildingPrototype buildingPrototype, bool deconstruction)
     {
+        Building = building;
         Prototype = buildingPrototype;
         world = GameManager.Instance.World;
 
-        Building = building;
         constructionTime = Prototype.ConstructionTime;
-        deconstructionTime = constructionTime / 2;
 
-        if (Prototype.ConstructionWithoutScaffolding)
+        Halted = false;
+
+        if (deconstruction)
         {
-            Stage = ConstructionStage.Construction;
-            LoadResourcesForConstruction();
-            stageTimeLeft = constructionTime;
+            CanAbort = false;
+            Stage = ConstructionStage.Deconstruction;                         
+            stageTimeLeft = constructionTime;          
         }
         else
         {
-            Stage = ConstructionStage.ScaffoldingConstruction;
-            LoadResourcesForScaffoldingConstruction();
-            stageTimeLeft = scaffoldingStageTime;
-        }        
+            CanAbort = true;
+
+            if (Prototype.ConstructionWithoutScaffolding)
+            {
+                Stage = ConstructionStage.Construction;
+                LoadRequiredResourcesForConstruction();
+                stageTimeLeft = constructionTime;
+            }
+            else
+            {
+                Stage = ConstructionStage.ScaffoldingConstruction;
+                LoadRequiredResourcesForScaffoldingConstruction();
+                stageTimeLeft = scaffoldingStageTime;
+            }
+        }                
     }
 
     public void UpdateConstructionSite(float deltaTime)
     {
+        if (TransitionToDeconstructionStage)
+        {
+            if (ConstructionStorage.IsWaitingForResources() == false)
+            {
+                DeconstructionStorage = new StorageToEmpty(Building, ConstructionStorage.Resources);
+                ConstructionStorage = new StorageToFill(Building, null);
+
+                if (Stage == ConstructionStage.Construction)
+                {
+                    Stage = ConstructionStage.Deconstruction;
+                    stageTimeLeft = scaffoldingStageTime - stageTimeLeft;
+                }
+                else if (Stage == ConstructionStage.ScaffoldingConstruction)
+                {
+                    Stage = ConstructionStage.ScaffoldingDeconstruction;
+                    stageTimeLeft = constructionTime - stageTimeLeft;
+                }
+
+                TransitionToDeconstructionStage = false;
+            }
+
+            return;
+        }
+
+
         if (WorkingCharacter == null)
         {
             jobReservationTimer -= deltaTime;
@@ -88,6 +128,8 @@ public class ConstructionSite : IWorkplace
 
     public bool Work(float deltaTime, Character workingCharacter)
     {
+        if (Halted || TransitionToDeconstructionStage) return false;
+
         if (ConstructionMode && ConstructionStorage.IsFilled == false)
         {
             return false;
@@ -116,7 +158,7 @@ public class ConstructionSite : IWorkplace
             {
                 Stage = ConstructionStage.Construction;                
                 stageTimeLeft = constructionTime;
-                LoadResourcesForConstruction();
+                LoadRequiredResourcesForConstruction();
             }
             else if (Stage == ConstructionStage.Construction)
             {
@@ -132,6 +174,7 @@ public class ConstructionSite : IWorkplace
                 else
                 {
                     Stage = ConstructionStage.ScaffoldingDeconstruction;
+                    LoadResourcesFromDeconstruction();
                     stageTimeLeft = scaffoldingStageTime;
                 }                
             }
@@ -143,10 +186,33 @@ public class ConstructionSite : IWorkplace
 
         return true;        
     }
- 
+
+    public void CancelConstruction()
+    {
+        if (Stage == ConstructionStage.Construction || Stage == ConstructionStage.ScaffoldingConstruction)
+        {
+            TransitionToDeconstructionStage = true;
+            Halted = false;
+            CanAbort = false;
+            ConstructionStorage.Halted = true;
+        }
+        else
+        {
+            Debug.LogWarning("Próbujemy przerwać budowę, kiedy trwa dekonstrukcja budynku");
+        }        
+    }
+
+    public void SetHaltStatus(bool halted)
+    {
+        Halted = halted;
+        ConstructionStorage.Halted = halted;
+    }
+
     public bool CanReserveJob(Character character)
     {
-        return (WorkingCharacter == null
+        return (Halted == false
+                && TransitionToDeconstructionStage == false
+                && WorkingCharacter == null
                 && (jobReservation == null || jobReservation == character)
                 && ((ConstructionMode && ConstructionStorage.IsFilled)
                     || DeconstructionMode && DeconstructionStorage.IsEmpty));
@@ -174,24 +240,23 @@ public class ConstructionSite : IWorkplace
         }
     }
 
-    void LoadResourcesForConstruction()
+    void LoadRequiredResourcesForConstruction()
     {      
         ConstructionStorage = new StorageToFill(Building, Prototype.ConstructionResources);
         DeconstructionStorage = new StorageToEmpty(Building, null);
     }
 
+    void LoadRequiredResourcesForScaffoldingConstruction()
+    {
+        ConstructionStorage = new StorageToFill(Building, Prototype.ResourcesForScaffoldingConstruction);
+        DeconstructionStorage = new StorageToEmpty(Building, null);
+    }
     void LoadResourcesFromDeconstruction()
     {
         ConstructionStorage = new StorageToFill(Building, null);
         DeconstructionStorage = new StorageToEmpty(Building, Prototype.ResourcesFromDeconstruction);
         GameManager.Instance.World.RegisterResources(Prototype.ResourcesFromDeconstruction);
-    }
-
-    void LoadResourcesForScaffoldingConstruction()
-    {
-        ConstructionStorage = new StorageToFill(Building, Prototype.ResourcesForScaffoldingConstruction);
-        DeconstructionStorage = new StorageToEmpty(Building, null);
-    }
+    }   
 
     public float GetCompletionPercentage()
     {
@@ -199,20 +264,13 @@ public class ConstructionSite : IWorkplace
 
         if (Prototype.ConstructionWithoutScaffolding)
         {
-            if (Stage == ConstructionStage.Construction)
-            {
-                result = (constructionTime - stageTimeLeft) / constructionTime;
-            }
-            else
-            {
-                result = (deconstructionTime - stageTimeLeft) / deconstructionTime;
-            }
+            result = (constructionTime - stageTimeLeft) / constructionTime;
             return result;
         }
 
+        float totalTime = constructionTime + scaffoldingStageTime;
         if (ConstructionMode)
         {
-            float totalTime = constructionTime + scaffoldingStageTime;
             if (Stage == ConstructionStage.ScaffoldingConstruction)
             {
                 result = (totalTime - stageTimeLeft - constructionTime) / totalTime;
@@ -224,7 +282,6 @@ public class ConstructionSite : IWorkplace
         }
         else
         {
-            float totalTime = deconstructionTime + scaffoldingStageTime;
             // W tym wypadku liczymy na odwrót - rusztowanie jest rozbierane na końcu
             if (Stage == ConstructionStage.ScaffoldingDeconstruction)
             {
@@ -241,22 +298,18 @@ public class ConstructionSite : IWorkplace
     public float GetStageCompletionPercentage()
     {
         float result = 0;
-        if(Stage == ConstructionStage.ScaffoldingConstruction 
+        if (Stage == ConstructionStage.ScaffoldingConstruction 
             || Stage == ConstructionStage.ScaffoldingDeconstruction)        
         {
             result = (scaffoldingStageTime - stageTimeLeft) / scaffoldingStageTime;
         }
-        if (Stage == ConstructionStage.Construction)
+        else
         {
             result = (constructionTime - stageTimeLeft) / constructionTime;
-        }
-        if (Stage == ConstructionStage.Deconstruction)
-        {
-            result = (deconstructionTime - stageTimeLeft) / deconstructionTime;
-        }
+        }        
         return result;
     }
-
+    
     public Tile GetAccessTile()
     {
         if (Building != null)
@@ -274,6 +327,8 @@ public class ConstructionSite : IWorkplace
     public string GetSelectionText()
     {
         string s = "";
+
+        s += "Wstrzymane: " + Halted.ToString() + "\n";
 
         s += "Pracująca postać: ";
         if (WorkingCharacter != null)

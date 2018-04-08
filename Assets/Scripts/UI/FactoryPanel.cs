@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System;
 
-public class FactoryPanel : MonoBehaviour 
+public class FactoryPanel : MonoBehaviour
 {    
     [HideInInspector]
     public Factory Factory { get; protected set; }
@@ -23,6 +23,10 @@ public class FactoryPanel : MonoBehaviour
     public Text TextSubpanel;
 
     public GameObject RobotIconPrefab;
+
+    public GameObject StartButton;
+    public GameObject StopButton;
+    public GameObject DeconstructButton;
 
     void Awake()
     {
@@ -61,7 +65,15 @@ public class FactoryPanel : MonoBehaviour
     {
         if (Factory == null) return;
 
-        ProgressBar.SetFillPercentage(Factory.GetCompletionPercentage());
+        if (Factory.Halted)
+        {
+            ProgressBar.SetFillPercentageWithoutText(Factory.GetCompletionPercentage());
+            ProgressBar.SetText("Wstrzymane");
+        }
+        else
+        {
+            ProgressBar.SetFillPercentage(Factory.GetCompletionPercentage());
+        }
 
         SelectionPanel.HideResourceIcons(icons);
 
@@ -100,6 +112,46 @@ public class FactoryPanel : MonoBehaviour
     public void SetFactory(Factory f)
     {
         Factory = f;
-        if (f != null && f.Building != null) TextSubpanel.text = f.Building.Type;
+        if (f != null && f.Building != null)
+        {
+            TextSubpanel.text = f.Building.Type;
+
+            DeconstructButton.SetActive(true);
+
+            if (f.Halted)
+            {
+                StartButton.SetActive(true);
+                StopButton.SetActive(false);
+            }
+            else
+            {
+                StartButton.SetActive(false);
+                StopButton.SetActive(true);
+            }
+        }
+    }
+
+    public void DeconstructButtonAction()
+    {
+        if (Factory == null) return;
+        GameManager.Instance.World.MarkBuildingToDenconstruction(Factory.Building);
+        SetFactory(null);
+        DeconstructButton.SetActive(false);
+    }
+
+    public void StopButtonAction()
+    {
+        if (Factory == null) return;
+        Factory.SetHaltStatus(true);
+        StopButton.SetActive(false);
+        StartButton.SetActive(true);
+    }
+
+    public void StartButtonAction()
+    {
+        if (Factory == null) return;
+        Factory.SetHaltStatus(false);
+        StopButton.SetActive(true);
+        StartButton.SetActive(false);
     }
 }

@@ -47,6 +47,7 @@ public class BuildingPrototype
     public int ProductionCyclesLimitMax = -1;
 
     public bool ProducesRobot = false;
+    public bool IsNaturalDeposit = false;
 
     public float ConstructionTime = 0f;
     public Dictionary<int, int> ConstructionResources = null;

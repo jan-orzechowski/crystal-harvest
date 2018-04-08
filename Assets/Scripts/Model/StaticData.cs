@@ -105,6 +105,8 @@ public static class StaticData
 
         bp.ConstructionWithoutScaffolding = true;
 
+        bp.IsNaturalDeposit = true;
+
         bp.ProductionTime = 2f;
         bp.ProducedResources = new Dictionary<int, int>() { { 3, 1 } };
         bp.ProductionCyclesLimitMin = MinOreAmountInDeposit;
@@ -119,12 +121,14 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "CrystalsDeposit";
-
+       
         bp.CanBeBuiltOnRock = true;
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 1);
 
         bp.ConstructionWithoutScaffolding = true;
+
+        bp.IsNaturalDeposit = true;
 
         bp.ProductionTime = 2f;
         bp.ProducedResources = new Dictionary<int, int>() { { 0, 1 } };

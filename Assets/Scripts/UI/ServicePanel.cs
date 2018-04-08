@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class ServicePanel : MonoBehaviour 
+public class ServicePanel : MonoBehaviour
 {
     [HideInInspector]
     public Service Service;
@@ -18,7 +18,9 @@ public class ServicePanel : MonoBehaviour
     List<int> tempRequiredResources;
     List<int> tempResources;
 
-    public Text TextSubpanel; 
+    public Text TextSubpanel;
+
+    public GameObject DeconstructButton;
 
     void Start()
     {
@@ -49,5 +51,13 @@ public class ServicePanel : MonoBehaviour
     {
         Service = s;
         if (s != null && s.Building != null) TextSubpanel.text = s.Building.Type;
+    }
+
+    public void DeconstructButtonAction()
+    {
+        if (Service == null) return;
+        GameManager.Instance.World.MarkBuildingToDenconstruction(Service.Building);
+        SetService(null);
+        DeconstructButton.SetActive(false);
     }
 }

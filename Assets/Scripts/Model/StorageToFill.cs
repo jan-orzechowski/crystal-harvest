@@ -14,6 +14,8 @@ public class StorageToFill : ITargetStorage
     Tile accessTile;
     Rotation accessTileRotation;
 
+    public bool Halted;
+
     public StorageToFill(Tile accessTile, Rotation accessTileRotation, Dictionary<int, int> requiredResources)
     {
         this.accessTile = accessTile;
@@ -36,14 +38,17 @@ public class StorageToFill : ITargetStorage
                 MissingResourcesCount += requiredResources[id];
             }
         }
+
+        Halted = false;
     }
 
     public StorageToFill(Building building, Dictionary<int, int> requiredResources)
         : this(building.GetAccessTile(), building.GetAccessTileRotation(), requiredResources) { }
 
-    public virtual bool CanReserveFreeSpace(int resourceID, Character character)
+    public bool CanReserveFreeSpace(int resourceID, Character character)
     {
-        return (character.Reservation == null
+        return (Halted == false
+                && character.Reservation == null
                 && MissingResources.ContainsKey(resourceID)
                 && PendingResources.ContainsKey(character) == false);
     }
@@ -110,6 +115,11 @@ public class StorageToFill : ITargetStorage
         {
             return false;
         }
+    }
+
+    public bool IsWaitingForResources()
+    {
+        return (PendingResources.Keys.Count > 0);
     }
 
     public Tile GetAccessTile()

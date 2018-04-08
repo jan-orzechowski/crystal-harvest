@@ -16,6 +16,8 @@ public class StoragePanel : MonoBehaviour
 
     List<int> tempResourcesList;
 
+    public GameObject DeconstructButton;
+
     void Awake()
     {
         tempResourcesList = new List<int>();
@@ -40,19 +42,8 @@ public class StoragePanel : MonoBehaviour
     {
         if (activePanel == null || activePanel.gameObject.activeSelf == false) return;
 
-        tempResourcesList.Clear();
-        foreach (int id in Storage.Resources.Keys)
-        {
-            for (int number = 0; number < Storage.Resources[id]; number++)
-            {
-                tempResourcesList.Add(id);
-            }
-        }
-        foreach (Character c in Storage.ReservedResources.Keys)
-        {
-            tempResourcesList.Add(Storage.ReservedResources[c]);
-        }
-
+        tempResourcesList = SelectionPanel.GetResourcesList(Storage.Resources);
+        tempResourcesList.AddRange(SelectionPanel.GetResourcesList(Storage.ReservedResources));        
         tempResourcesList.Sort();
 
         activePanel.HideResourceIcons();
@@ -83,5 +74,13 @@ public class StoragePanel : MonoBehaviour
 
             ShowResourcesInStorage();
         }
+    }
+
+    public void DeconstructButtonAction()
+    {
+        if (Storage == null) return;
+        GameManager.Instance.World.MarkBuildingToDenconstruction(Storage.Building);
+        SetStorage(null);
+        DeconstructButton.SetActive(false);
     }
 }
