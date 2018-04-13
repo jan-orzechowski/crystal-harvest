@@ -53,8 +53,8 @@ public class Building : ISelectable
         }
         else if (Prototype.MaxStorage > 0)
         {
-            Module = new Storage(this);
-        }
+            Module = new Storage(this, Prototype.InitialStorage, false);
+        }        
     }
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)

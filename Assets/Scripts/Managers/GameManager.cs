@@ -67,7 +67,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        World.InstantBuild(new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
+        Building spaceship = World.InstantBuild(
+                           new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
                            Rotation.N, World.GetBuildingPrototype("Spaceship"));
 
         World.PlaceNaturalResources();

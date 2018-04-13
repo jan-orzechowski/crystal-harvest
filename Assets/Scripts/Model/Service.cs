@@ -8,7 +8,7 @@ public class Service : IBuildingModule
     public Building Building { get; protected set; }
     public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
-    public StorageToFill InputStorage;
+    public StorageWithRequirements InputStorage;
 
     public Character ServicedCharacter { get; protected set; }
 
@@ -26,7 +26,7 @@ public class Service : IBuildingModule
     {
         Building = building;
 
-        InputStorage = new StorageToFill(building, Prototype.ConsumedResources);
+        InputStorage = new StorageWithRequirements(building, Prototype.ConsumedResources);
 
         NeedFulfilled = Prototype.NeedFulfilled;
         NeedFulfillmentPerSecond = Prototype.NeedFulfillmentPerSecond;
@@ -63,9 +63,9 @@ public class Service : IBuildingModule
 
     bool Consume()
     {
-        if (InputStorage.IsFilled)
+        if (InputStorage.AreRequirementsMet)
         {
-            InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
+            InputStorage = new StorageWithRequirements(Building, Prototype.ConsumedResources);
             GameManager.Instance.World.UnregisterResources(Prototype.ConsumedResources);
             return true;
         }

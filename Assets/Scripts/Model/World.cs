@@ -4,10 +4,10 @@ using UnityEngine;
 using System;
 using Pathfinding;
 
-public class World 
+public class World
 {
     public int XSize { get; protected set; }
-    public int YSize { get; protected set; } 
+    public int YSize { get; protected set; }
     public int Height { get; protected set; }
 
     public Tile[,,] Tiles { get; protected set; }
@@ -59,7 +59,7 @@ public class World
 
         MapGenerator mapGenerator = new MapGenerator();
         Tiles = mapGenerator.GenerateMap(XSize, YSize, startingAreaXSize, startingAreaYSize);
-        
+
         StartingAreaX = mapGenerator.StartingAreaX;
         StartingAreaY = mapGenerator.StartingAreaY;
 
@@ -111,13 +111,13 @@ public class World
     {
         if (mapChangedThisFrame)
         {
-            Pathfinder.InvalidateGraph(modifiedTiles);           
+            Pathfinder.InvalidateGraph(modifiedTiles);
             mapChangedThisFrame = false;
             modifiedTiles.Clear();
         }
 
         Pathfinder.Process();
-        
+
         for (int i = 0; i < Characters.Count; i++)
         {
             Characters[i].UpdateCharacter(deltaTime);
@@ -151,40 +151,7 @@ public class World
         }
     }
 
-    public Tile GetTileFromPosition(int x, int y, int height)
-    {
-        return GetTileFromPosition(new TilePosition(x, y, height));
-    }
-
-    public Tile GetTileFromPosition(TilePosition tilePosition)
-    {
-        if (CheckTilePosition(tilePosition) == false)
-        {
-            return null;
-        }
-
-#if DEBUG
-        if (Tiles[tilePosition.X, tilePosition.Y, tilePosition.Height] == null)
-        {
-            return null;
-        }
-#endif
-
-        return Tiles[tilePosition.X, tilePosition.Y, tilePosition.Height];
-    }
-
-    public bool CheckTilePosition(TilePosition tilePosition)
-    {
-        if (tilePosition.X < 0 || tilePosition.Y < 0 || tilePosition.Height < 0 ||
-            tilePosition.X >= XSize || tilePosition.Y >= YSize || tilePosition.Height >= Height)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    #region CharactersManagement
 
     public bool CreateNewCharacter(TilePosition tilePosition, bool isRobot)
     {
@@ -213,7 +180,7 @@ public class World
         }
         return false;
     }
-   
+
     public bool IsCharacterOnTile(Tile tile)
     {
         for (int i = 0; i < Characters.Count; i++)
@@ -227,6 +194,10 @@ public class World
         return false;
     }
 
+    #endregion
+
+    #region ConstructionManagement
+
     public bool IsValidBuildingPosition(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
         List<Tile> tilesToCheck = MapPrototypeToWorld(origin, rotation, prototype);
@@ -235,10 +206,10 @@ public class World
         {
             Tile tile = tilesToCheck[i];
             if (Tile.CheckPassability(tile)
-                && ! (prototype.CanBeBuiltOnSand == false && tile.Type == TileType.Sand)
-                && ! (prototype.CanBeBuiltOnRock == false && tile.Type == TileType.Rock)
-                && ! (prototype.CanBeBuiltOnPlatform == false && tile.Type == TileType.WalkableEmpty)
-                && ! (prototype.AllowToBuildOnTop == false && Platforms.ContainsKey(tile))
+                && !(prototype.CanBeBuiltOnSand == false && tile.Type == TileType.Sand)
+                && !(prototype.CanBeBuiltOnRock == false && tile.Type == TileType.Rock)
+                && !(prototype.CanBeBuiltOnPlatform == false && tile.Type == TileType.WalkableEmpty)
+                && !(prototype.AllowToBuildOnTop == false && Platforms.ContainsKey(tile))
                 && ((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) || prototype.MovementCost != 0f)
                 )
             {
@@ -270,9 +241,9 @@ public class World
     bool IsValidAccessTilePosition(Tile tile)
     {
         return (Tile.CheckPassability(tile));
-    } 
+    }
 
-    public Tile MapPrototypeAccessTileToWorld(TilePosition origin, Rotation rotation, 
+    public Tile MapPrototypeAccessTileToWorld(TilePosition origin, Rotation rotation,
                                               BuildingPrototype prototype, bool secondAccessTile)
     {
         if (secondAccessTile == false && prototype.HasAccessTile)
@@ -374,7 +345,7 @@ public class World
             {
                 ApplyNewMovementCostsToTiles(newBuilding);
             }
-            
+
             ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype, false);
             ConstructionSites.Add(newConstructionSite);
 
@@ -383,7 +354,7 @@ public class World
             Debug.Log("Dodano budynek: " + newBuilding.Tiles[0].Position.ToString());
 
             return newConstructionSite;
-        }       
+        }
     }
 
     public void ApplyNewMovementCostsToTiles(Building building)
@@ -470,7 +441,7 @@ public class World
                 {
                     building.Tiles[i].AllowDiagonal = true;
                 }
-               
+
                 modifiedTiles.Add(building.Tiles[i]);
             }
 
@@ -609,11 +580,11 @@ public class World
             }
         }
 
-        GameManager.Instance.RemoveConstructionSiteDisplay(site);   
-       
-        TilePosition positionForBuildingDisplay = site.Building.Tiles[0].Position - 
-                MapNormalizedPositionToWorld(site.Prototype.NormalizedTilePositions[0], 
-                                             new TilePosition(0,0,0), 
+        GameManager.Instance.RemoveConstructionSiteDisplay(site);
+
+        TilePosition positionForBuildingDisplay = site.Building.Tiles[0].Position -
+                MapNormalizedPositionToWorld(site.Prototype.NormalizedTilePositions[0],
+                                             new TilePosition(0, 0, 0),
                                              buildingToConstruct.Rotation);
 
         site.Building = null;
@@ -639,36 +610,35 @@ public class World
 
         //DeleteBuilding(buildingToDeconstruct);
     }
-    
+
+    #endregion
+
+    #region ResourcesManagement
+
     public bool GetReservationForFillingInput(Character character)
     {
         foreach (Factory factory in Factories)
         {
-            if (GetReservationForFillingInput(character, factory))
-            {
-                return true;
-            }
+            if (factory.Halted) continue;
+
+            if (GetReservationForFillingInput(character, factory.InputStorage)) return true;
         }
 
         foreach (ConstructionSite site in ConstructionSites)
         {
-            if (GetReservationForFillingInput(character, site))
-            {
-                return true;
-            }
+            if (site.Halted) continue;
+
+            if (GetReservationForFillingInput(character, site.InputStorage)) return true;
         }
 
         return false;
     }
 
-    public bool GetReservationForFillingInput(Character character, IWorkplace workplaceToFill)
+    public bool GetReservationForFillingInput(Character character, StorageWithRequirements storageToFill)
     {
-        return GetReservationForFillingInput(character, workplaceToFill.InputStorage);
-    }
-
-    public bool GetReservationForFillingInput(Character character, StorageToFill storageToFill)
-    {
-        if (character.Reservation != null || storageToFill.IsFilled)
+        if (character.Reservation != null
+            || storageToFill.AreRequirementsMet
+            || storageToFill.RequiresEmptying)
         {
             return false;
         }
@@ -679,8 +649,8 @@ public class World
         {
             // Czy nie ma potrzebnych zasobów w jakiejś fabryce do opróżnienia?
             foreach (Factory factoryToCheck in Factories)
-            {
-                if (factoryToCheck.OutputStorage.ResourcesToRemove.ContainsKey(resourceID))
+            {                
+                if (factoryToCheck.OutputStorage.Resources.ContainsKey(resourceID))
                 {
                     if (factoryToCheck.OutputStorage.CanReserveResource(resourceID, character)
                         && storageToFill.CanReserveFreeSpace(resourceID, character))
@@ -688,6 +658,19 @@ public class World
                         newReservation = new ResourceReservation(
                             factoryToCheck.OutputStorage,
                             storageToFill, 
+                            resourceID);
+                        break;
+                    }
+                }
+
+                if (factoryToCheck.InputStorage.RequiresEmptying)
+                {
+                    if (factoryToCheck.InputStorage.CanReserveResource(resourceID, character)
+                        && storageToFill.CanReserveFreeSpace(resourceID, character))
+                    {
+                        newReservation = new ResourceReservation(
+                            factoryToCheck.InputStorage,
+                            storageToFill,
                             resourceID);
                         break;
                     }
@@ -716,7 +699,7 @@ public class World
                 }
             }
 
-            if(newReservation != null)
+            if (newReservation != null)
             {
                 break;
             }            
@@ -741,12 +724,14 @@ public class World
         // Nie udało się nic znaleźć
         return false;        
     }
-
-    public bool GetReservationForHandlingOutput(Character character)
+    
+    public bool GetReservationForEmptying(Character character)
     {
         foreach (Factory factory in Factories)
         {
-            if (GetReservationForHandlingOutput(character, factory))
+            if (GetReservationForEmptying(character, factory.OutputStorage)
+                || (factory.InputStorage.RequiresEmptying 
+                    && GetReservationForEmptying(character, factory.InputStorage)))
             {
                 return true;
             }
@@ -754,7 +739,16 @@ public class World
 
         foreach (ConstructionSite site in ConstructionSites)
         {
-            if (GetReservationForHandlingOutput(character, site))
+            if (site.DeconstructionMode && GetReservationForEmptying(character, site.OutputStorage))
+            {
+                return true;
+            }
+        }
+
+        foreach (Storage storage in Storages)
+        {
+            if (storage.RequiresEmptying
+                && GetReservationForEmptying(character, storage))
             {
                 return true;
             }
@@ -763,28 +757,30 @@ public class World
         return false;
     }
 
-    public bool GetReservationForHandlingOutput(Character character, IWorkplace workplaceWithOutput)
+    public bool GetReservationForEmptying(Character character, Storage storageToEmpty)
     {
-        if (character.Reservation != null || workplaceWithOutput.OutputStorage.IsEmpty)
+        if (character.Reservation != null || storageToEmpty.IsEmpty)
         {
             return false;
         }
 
         ResourceReservation newReservation = null;
 
-        foreach (int resourceID in workplaceWithOutput.OutputStorage.ResourcesToRemove.Keys)
+        foreach (int resourceID in storageToEmpty.Resources.Keys)
         {
             // Czy jakaś fabryka nie potrzebuje tego zasobu?
             foreach (Factory factoryToCheck in Factories)
             {
-                if (factoryToCheck.InputStorage.IsFilled == false
+                if (factoryToCheck.Halted || factoryToCheck.InputStorage.RequiresEmptying) continue;
+
+                if (factoryToCheck.InputStorage.AreRequirementsMet == false
                     && factoryToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
                 {
-                    if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
+                    if (storageToEmpty.CanReserveResource(resourceID, character)
                         && factoryToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
-                            workplaceWithOutput.OutputStorage, 
+                            storageToEmpty, 
                             factoryToCheck.InputStorage, 
                             resourceID);
                         break;
@@ -802,14 +798,14 @@ public class World
             {
                 if (siteToCheck.DeconstructionMode) continue;
 
-                if (siteToCheck.InputStorage.IsFilled == false
+                if (siteToCheck.InputStorage.AreRequirementsMet == false
                     && siteToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
                 {
-                    if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
+                    if (storageToEmpty.CanReserveResource(resourceID, character)
                         && siteToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
-                            workplaceWithOutput.OutputStorage, 
+                            storageToEmpty, 
                             siteToCheck.InputStorage, 
                             resourceID);
                         break;
@@ -825,13 +821,15 @@ public class World
             // Czy w jakimś magazynie jest wolne miejsce?
             foreach (Storage storageToCheck in Storages)
             {
+                if (storageToCheck.RequiresEmptying) continue;
+
                 if (storageToCheck.UnreservedFreeSpace > 0)
                 {
-                    if (workplaceWithOutput.OutputStorage.CanReserveResource(resourceID, character)
+                    if (storageToEmpty.CanReserveResource(resourceID, character)
                         && storageToCheck.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
-                            workplaceWithOutput.OutputStorage, 
+                            storageToEmpty, 
                             storageToCheck, 
                             resourceID);
                         break;
@@ -941,4 +939,46 @@ public class World
             }
         }        
     }
+
+    #endregion
+
+    #region TileUtilities
+
+    public Tile GetTileFromPosition(int x, int y, int height)
+    {
+        return GetTileFromPosition(new TilePosition(x, y, height));
+    }
+
+    public Tile GetTileFromPosition(TilePosition tilePosition)
+    {
+        if (CheckTilePosition(tilePosition) == false)
+        {
+            return null;
+        }
+
+#if DEBUG
+        if (Tiles[tilePosition.X, tilePosition.Y, tilePosition.Height] == null)
+        {
+            return null;
+        }
+#endif
+
+        return Tiles[tilePosition.X, tilePosition.Y, tilePosition.Height];
+    }
+
+    public bool CheckTilePosition(TilePosition tilePosition)
+    {
+        if (tilePosition.X < 0 || tilePosition.Y < 0 || tilePosition.Height < 0 ||
+            tilePosition.X >= XSize || tilePosition.Y >= YSize || tilePosition.Height >= Height)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    #endregion
+
 }

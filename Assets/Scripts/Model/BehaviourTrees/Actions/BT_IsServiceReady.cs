@@ -12,7 +12,7 @@ public class BT_IsServiceReady : BT_Node
             return BT_Result.ERROR;
         }
 
-        if (am.Service.InputStorage.IsFilled == false)
+        if (am.Service.InputStorage.AreRequirementsMet == false)
         {
             return BT_Result.FAILURE;
         }

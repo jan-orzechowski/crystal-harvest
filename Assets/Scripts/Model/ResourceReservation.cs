@@ -5,11 +5,11 @@ using System;
 
 public class ResourceReservation
 {
-    public ISourceStorage SourceStorage;
-    public ITargetStorage TargetStorage;
+    public Storage SourceStorage;
+    public Storage TargetStorage;
     public int Resource;
 
-    public ResourceReservation(ISourceStorage sourceStorage, ITargetStorage targetStorage, int resourceID)
+    public ResourceReservation(Storage sourceStorage, Storage targetStorage, int resourceID)
     {
         SourceStorage = sourceStorage;
         TargetStorage = targetStorage;

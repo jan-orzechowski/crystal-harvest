@@ -21,7 +21,7 @@ public static class StaticData
     public const int MaxCrystalsAmountInDeposit = 15;
 
     public const int CrystalsAmountToGather = 100;
-
+   
     public static Dictionary<int, ResourceInfo> LoadResources()
     {
         Dictionary<int, ResourceInfo> resources = new Dictionary<int, ResourceInfo>();
@@ -87,7 +87,7 @@ public static class StaticData
         bp.MaxStorage = 90;
         bp.InitialStorage = new Dictionary<int, int>() { { 1, 10 }, { 2, 10 }, { 3, 10 },
                                                          { 4, 10 }, { 5, 10 }, { 6, 10 },
-                                                         { 7, 10 }, { 8, 10 }, { 0, 10 }};
+                                                         { 7, 10 }, { 8, 10 }, { 0, 10 } };
 
         prototypes.Add(bp);
 

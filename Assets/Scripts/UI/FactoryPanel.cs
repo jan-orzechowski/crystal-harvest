@@ -90,7 +90,7 @@ public class FactoryPanel : MonoBehaviour
             tempRequiredResources = SelectionPanel.GetResourcesList(Factory.Prototype.ProducedResources);    
             tempRequiredResources.Sort();
 
-            tempResources = SelectionPanel.GetResourcesList(Factory.OutputStorage.ResourcesToRemove);           
+            tempResources = SelectionPanel.GetResourcesList(Factory.OutputStorage.Resources);           
             foreach (Character c in Factory.OutputStorage.ReservedResources.Keys)
             {
                 tempResources.Add(Factory.OutputStorage.ReservedResources[c]);

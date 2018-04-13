@@ -15,7 +15,7 @@ public class BT_GetTransportJob : BT_Node
         {
             return BT_Result.SUCCESS;
         }
-        else if (world.GetReservationForHandlingOutput(am.Character))
+        else if (world.GetReservationForEmptying(am.Character))
         {
             return BT_Result.SUCCESS;
         }

@@ -12,11 +12,10 @@ public class BT_GetTransportJobForWorkplace : BT_Node
 
         World world = GameManager.Instance.World;
 
-        if (world.GetReservationForFillingInput(am.Character, am.Workplace))
-        {
-            return BT_Result.SUCCESS;
-        }
-        else if (world.GetReservationForHandlingOutput(am.Character, am.Workplace))
+        if ((world.GetReservationForFillingInput(am.Character, am.Workplace.InputStorage))
+            || (world.GetReservationForEmptying(am.Character, am.Workplace.OutputStorage))
+            || (am.Workplace.InputStorage.RequiresEmptying 
+                && world.GetReservationForEmptying(am.Character, am.Workplace.OutputStorage)))
         {
             return BT_Result.SUCCESS;
         }

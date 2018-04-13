@@ -15,11 +15,11 @@ public class ConstructionSite : IWorkplace
 {
     public Building Building;
 
-    StorageToFill ConstructionStorage;
-    StorageToEmpty DeconstructionStorage;
+    StorageWithRequirements ConstructionStorage;
+    Storage DeconstructionStorage;
 
-    public StorageToFill InputStorage { get { return ConstructionStorage;  } }
-    public StorageToEmpty OutputStorage { get { return DeconstructionStorage; } }
+    public StorageWithRequirements InputStorage { get { return ConstructionStorage;  } }
+    public Storage OutputStorage { get { return DeconstructionStorage; } }
 
     float constructionTime;
     
@@ -88,8 +88,8 @@ public class ConstructionSite : IWorkplace
         {
             if (ConstructionStorage.IsWaitingForResources() == false)
             {
-                DeconstructionStorage = new StorageToEmpty(Building, ConstructionStorage.Resources);
-                ConstructionStorage = new StorageToFill(Building, null);
+                DeconstructionStorage = new Storage(Building, ConstructionStorage.Resources, true);
+                ConstructionStorage = new StorageWithRequirements(Building, null);
 
                 if (Stage == ConstructionStage.Construction)
                 {
@@ -130,7 +130,7 @@ public class ConstructionSite : IWorkplace
     {
         if (Halted || TransitionToDeconstructionStage) return false;
 
-        if (ConstructionMode && ConstructionStorage.IsFilled == false)
+        if (ConstructionMode && ConstructionStorage.AreRequirementsMet == false)
         {
             return false;
         }
@@ -194,7 +194,6 @@ public class ConstructionSite : IWorkplace
             TransitionToDeconstructionStage = true;
             Halted = false;
             CanAbort = false;
-            ConstructionStorage.Halted = true;
         }
         else
         {
@@ -205,7 +204,6 @@ public class ConstructionSite : IWorkplace
     public void SetHaltStatus(bool halted)
     {
         Halted = halted;
-        ConstructionStorage.Halted = halted;
     }
 
     public bool CanReserveJob(Character character)
@@ -214,7 +212,7 @@ public class ConstructionSite : IWorkplace
                 && TransitionToDeconstructionStage == false
                 && WorkingCharacter == null
                 && (jobReservation == null || jobReservation == character)
-                && ((ConstructionMode && ConstructionStorage.IsFilled)
+                && ((ConstructionMode && ConstructionStorage.AreRequirementsMet)
                     || DeconstructionMode && DeconstructionStorage.IsEmpty));
     }
 
@@ -242,19 +240,20 @@ public class ConstructionSite : IWorkplace
 
     void LoadRequiredResourcesForConstruction()
     {      
-        ConstructionStorage = new StorageToFill(Building, Prototype.ConstructionResources);
-        DeconstructionStorage = new StorageToEmpty(Building, null);
+        ConstructionStorage = new StorageWithRequirements(Building, Prototype.ConstructionResources);
+        DeconstructionStorage = new Storage(Building, null);
     }
 
     void LoadRequiredResourcesForScaffoldingConstruction()
     {
-        ConstructionStorage = new StorageToFill(Building, Prototype.ResourcesForScaffoldingConstruction);
-        DeconstructionStorage = new StorageToEmpty(Building, null);
+        ConstructionStorage = new StorageWithRequirements(Building, Prototype.ResourcesForScaffoldingConstruction);
+        DeconstructionStorage = new Storage(Building, null);
     }
+
     void LoadResourcesFromDeconstruction()
     {
-        ConstructionStorage = new StorageToFill(Building, null);
-        DeconstructionStorage = new StorageToEmpty(Building, Prototype.ResourcesFromDeconstruction);
+        ConstructionStorage = new StorageWithRequirements(Building, null);
+        DeconstructionStorage = new Storage(Building, Prototype.ResourcesFromDeconstruction, true);
         GameManager.Instance.World.RegisterResources(Prototype.ResourcesFromDeconstruction);
     }   
 

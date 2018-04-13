@@ -3,24 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class StorageToFill : ITargetStorage
+public class StorageWithRequirements : Storage
 {
-    public Dictionary<int, int> Resources { get; protected set; }
-    public Dictionary<Character, int> PendingResources { get; protected set; }
     public Dictionary<int, int> MissingResources { get; protected set; }
+    public Dictionary<Character, int> PendingResources { get; protected set; }
     public int MissingResourcesCount { get; protected set; }
-    public bool IsFilled { get { return (MissingResourcesCount == 0); } }
-
-    Tile accessTile;
-    Rotation accessTileRotation;
-
-    public bool Halted;
-
-    public StorageToFill(Tile accessTile, Rotation accessTileRotation, Dictionary<int, int> requiredResources)
+    public bool AreRequirementsMet { get { return (MissingResourcesCount == 0); } }
+        
+    public StorageWithRequirements(Building building, Dictionary<int, int> requiredResources)
+        : base (building, null, false)
     {
-        this.accessTile = accessTile;
-        this.accessTileRotation = accessTileRotation;
-
         Resources = new Dictionary<int, int>();
         PendingResources = new Dictionary<Character, int>();
 
@@ -38,22 +30,17 @@ public class StorageToFill : ITargetStorage
                 MissingResourcesCount += requiredResources[id];
             }
         }
-
-        Halted = false;
     }
 
-    public StorageToFill(Building building, Dictionary<int, int> requiredResources)
-        : this(building.GetAccessTile(), building.GetAccessTileRotation(), requiredResources) { }
-
-    public bool CanReserveFreeSpace(int resourceID, Character character)
+    public override bool CanReserveFreeSpace(int resourceID, Character character)
     {
-        return (Halted == false
+        return (RequiresEmptying == false
                 && character.Reservation == null
                 && MissingResources.ContainsKey(resourceID)
                 && PendingResources.ContainsKey(character) == false);
     }
 
-    public bool TransferToStorage(int resourceID, Character character)
+    public override bool TransferToStorage(int resourceID, Character character)
     {
         if (PendingResources.ContainsKey(character)
             && PendingResources[character] == resourceID
@@ -76,7 +63,7 @@ public class StorageToFill : ITargetStorage
         return false;
     }
 
-    public bool ReserveFreeSpace(int resourceID, Character character)
+    public override bool ReserveFreeSpace(int resourceID, Character character)
     {
         if (CanReserveFreeSpace(resourceID, character))
         {
@@ -94,7 +81,7 @@ public class StorageToFill : ITargetStorage
         }
     }
 
-    public bool RemoveFreeSpaceReservation(Character character)
+    public override bool RemoveFreeSpaceReservation(Character character)
     {
         if (PendingResources.ContainsKey(character))
         {
@@ -117,33 +104,61 @@ public class StorageToFill : ITargetStorage
         }
     }
 
+    public override bool CanReserveResource(int resourceID, Character character)
+    {
+        return (RequiresEmptying == true
+                && character.Reservation == null
+                && ReservedResources.ContainsKey(character) == false
+                && Resources.ContainsKey(resourceID)
+                && Resources[resourceID] > 0);
+    }
+    
+    public override bool TransferFromStorage(int resourceID, Character character)
+    {
+        if (ReservedResources.ContainsKey(character) &&
+            ReservedResources[character] == resourceID
+            && character.HasResource == false)
+        {
+            ReservedResources.Remove(character);
+            character.AddResource(resourceID);
+
+            MissingResources.Add(resourceID, 1);
+            MissingResourcesCount++;
+
+            CurrentResourceCount--;
+            Changed = true;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public bool IsWaitingForResources()
     {
         return (PendingResources.Keys.Count > 0);
     }
 
-    public Tile GetAccessTile()
+    public override void SetEmptyingMode(bool requiresEmptying)
     {
-        return accessTile;
-    }
 
-    public Rotation GetAccessTileRotation()
-    {
-        return accessTileRotation;
     }
-
-    public string GetSelectionText()
+    
+    public new string GetSelectionText()
     {
         string s = "";
 
-        s += "StorageToFill - jest: " + "\n";
+        s += "Tryb opróżniania: " + RequiresEmptying + "\n";
+
+        s += "StorageWithRequirements - jest: " + "\n";
         foreach (int resourceID in Resources.Keys)
         {
             s += "- " + GameManager.Instance.World.ResourcesInfo[resourceID].Name + " - "
                 + Resources[resourceID] + "\n";
         }
         s += "\n";
-        s += "StorageToFill - brakuje: " + "\n";
+        s += "StorageWithRequirements - brakuje: " + "\n";
         if (MissingResourcesCount > 0)
             foreach (int resourceID in MissingResources.Keys)
             {
@@ -152,13 +167,19 @@ public class StorageToFill : ITargetStorage
             }
 
         s += "\n";
-        s += "StorageToFill - w drodze: " + "\n";
+        s += "StorageWithRequirements - w drodze: " + "\n";
         foreach (Character character in PendingResources.Keys)
         {
             s += "- " + character.Name + " - "
                 + GameManager.Instance.World.ResourcesInfo[PendingResources[character]].Name + "\n";
         }
         s += "\n";
+
+        s += "Rezerwacje zasobów: " + "\n";
+        foreach (Character character in ReservedResources.Keys)
+        {
+            s += "- " + character.Name + "- " + GameManager.Instance.World.ResourcesInfo[ReservedResources[character]].Name + "\n";
+        }
 
         return s;
     }

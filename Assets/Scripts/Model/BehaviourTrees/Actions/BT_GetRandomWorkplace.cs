@@ -16,7 +16,7 @@ public class BT_GetRandomWorkplace : BT_Node
             int cs = UnityEngine.Random.Range(0, world.ConstructionSites.Count);
             if (world.ConstructionSites[cs].CanReserveJob(am.Character))
             {
-                am.SetNewWorkplace((IWorkplace)world.ConstructionSites[cs]);
+                am.SetNewWorkplace(world.ConstructionSites[cs]);
                 return BT_Result.SUCCESS;
             }
         }
@@ -28,7 +28,7 @@ public class BT_GetRandomWorkplace : BT_Node
             int f = UnityEngine.Random.Range(0, world.Factories.Count);
             if (world.Factories[f].CanReserveJob(am.Character))
             {
-                am.SetNewWorkplace((IWorkplace)world.Factories[f]);
+                am.SetNewWorkplace(world.Factories[f]);
                 return BT_Result.SUCCESS;
             }
         }

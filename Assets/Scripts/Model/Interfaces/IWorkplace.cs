@@ -11,8 +11,8 @@ public interface IWorkplace : IBuildingModule
     bool CanReserveJob(Character character);
     bool ReserveJob(Character character);
     void RenewJobReservation(Character character);
-    StorageToFill InputStorage { get; }
-    StorageToEmpty OutputStorage { get; }
+    StorageWithRequirements InputStorage { get; }
+    Storage OutputStorage { get; }
     Tile GetAccessTile();
     Rotation GetAccessTileRotation();
 }

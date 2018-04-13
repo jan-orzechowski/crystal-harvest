@@ -113,7 +113,7 @@ public class ConstructionPanel : MonoBehaviour
         else 
         if (ConstructionSite.DeconstructionMode)
         {            
-            tempResources = SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.ResourcesToRemove);
+            tempResources = SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.Resources);
             tempResources.AddRange(SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.ReservedResources));
             tempResources.Sort();
 

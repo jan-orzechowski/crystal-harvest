@@ -3,58 +3,66 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
+public class Storage : IBuildingModule
 {
     public Building Building { get; protected set; }
-    public BuildingPrototype Prototype { get { return Building.Prototype; } }
+    
     public Dictionary<int, int> Resources { get; protected set; }
     public Dictionary<Character, int> ReservedResources { get; protected set; }
     public List<Character> FreeSpaceReservations { get; protected set; }
     public int MaxCapacity { get; protected set; }
     public int CurrentResourceCount { get; protected set; }
-    public int UnreservedFreeSpace { get { return (MaxCapacity - CurrentResourceCount - FreeSpaceReservations.Count); } }
-  
+
+    public bool RequiresEmptying { get; protected set; }
+    
     public bool Changed = true;
-
+    
+    public bool IsEmpty { get { return (CurrentResourceCount == 0); } }
+    public int UnreservedFreeSpace { get { return (MaxCapacity - CurrentResourceCount - FreeSpaceReservations.Count); } }
     public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
+    public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
-    public Storage(Building building)
-    {
+    public Storage (Building building, Dictionary<int, int> initialResources, bool requiresEmptying = false)
+    {       
         Building = building;
+               
+        if (initialResources == null)
+        {
+            Resources = new Dictionary<int, int>();
+            CurrentResourceCount = 0;
+        }
+        else
+        {
+            Resources = new Dictionary<int, int>(initialResources);
+            foreach (int id in Resources.Keys)
+            {
+                CurrentResourceCount += Resources[id];
+            }
+            GameManager.Instance.World.RegisterResources(initialResources);
+        }
        
         ReservedResources = new Dictionary<Character, int>();
         FreeSpaceReservations = new List<Character>();
 
-        MaxCapacity = Prototype.MaxStorage;
-        
-        if (Prototype.InitialStorage != null)
+        if (CurrentResourceCount > MaxCapacity)
         {
-            int initialStorageCount = 0;
-            foreach (int id in Prototype.InitialStorage.Keys)
-            {
-                initialStorageCount += Prototype.InitialStorage[id];
-            }
-            if (initialStorageCount <= MaxCapacity)
-            {
-                Resources = new Dictionary<int, int>(Prototype.InitialStorage);
-                GameManager.Instance.World.RegisterResources(Prototype.InitialStorage);
-                CurrentResourceCount = initialStorageCount;
-                return;
-            }           
+            MaxCapacity = CurrentResourceCount;
         }
-
-        Resources = new Dictionary<int, int>();
-        CurrentResourceCount = 0;
+        else
+        {
+            MaxCapacity = Prototype.MaxStorage;
+        }
     }
     
-    public bool CanReserveFreeSpace(int resourceID, Character character)
+    public virtual bool CanReserveFreeSpace(int resourceID, Character character)
     {
-        return (UnreservedFreeSpace > 0
+        return (RequiresEmptying == false
+                && UnreservedFreeSpace > 0
                 && FreeSpaceReservations.Contains(character) == false
                 && Building.Prototype.RestrictedResources.Contains(resourceID) == false);
     }
 
-    public bool ReserveFreeSpace(int resourceID, Character character)
+    public virtual bool ReserveFreeSpace(int resourceID, Character character)
     {
         if (CanReserveFreeSpace(resourceID, character))
         {
@@ -67,7 +75,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         }
     }
 
-    public bool RemoveFreeSpaceReservation(Character character)
+    public virtual bool RemoveFreeSpaceReservation(Character character)
     {
         if (FreeSpaceReservations.Contains(character))
         {
@@ -80,7 +88,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         }
     }
 
-    public bool CanReserveResource(int resourceID, Character character)
+    public virtual bool CanReserveResource(int resourceID, Character character)
     {
         return (character.Reservation == null
                 && ReservedResources.ContainsKey(character) == false
@@ -88,7 +96,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
                 && Resources[resourceID] > 0);        
     }
 
-    public bool ReserveResource(int resourceID, Character character)
+    public virtual bool ReserveResource(int resourceID, Character character)
     {
         if (CanReserveResource(resourceID, character))
         {
@@ -107,7 +115,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         }
     }
 
-    public bool RemoveResourceReservation(Character character)
+    public virtual bool RemoveResourceReservation(Character character)
     {
         if (ReservedResources.ContainsKey(character))
         {
@@ -131,7 +139,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         }
     }
 
-    public bool TransferFromStorage(int resourceID, Character character)
+    public virtual bool TransferFromStorage(int resourceID, Character character)
     {
         if (ReservedResources.ContainsKey(character) &&
             ReservedResources[character] == resourceID
@@ -149,7 +157,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         }
     }
 
-    public bool TransferToStorage(int resourceID, Character character)
+    public virtual bool TransferToStorage(int resourceID, Character character)
     {
         if (FreeSpaceReservations.Contains(character) &&
             character.Resource == resourceID)
@@ -172,6 +180,11 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         return false;
     }
 
+    public virtual void SetEmptyingMode(bool requiresEmptying)
+    {
+        RequiresEmptying = requiresEmptying;
+    }
+
     public Dictionary<int, int> GetAllResources()
     {
         Dictionary<int, int> result = new Dictionary<int, int>(Resources);
@@ -188,7 +201,7 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
         }
         return result;
     }
-
+    
     public Tile GetAccessTile()
     {
         return Building.GetAccessTile();
@@ -202,6 +215,9 @@ public class Storage : ISourceStorage, ITargetStorage, IBuildingModule
     public string GetSelectionText()
     {
         string s = "";
+
+        s += "Tryb opróżniania: " + RequiresEmptying + "\n";
+
         s += "Zasoby: " + "\n";
         var resourcesToPrint = GetAllResources();
         foreach (int resourceID in resourcesToPrint.Keys)

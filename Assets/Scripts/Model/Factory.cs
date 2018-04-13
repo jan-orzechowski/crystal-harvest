@@ -8,8 +8,8 @@ public class Factory : IWorkplace, IBuildingModule
     public Building Building { get; protected set; }
     public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
-    public StorageToFill InputStorage { get; protected set; }
-    public StorageToEmpty OutputStorage { get; protected set; }
+    public StorageWithRequirements InputStorage { get; protected set; }
+    public Storage OutputStorage { get; protected set; }
 
     float productionTime;
     float productionTimeLeft;
@@ -51,8 +51,8 @@ public class Factory : IWorkplace, IBuildingModule
         }        
         StartingProductionCycles = RemainingProductionCycles;
 
-        InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
-        OutputStorage = new StorageToEmpty(Building, null);
+        InputStorage = new StorageWithRequirements(Building, Prototype.ConsumedResources);
+        OutputStorage = new Storage(Building, null);
     }
 
     public void UpdateFactory(float deltaTime)
@@ -77,7 +77,7 @@ public class Factory : IWorkplace, IBuildingModule
     public bool Work(float deltaTime, Character workingCharacter)
     {
         if (ProductionStarted == false 
-            && (InputStorage.IsFilled == false || OutputStorage.IsEmpty == false))
+            && (InputStorage.AreRequirementsMet == false || OutputStorage.IsEmpty == false))
         {
             return false;
         }
@@ -139,7 +139,7 @@ public class Factory : IWorkplace, IBuildingModule
     {
         if (OutputStorage.IsEmpty)
         {
-            OutputStorage = new StorageToEmpty(Building, Prototype.ProducedResources);
+            OutputStorage = new Storage(Building, Prototype.ProducedResources, requiresEmptying: true);
             GameManager.Instance.World.RegisterResources(Prototype.ProducedResources);
 
             if (ProducesRobot)
@@ -159,9 +159,9 @@ public class Factory : IWorkplace, IBuildingModule
 
     bool Consume()
     {
-        if (InputStorage.IsFilled)
+        if (InputStorage.AreRequirementsMet)
         {
-            InputStorage = new StorageToFill(Building, Prototype.ConsumedResources);
+            InputStorage = new StorageWithRequirements(Building, Prototype.ConsumedResources);
             GameManager.Instance.World.UnregisterResources(Prototype.ConsumedResources);
             return true;            
         }
@@ -177,7 +177,7 @@ public class Factory : IWorkplace, IBuildingModule
                 && Halted == false
                 && (jobReservation == null || jobReservation == character)
                 && RemainingProductionCycles != 0
-                && (ProductionStarted || (InputStorage.IsFilled && OutputStorage.IsEmpty)));
+                && (ProductionStarted || (InputStorage.AreRequirementsMet && OutputStorage.IsEmpty)));
     }
 
     public bool ReserveJob(Character character)
@@ -217,7 +217,6 @@ public class Factory : IWorkplace, IBuildingModule
     public void SetHaltStatus(bool halted)
     {
         Halted = halted;
-        InputStorage.Halted = halted;
     }
 
     public void SetRemainingProductionCycles(int number)
@@ -239,7 +238,7 @@ public class Factory : IWorkplace, IBuildingModule
         jobReservation = null;
         Halted = true;
         GameManager.Instance.World.UnregisterResources(InputStorage.Resources);
-        GameManager.Instance.World.UnregisterResources(OutputStorage.ResourcesToRemove);
+        GameManager.Instance.World.UnregisterResources(OutputStorage.Resources);
     }
 
     public Tile GetAccessTile()
