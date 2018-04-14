@@ -24,6 +24,8 @@ public class Service : IBuildingModule
 
     bool haltedForDeconstruction;
 
+    public bool Halted { get { return haltedForDeconstruction; } }
+
     public Service(Building building)
     {
         Building = building;
@@ -140,6 +142,11 @@ public class Service : IBuildingModule
         haltedForDeconstruction = false;
     }
 
+    public bool IsPreparingForDeconstruction()
+    {
+        return haltedForDeconstruction;
+    }
+
     public bool IsReadyForDeconstruction()
     {
         return (ServicedCharacter == null
@@ -149,6 +156,11 @@ public class Service : IBuildingModule
     public float GetServicePercentage()
     {
         return ((Prototype.ServiceDuration - serviceDuration) / Prototype.ServiceDuration);
+    }
+
+    public void SetHalt(bool halt)
+    {
+        return;
     }
 
     public Tile GetAccessTile()

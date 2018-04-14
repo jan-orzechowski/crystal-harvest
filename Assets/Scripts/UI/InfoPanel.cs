@@ -17,7 +17,6 @@ public class InfoPanel : MonoBehaviour
 
     void Update()
     {
-#if DEBUG
         string s = "";
 
         Tile t = mouseManager.CurrentTile;
@@ -48,6 +47,5 @@ public class InfoPanel : MonoBehaviour
 
             text.text = s;
         }
-#endif
     }
 }

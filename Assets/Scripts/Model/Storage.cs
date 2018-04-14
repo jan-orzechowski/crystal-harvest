@@ -22,6 +22,10 @@ public class Storage : IBuildingModule
     public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
     public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
+    bool preparingForDeconstruction;
+
+    public bool Halted { get { return preparingForDeconstruction; } }
+
     public Storage (Building building, Dictionary<int, int> initialResources, bool requiresEmptying = false)
     {       
         Building = building;
@@ -183,16 +187,28 @@ public class Storage : IBuildingModule
     public void StartDeconstructionPreparation()
     {
         RequiresEmptying = true;
+        preparingForDeconstruction = true;
     }
 
     public void CancelDeconstructionPreparation()
     {
         RequiresEmptying = false;
+        preparingForDeconstruction = false;
+    }
+
+    public bool IsPreparingForDeconstruction()
+    {
+        return preparingForDeconstruction;
     }
 
     public virtual bool IsReadyForDeconstruction()
     {
         return (CurrentResourceCount == 0 && FreeSpaceReservations.Count == 0);
+    }
+
+    public void SetHalt(bool halt)
+    {
+        return;
     }
 
     public Dictionary<int, int> GetAllResources()

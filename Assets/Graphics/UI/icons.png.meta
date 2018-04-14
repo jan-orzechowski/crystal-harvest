@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 5300128027881914eb974e2d164791b7
-timeCreated: 1523119153
+timeCreated: 1523728861
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -31,17 +31,17 @@ TextureImporter:
     21300048: icons_24
     21300050: icons_25
     21300052: icons_26
-    21300054: icons_27
-    21300056: icons_28
+    21300054: people
+    21300056: load
     21300058: icons_29
     21300060: icons_30
     21300062: icons_31
-    21300064: icons_32
+    21300064: revert
     21300066: icons_33
     21300068: icons_34
     21300070: icons_35
     21300072: icons_36
-    21300074: icons_37
+    21300074: question_mark
     21300076: icons_38
     21300078: icons_39
     21300080: icons_40
@@ -51,7 +51,7 @@ TextureImporter:
     21300088: icons_44
     21300090: icons_45
     21300092: icons_46
-    21300094: icons_47
+    21300094: quit
     21300096: icons_48
     21300098: icons_49
     21300100: arrow_icon
@@ -110,6 +110,7 @@ TextureImporter:
     21300206: icons_103
     21300208: icons_104
     21300210: icons_50
+    21300212: icons_14
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -584,7 +585,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_27
+      name: people
       rect:
         serializedVersion: 2
         x: 300
@@ -598,7 +599,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_28
+      name: load
       rect:
         serializedVersion: 2
         x: 400
@@ -654,7 +655,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_32
+      name: revert
       rect:
         serializedVersion: 2
         x: 200
@@ -724,7 +725,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_37
+      name: question_mark
       rect:
         serializedVersion: 2
         x: 200
@@ -864,7 +865,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: icons_47
+      name: quit
       rect:
         serializedVersion: 2
         x: 200
@@ -1671,6 +1672,20 @@ TextureImporter:
         height: 100
       alignment: 1
       pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: icons_14
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 1349
+        width: 6
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

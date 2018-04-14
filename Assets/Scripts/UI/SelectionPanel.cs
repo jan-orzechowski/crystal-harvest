@@ -15,6 +15,8 @@ public enum SelectedObjectType
 
 public class SelectionPanel : MonoBehaviour 
 {
+    public InputManager InputManager;
+
     public ServicePanel ServicePanel;
     public FactoryPanel FactoryPanel;
     public NaturalDepositPanel NaturalDepositPanel;
@@ -22,7 +24,9 @@ public class SelectionPanel : MonoBehaviour
     public ConstructionPanel ConstructionPanel;
     public CharacterPanel CharacterPanel;
     public RobotPanel RobotPanel;
-    
+    public BuildingModulePanel BuildingModulePanel;
+    public OtherBuildingPanel OtherBuildingPanel;
+
     void Start()
     {
         HidePanels();
@@ -35,41 +39,56 @@ public class SelectionPanel : MonoBehaviour
         if (obj is Building)
         {
             Building building = (Building)obj;
-
+            
             if (building.Module == null)
             {               
                 if (building.GetDisplayObject() is ConstructionSiteDisplayObject)
                 {
                     ConstructionSiteDisplayObject cds = (ConstructionSiteDisplayObject)building.GetDisplayObject();
                     ConstructionPanel.gameObject.SetActive(true);
-                    ConstructionPanel.SetConstructionSite(cds.ConstructionSite);                   
+                    ConstructionPanel.SetConstructionSite(cds.ConstructionSite);
+
+                    BuildingModulePanel.gameObject.SetActive(true);
+                    BuildingModulePanel.SetModule(cds.ConstructionSite);
+                }
+                else if (building.Type == "Stairs" 
+                         || building.Type == "Platform"
+                         || building.Type == "Slab")
+                {
+                    OtherBuildingPanel.gameObject.SetActive(true);
+                    OtherBuildingPanel.SetOtherBuilding(building);
                 }
             }
-            else 
-            if (building.Module is Storage)
-            {
-                StoragePanel.gameObject.SetActive(true);
-                StoragePanel.SetStorage((Storage)building.Module);
-            }
             else
-            if (building.Module is Factory)
-            {
-                if (((Factory)building.Module).IsNaturalDeposit)
+            {                
+                if (building.Module is Storage)
                 {
-                    NaturalDepositPanel.gameObject.SetActive(true);
-                    NaturalDepositPanel.SetDeposit((Factory)building.Module);
+                    StoragePanel.gameObject.SetActive(true);
+                    StoragePanel.SetStorage((Storage)building.Module);
                 }
-                else
+                else if (building.Module is Factory)
                 {
-                    FactoryPanel.gameObject.SetActive(true);
-                    FactoryPanel.SetFactory((Factory)building.Module);
-                }                                  
-            }
-            else
-            if (building.Module is Service)
-            {
-                ServicePanel.gameObject.SetActive(true);
-                ServicePanel.SetService((Service)building.Module);
+                    if (((Factory)building.Module).IsNaturalDeposit)
+                    {
+                        NaturalDepositPanel.gameObject.SetActive(true);
+                        NaturalDepositPanel.SetDeposit((Factory)building.Module);
+                    }
+                    else
+                    {
+                        FactoryPanel.gameObject.SetActive(true);
+                        FactoryPanel.SetFactory((Factory)building.Module);
+                    }
+                }
+                else if (building.Module is Service)
+                {
+                    ServicePanel.gameObject.SetActive(true);
+                    ServicePanel.SetService((Service)building.Module);
+                }
+
+                if (building.Prototype.IsNaturalDeposit) return;
+                
+                BuildingModulePanel.gameObject.SetActive(true);
+                BuildingModulePanel.SetModule(building.Module);                
             }
         }
         else
@@ -111,6 +130,18 @@ public class SelectionPanel : MonoBehaviour
         
         RobotPanel.gameObject.SetActive(false);
         RobotPanel.SetRobot(null);
+
+        BuildingModulePanel.gameObject.SetActive(false);
+        BuildingModulePanel.SetModule(null);
+
+        OtherBuildingPanel.gameObject.SetActive(false);
+        OtherBuildingPanel.SetOtherBuilding(null);
+    }
+
+    public void RemoveSelection()
+    {
+        InputManager.RemoveSelection();
+        HidePanels();
     }
 
     public static List<int> GetResourcesList(Dictionary<int, int> resources)

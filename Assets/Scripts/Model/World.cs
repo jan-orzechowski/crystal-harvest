@@ -431,8 +431,10 @@ public class World
         }
     }
 
-    public void MarkBuildingToDenconstruction(Building building)
+    public void MarkBuildingForDenconstruction(Building building)
     {
+        if (building == null) return;
+
         if (buildingsMarkedForDeconstruction.Contains(building) == false)
         {
             buildingsMarkedForDeconstruction.Add(building);
@@ -475,6 +477,7 @@ public class World
 
         Buildings.Remove(building);
         building.RemoveModule();
+        building.IsDeconstructed = true;
 
         mapChangedThisFrame = true;
 

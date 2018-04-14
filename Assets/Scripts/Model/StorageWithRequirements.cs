@@ -60,6 +60,7 @@ public class StorageWithRequirements : Storage
             }
             character.RemoveResource();
             character.ReservationUsed();
+            Changed = true;
             return true;
         }
         return false;

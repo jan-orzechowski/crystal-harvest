@@ -6,8 +6,9 @@ using System.Linq;
 using System;
 
 public class FactoryPanel : MonoBehaviour
-{    
-    [HideInInspector]
+{
+    public SelectionPanel SelectionPanel;
+
     public Factory Factory { get; protected set; }
 
     public ProgressBar ProgressBar;
@@ -17,16 +18,12 @@ public class FactoryPanel : MonoBehaviour
 
     List<GameObject> icons;
 
-    List<int> tempRequiredResources;  
+    List<int> tempRequiredResources;
     List<int> tempResources;
 
     public Text TextSubpanel;
 
     public GameObject RobotIconPrefab;
-
-    public GameObject StartButton;
-    public GameObject StopButton;
-    public GameObject DeconstructButton;
 
     void Awake()
     {
@@ -63,7 +60,11 @@ public class FactoryPanel : MonoBehaviour
 
     void Update()
     {
-        if (Factory == null) return;
+        if (Factory == null || Factory.Building.IsDeconstructed)
+        {
+            SelectionPanel.RemoveSelection();
+            return;
+        } 
 
         if (Factory.Halted)
         {
@@ -74,7 +75,7 @@ public class FactoryPanel : MonoBehaviour
         {
             ProgressBar.SetFillPercentage(Factory.GetCompletionPercentage());
         }
-
+       
         SelectionPanel.HideResourceIcons(icons);
 
         if (Factory.Prototype.ConsumedResources != null)
@@ -114,44 +115,7 @@ public class FactoryPanel : MonoBehaviour
         Factory = f;
         if (f != null && f.Building != null)
         {
-            TextSubpanel.text = f.Building.Type;
-
-            DeconstructButton.SetActive(true);
-
-            if (f.Halted)
-            {
-                StartButton.SetActive(true);
-                StopButton.SetActive(false);
-            }
-            else
-            {
-                StartButton.SetActive(false);
-                StopButton.SetActive(true);
-            }
+            TextSubpanel.text = f.Building.Type;       
         }
-    }
-
-    public void DeconstructButtonAction()
-    {
-        if (Factory == null) return;
-        GameManager.Instance.World.MarkBuildingToDenconstruction(Factory.Building);
-        SetFactory(null);
-        DeconstructButton.SetActive(false);
-    }
-
-    public void StopButtonAction()
-    {
-        if (Factory == null) return;
-        Factory.SetHaltStatus(true);
-        StopButton.SetActive(false);
-        StartButton.SetActive(true);
-    }
-
-    public void StartButtonAction()
-    {
-        if (Factory == null) return;
-        Factory.SetHaltStatus(false);
-        StopButton.SetActive(true);
-        StartButton.SetActive(false);
-    }
+    }    
 }

@@ -29,8 +29,10 @@ public class Factory : IWorkplace, IBuildingModule
 
     public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
     
-    public bool Halted { get; protected set; }
-    
+    public bool Halted { get; protected set; }   
+
+    bool preparingForDeconstruction;
+
     public Factory(Building building)
     {
         Building = building;
@@ -214,7 +216,7 @@ public class Factory : IWorkplace, IBuildingModule
         }
     }
 
-    public void SetHaltStatus(bool halted)
+    public void SetHalt(bool halted)
     {
         Halted = halted;
     }
@@ -243,14 +245,21 @@ public class Factory : IWorkplace, IBuildingModule
         Halted = true;
         jobReservation = null;
         InputStorage.StartDeconstructionPreparation();
+        preparingForDeconstruction = true;
     }
 
     public void CancelDeconstructionPreparation()
     {
         Halted = false;
         InputStorage.CancelDeconstructionPreparation();
+        preparingForDeconstruction = false;
     }
-    
+
+    public bool IsPreparingForDeconstruction()
+    {
+        return preparingForDeconstruction;
+    }
+
     public bool IsReadyForDeconstruction()
     {
         return (InputStorage.IsReadyForDeconstruction() 

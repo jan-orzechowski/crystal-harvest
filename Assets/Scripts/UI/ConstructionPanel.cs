@@ -7,9 +7,10 @@ using System;
 
 public class ConstructionPanel : MonoBehaviour 
 {
-    [HideInInspector]
-    public ConstructionSite ConstructionSite;
+    public SelectionPanel SelectionPanel;
 
+    public ConstructionSite ConstructionSite { get; protected set; }
+   
     public ProgressBar ProgressBar;
 
     List<ResourceIconSlot> slots;
@@ -19,14 +20,8 @@ public class ConstructionPanel : MonoBehaviour
     List<int> tempRequiredResources;
     List<int> tempResources;
 
-    public InputManager InputManager;
-
     public Text Text;
     public Text SubText;
-
-    public GameObject StartButton;
-    public GameObject StopButton;
-    public GameObject AbortButton;
 
     void Start ()
     {
@@ -42,10 +37,6 @@ public class ConstructionPanel : MonoBehaviour
 
         tempRequiredResources = new List<int>();
         tempResources = new List<int>();
-
-        AbortButton.SetActive(true);
-        StopButton.SetActive(false);
-        StartButton.SetActive(false);
     }
 
     void Update()
@@ -58,22 +49,22 @@ public class ConstructionPanel : MonoBehaviour
         if (ConstructionSite.GetCompletionPercentage() >= 1f)
         {
             ConstructionSite = null;
-            InputManager.RemoveSelection();            
+            SelectionPanel.RemoveSelection();            
             return;
         }
 
         if (ConstructionSite.Building != null)
-        {
-            Text.text = ConstructionSite.Building.Type;
-
+        {            
             if (ConstructionSite.Stage == ConstructionStage.Construction)
-                SubText.text = "Plac budowy";
+                Text.text = "Plac budowy";
             else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
-                SubText.text = "Budowa rusztowania";
+                Text.text = "Budowa rusztowania";
             else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
-                SubText.text = "Rozbiórka";
+                Text.text = "Rozbiórka";
             else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
-                SubText.text = "Rozbiórka rusztowania";
+                Text.text = "Rozbiórka rusztowania";
+
+            SubText.text = ConstructionSite.Building.Type;
         }
 
         float percentage = ConstructionSite.GetStageCompletionPercentage();
@@ -126,44 +117,6 @@ public class ConstructionPanel : MonoBehaviour
 
     public void SetConstructionSite(ConstructionSite cs)
     {
-        ConstructionSite = cs;
-        if (cs != null)
-        {            
-            AbortButton.SetActive(cs.CanAbort);           
-
-            if (cs.Halted)
-            {
-                StartButton.SetActive(true);
-                StopButton.SetActive(false);
-            }
-            else
-            {
-                StartButton.SetActive(false);
-                StopButton.SetActive(true);
-            }
-        } 
-    }
-
-    public void AbortButtonAction()
-    {
-        if (ConstructionSite == null) return;
-        ConstructionSite.CancelConstruction();
-        AbortButton.SetActive(false);
-    }
-
-    public void StopButtonAction()
-    {
-        if (ConstructionSite == null) return;
-        ConstructionSite.SetHaltStatus(true);
-        StopButton.SetActive(false);
-        StartButton.SetActive(true);
-    }
-
-    public void StartButtonAction()
-    {
-        if (ConstructionSite == null) return;
-        ConstructionSite.SetHaltStatus(false);
-        StopButton.SetActive(true);
-        StartButton.SetActive(false);
+        ConstructionSite = cs;  
     }
 }

@@ -13,7 +13,7 @@ public enum ConstructionStage
 
 public class ConstructionSite : IWorkplace
 {
-    public Building Building;
+    public Building Building { get; set; }
 
     StorageWithRequirements ConstructionStorage;
     Storage DeconstructionStorage;
@@ -206,9 +206,14 @@ public class ConstructionSite : IWorkplace
         }        
     }
 
-    public void SetHaltStatus(bool halted)
+    public void SetHalt(bool halted)
     {
         Halted = halted;
+    }
+
+    public bool IsPreparingForDeconstruction()
+    {
+        return false;
     }
 
     public bool IsReadyForDeconstruction()

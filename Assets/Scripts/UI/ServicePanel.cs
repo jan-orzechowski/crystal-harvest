@@ -6,8 +6,9 @@ using System;
 
 public class ServicePanel : MonoBehaviour
 {
-    [HideInInspector]
-    public Service Service;
+    public SelectionPanel SelectionPanel;
+
+    public Service Service { get; protected set; }
 
     public ProgressBar ProgressBar;
 
@@ -20,8 +21,6 @@ public class ServicePanel : MonoBehaviour
 
     public Text TextSubpanel;
 
-    public GameObject DeconstructButton;
-
     void Start()
     {
         icons = new List<GameObject>();
@@ -31,7 +30,12 @@ public class ServicePanel : MonoBehaviour
 
     void Update()
     {
-        if (Service == null) return;
+        if (Service == null || Service.Building.IsDeconstructed)
+        {
+            Service = null;
+            SelectionPanel.RemoveSelection();
+            return;
+        }
 
         ProgressBar.SetFillPercentage(Service.GetServicePercentage());
 
@@ -44,20 +48,11 @@ public class ServicePanel : MonoBehaviour
             SelectionPanel.ShowIconsWithRequirements(new List<ResourceIconSlot>() { InputSlot }, 
                                                      tempRequiredResources, tempResources, icons);
         }
-
     }
 
     public void SetService(Service s)
     {
         Service = s;
         if (s != null && s.Building != null) TextSubpanel.text = s.Building.Type;
-    }
-
-    public void DeconstructButtonAction()
-    {
-        if (Service == null) return;
-        GameManager.Instance.World.MarkBuildingToDenconstruction(Service.Building);
-        SetService(null);
-        DeconstructButton.SetActive(false);
     }
 }

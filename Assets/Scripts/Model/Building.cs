@@ -20,6 +20,8 @@ public class Building : ISelectable
 
     public BuildingPrototype Prototype { get; protected set; }
 
+    public bool IsDeconstructed;
+
     public Building(BuildingPrototype buildingPrototype, Rotation buildingRotation, 
                     List<Tile> tiles, Tile accessTile, Tile secondAccessTile)
     {

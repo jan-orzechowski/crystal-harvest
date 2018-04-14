@@ -5,7 +5,8 @@ using System;
 
 public class StoragePanel : MonoBehaviour 
 {
-    [HideInInspector]
+    public SelectionPanel SelectionPanel;
+
     public Storage Storage { get; protected set; }
 
     public StorageSubpanel TwoRowsSubpanel;
@@ -15,9 +16,7 @@ public class StoragePanel : MonoBehaviour
     StorageSubpanel activePanel;
 
     List<int> tempResourcesList;
-
-    public GameObject DeconstructButton;
-
+    
     void Awake()
     {
         tempResourcesList = new List<int>();
@@ -25,8 +24,13 @@ public class StoragePanel : MonoBehaviour
 
     void Update()
     {
-        if (Storage == null) return;
-
+        if (Storage == null || Storage.Building.IsDeconstructed)
+        {
+            Storage = null;
+            SelectionPanel.RemoveSelection();
+            return;
+        }
+    
         if (Storage.Changed == false)
         {
             return;
@@ -71,7 +75,7 @@ public class StoragePanel : MonoBehaviour
             activePanel.gameObject.SetActive(true);
 
             activePanel.TextSubpanel.text = Storage.Building.Type;
-
+           
             ShowResourcesInStorage();
         }
     }
@@ -79,8 +83,12 @@ public class StoragePanel : MonoBehaviour
     public void DeconstructButtonAction()
     {
         if (Storage == null) return;
-        GameManager.Instance.World.MarkBuildingToDenconstruction(Storage.Building);
-        SetStorage(null);
-        DeconstructButton.SetActive(false);
+        GameManager.Instance.World.MarkBuildingForDenconstruction(Storage.Building);
+    }
+
+    public void CancelDeconstructionButtonAction()
+    {
+        if (Storage == null) return;
+        GameManager.Instance.World.CancelBuildingDeconstruction(Storage.Building);        
     }
 }

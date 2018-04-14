@@ -338,7 +338,9 @@ public class InputManager : MonoBehaviour
             {
                 SidePanel.HidePanels();
 
-                selectionBox.SetActive(true);
+                if (selectionBoxMeshRenderer.enabled == false)
+                    selectionBoxMeshRenderer.enabled = true;
+
                 selectionBox.transform.SetPositionAndRotation(
                     selectedObjectCollider.transform.position + selectedObjectCollider.center,
                     selectedObjectCollider.transform.rotation);
@@ -350,7 +352,7 @@ public class InputManager : MonoBehaviour
             }
             else
             {
-                selectionBox.SetActive(false);
+                selectionBoxMeshRenderer.enabled = false;
             }
         }
         else
@@ -376,9 +378,9 @@ public class InputManager : MonoBehaviour
     public void RemoveSelection()
     {
         SelectedObject = null;
-        selectionBox.SetActive(false);
         SelectionPanel.gameObject.SetActive(false);
-        SelectionPanel.HidePanels();        
+        SelectionPanel.HidePanels();
+        selectionBoxMeshRenderer.enabled = false;
     }
 
     public void SetBuildMode(bool buildMode)
