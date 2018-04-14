@@ -124,17 +124,9 @@ public class BT_AgentMemory
         Workplace = workplace;
     }
 
-    public bool SetNewService(Service service)
-    {
-        if (Character.UsingService == false)
-        {
-            Service = service;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+    public void SetNewService(Service service)
+    {        
+        Service = service;     
     }
 
     public void SetRunning(int id, bool running)

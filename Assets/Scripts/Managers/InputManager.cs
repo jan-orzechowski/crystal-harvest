@@ -246,7 +246,8 @@ public class InputManager : MonoBehaviour
             }
             else if (hitDisplayObject.ModelObject is Building)
             {
-                buildingsHit.Add((Building)hitDisplayObject.ModelObject, raycastResults[i]);
+                if(buildingsHit.ContainsKey((Building)hitDisplayObject.ModelObject) == false)
+                    buildingsHit.Add((Building)hitDisplayObject.ModelObject, raycastResults[i]);
             }
         }
 
@@ -329,7 +330,7 @@ public class InputManager : MonoBehaviour
 
     void UpdateSelection()
     {
-        if (SelectedObject != null)
+        if (SelectedObject != null && SelectedObject.GetDisplayObject() != null)
         {
             BoxCollider selectedObjectCollider = SelectedObject.GetDisplayObject().Collider;
 

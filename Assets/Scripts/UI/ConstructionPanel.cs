@@ -55,10 +55,10 @@ public class ConstructionPanel : MonoBehaviour
             return;
         }
         else 
-        if (ConstructionSite.GetStageCompletionPercentage() >= 1f)
+        if (ConstructionSite.GetCompletionPercentage() >= 1f)
         {
             ConstructionSite = null;
-            InputManager.RemoveSelection();
+            InputManager.RemoveSelection();            
             return;
         }
 

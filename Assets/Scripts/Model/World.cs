@@ -12,6 +12,8 @@ public class World
 
     public Tile[,,] Tiles { get; protected set; }
 
+    public Dictionary<TileType, float> TileTypesMovementCosts { get; protected set; }
+
     public List<Building> Buildings { get; protected set; }
     public List<Character> Characters { get; protected set; }
 
@@ -57,6 +59,8 @@ public class World
         YSize = length;
         Height = 2;
 
+        TileTypesMovementCosts = StaticData.LoadTilesMovementCosts();
+
         MapGenerator mapGenerator = new MapGenerator();
         Tiles = mapGenerator.GenerateMap(XSize, YSize, startingAreaXSize, startingAreaYSize);
 
@@ -70,8 +74,8 @@ public class World
 
         Debug.Log("Stworzono mapę posiadającą " + XSize * YSize + " pól.");
 
-        Buildings = new List<Building>(1024);
-        Characters = new List<Character>(32);
+        Buildings = new List<Building>();
+        Characters = new List<Character>();
 
         buildingPrototypes = StaticData.LoadPrototypes();
         ResourcesInfo = StaticData.LoadResources();
@@ -351,13 +355,13 @@ public class World
 
             GameManager.Instance.ShowConstructionSite(newConstructionSite);
 
-            Debug.Log("Dodano budynek: " + newBuilding.Tiles[0].Position.ToString());
+            Debug.Log("Nowy plac budowy: " + newBuilding.Tiles[0].Position.ToString());
 
             return newConstructionSite;
         }
     }
 
-    public void ApplyNewMovementCostsToTiles(Building building)
+    void ApplyNewMovementCostsToTiles(Building building)
     {
         for (int i = 0; i < building.Tiles.Count; i++)
         {
@@ -387,6 +391,32 @@ public class World
         mapChangedThisFrame = true;
     }
 
+    void RemoveMovementCostsModificationByBuilding(Building building)
+    {
+        for (int i = 0; i < building.Tiles.Count; i++)
+        {
+            building.Tiles[i].MovementCost = TileTypesMovementCosts[building.Tiles[i].Type];
+            modifiedTiles.Add(building.Tiles[i]);
+            building.Tiles[i].AllowDiagonal = true;
+        }
+
+        if (building.Prototype.WalkableOnTop)
+        {
+            for (int i = 0; i < building.Tiles.Count; i++)
+            {
+                Tile tileOnTop = building.Tiles[i].GetUpperNeighbour();
+                if (tileOnTop != null)
+                {
+                    tileOnTop.Type = TileType.Empty;
+                    tileOnTop.MovementCost = TileTypesMovementCosts[TileType.Empty];
+                    modifiedTiles.Add(tileOnTop);
+                }
+            }
+        }
+
+        mapChangedThisFrame = true;
+    }
+
     public Building InstantBuild(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
         ConstructionSite site = PlaceNewConstructionSite(origin, rotation, prototype);
@@ -406,105 +436,124 @@ public class World
         if (buildingsMarkedForDeconstruction.Contains(building) == false)
         {
             buildingsMarkedForDeconstruction.Add(building);
+            if (building.Module != null) building.Module.StartDeconstructionPreparation();
         }
         else
-        {
+        {            
             Debug.Log("Próbowano dwa razy zarządzić dekonstrukcję tego samego budynku");
         }
     }
 
     bool CheckIfBuildingIsReadyForDeconstruction(Building building)
     {
-        return false;
+        if (building.Module != null)
+        {
+            if (building.Module is ConstructionSite)
+            {
+                Debug.LogWarning("Próbujemy zacząć dekonstruować budynek, który już ma przypisany plac");
+            }
 
+            return (building.Module.IsReadyForDeconstruction());
+        }
+        else
+        {
+            return true;
+        }
     }
 
     void StartBuildingDeconstruction(Building building)
     {
-        ConstructionSite deconstructionSite =
-            new ConstructionSite(building, building.Prototype, true);
+        ConstructionSite deconstructionSite = new ConstructionSite(building, building.Prototype, true);
         ConstructionSites.Add(deconstructionSite);
+    
+        if (building.Prototype.ConstructionWithoutScaffolding)
+        {
+            RemoveMovementCostsModificationByBuilding(building);
+        }
 
-        // Powiadomienie GameManagera o zmianie grafiki
+        UnregisterBuildingInDeconstruction(building);
+
+        Buildings.Remove(building);
+        building.RemoveModule();
+
+        mapChangedThisFrame = true;
+
+        Debug.Log("Usunięto budynek: " + building.Tiles[0].Position.ToString());
+        
+        GameManager.Instance.RemoveDisplayForBuilding(building);
+        GameManager.Instance.ShowConstructionSite(deconstructionSite);
     }
 
-    bool DeleteBuilding(Building building)
+    public void FinishDeconstruction(ConstructionSite site)
     {
-        if (Buildings.Contains(building))
+        if (ConstructionSites.Contains(site) == false || site.Building == null)
         {
-            CancelBuildingReservationForAccess(building);
+            Debug.Log("Próba ukończenia dekonstrukcji przez niezarejestrowany plac budowy");
+            return;
+        }
 
-            for (int i = 0; i < building.Tiles.Count; i++)
-            {
-                building.Tiles[i].MovementCost = 1f;
-                if (Platforms.ContainsKey(building.Tiles[i]) && building == Platforms[building.Tiles[i]])
-                {
-                    building.Tiles[i].AllowDiagonal = true;
-                }
+        Building buildingToDeconstruct = site.Building;
 
-                modifiedTiles.Add(building.Tiles[i]);
-            }
+        CancelBuildingReservationForAccess(buildingToDeconstruct);
+       
+        if (buildingToDeconstruct.Prototype.ConstructionWithoutScaffolding == false)
+        {
+            RemoveMovementCostsModificationByBuilding(buildingToDeconstruct);
+        }
+    
+        CancelBuildingReservationForAccess(buildingToDeconstruct);
+        
+        GameManager.Instance.RemoveConstructionSiteDisplay(site);
 
-            BuildingPrototype prototype = GetBuildingPrototype(building.Type);
-            if (prototype != null && prototype.WalkableOnTop)
-            {
-                for (int i = 0; i < building.Tiles.Count; i++)
-                {
-                    Tile tileOnTop = building.Tiles[i].GetUpperNeighbour();
-                    if (tileOnTop != null)
-                    {
-                        tileOnTop.Type = TileType.Empty;
-                        tileOnTop.MovementCost = 0f;
-                        modifiedTiles.Add(tileOnTop);
-                    }
-                }
-            }
+        site.Building = null;
+        ConstructionSites.Remove(site);
+    }
 
-            if (prototype.Type == "Stairs")
-            {
-                Stairs.Remove(building);
-            }
-            else if (prototype.Type == "Platform")
-            {
-                if (Platforms.ContainsKey(building.Tiles[0]))
-                    Platforms.Remove(building.Tiles[0]);
-            }
-
-            GameManager.Instance.RemoveDisplayForBuilding(building);
-            Buildings.Remove(building);
-
-            IBuildingModule module = building.Module;
-            if (module != null)
-            {
-                if (module is Factory)
-                {
-                    Factories.Remove((Factory)module);
-                }
-                if (module is Storage)
-                {
-                    Storages.Remove((Storage)module);
-                }
-                if (module is Service)
-                {
-                    string need = ((Service)module).NeedFulfilled;
-                    Services[need].Remove((Service)module);
-                    if (Services[need].Count == 0)
-                    {
-                        Services.Remove(need);
-                    }
-                }
-            }
-
-            mapChangedThisFrame = true;
-
-            Debug.Log("Usunięto budynek: " + building.Tiles[0].Position.ToString());
-            return true;
+    public void CancelBuildingDeconstruction(Building building)
+    {
+        if (buildingsMarkedForDeconstruction.Contains(building))
+        {
+            buildingsMarkedForDeconstruction.Remove(building);
+            if (building.Module != null) building.Module.CancelDeconstructionPreparation();
         }
         else
         {
-            Debug.Log("Próbujemy usunąć budynek, którego nie ma na liście!");
-            return false;
+            Debug.Log("Próbowano odwołać niezleconą rozbiórkę budynku");
         }
+    }
+    
+    public Building FinishConstruction(ConstructionSite site)
+    {
+        if (ConstructionSites.Contains(site) == false)
+        {
+            Debug.Log("Próba ukończenia konstrukcji przez niezarejestrowany plac budowy");
+            return null;
+        }
+
+        Building buildingToConstruct = site.Building;
+
+        buildingToConstruct.LoadDataForFinishedBuilding();
+
+        if (buildingToConstruct.Prototype.ConstructionWithoutScaffolding)
+        {
+            ApplyNewMovementCostsToTiles(buildingToConstruct);
+        }
+
+        RegisterConstructedBuilding(buildingToConstruct);
+
+        GameManager.Instance.RemoveConstructionSiteDisplay(site);
+
+        TilePosition positionForBuildingDisplay = site.Building.Tiles[0].Position -
+                MapNormalizedPositionToWorld(site.Prototype.NormalizedTilePositions[0],
+                                             new TilePosition(0, 0, 0),
+                                             buildingToConstruct.Rotation);
+
+        site.Building = null;
+        ConstructionSites.Remove(site);
+
+        GameManager.Instance.ShowBuilding(buildingToConstruct, positionForBuildingDisplay);
+
+        return buildingToConstruct;
     }
 
     void CancelBuildingReservationForAccess(Building building)
@@ -532,33 +581,18 @@ public class World
         }
     }
 
-    public Building FinishConstruction(ConstructionSite site)
+    void RegisterConstructedBuilding(Building building)
     {
-        if (ConstructionSites.Contains(site) == false || site.Building == null)
+        if (building.Type == "Stairs")
         {
-            Debug.Log("Próba ukończenia konstrukcji przez niezarejestrowany plac budowy");
-            return null;
+            Stairs.Add(building);
+        }
+        else if (building.Type == "Platform")
+        {
+            Platforms.Add(building.Tiles[0], building);
         }
 
-        Building buildingToConstruct = site.Building;
-
-        buildingToConstruct.LoadDataForFinishedBuilding();
-
-        if (buildingToConstruct.Prototype.ConstructionWithoutScaffolding)
-        {
-            ApplyNewMovementCostsToTiles(buildingToConstruct);
-        }
-
-        if (buildingToConstruct.Type == "Stairs")
-        {
-            Stairs.Add(buildingToConstruct);
-        }
-        else if (buildingToConstruct.Type == "Platform")
-        {
-            Platforms.Add(buildingToConstruct.Tiles[0], buildingToConstruct);
-        }
-
-        IBuildingModule module = buildingToConstruct.Module;
+        IBuildingModule module = building.Module;
         if (module != null)
         {
             if (module is Factory)
@@ -579,36 +613,41 @@ public class World
                 Services[need].Add((Service)module);
             }
         }
-
-        GameManager.Instance.RemoveConstructionSiteDisplay(site);
-
-        TilePosition positionForBuildingDisplay = site.Building.Tiles[0].Position -
-                MapNormalizedPositionToWorld(site.Prototype.NormalizedTilePositions[0],
-                                             new TilePosition(0, 0, 0),
-                                             buildingToConstruct.Rotation);
-
-        site.Building = null;
-        ConstructionSites.Remove(site);
-
-        GameManager.Instance.ShowBuilding(buildingToConstruct, positionForBuildingDisplay);
-
-        return buildingToConstruct;
     }
 
-    public void FinishDeconstruction(ConstructionSite site)
+    void UnregisterBuildingInDeconstruction(Building building)
     {
-        if (ConstructionSites.Remove(site) == false || site.Building == null)
+        if (building.Type == "Stairs")
         {
-            Debug.Log("Próba ukończenia dekonstrukcji przez niezarejestrowany plac budowy");
-            return;
+            Stairs.Remove(building);
+        }
+        else if (building.Type == "Platform")
+        {
+            if (Platforms.ContainsKey(building.Tiles[0]))
+                Platforms.Remove(building.Tiles[0]);
         }
 
-        Building buildingToDeconstruct = site.Building;
-
-        site.Building = null;
-        ConstructionSites.Remove(site);
-
-        //DeleteBuilding(buildingToDeconstruct);
+        IBuildingModule module = building.Module;
+        if (module != null)
+        {
+            if (module is Factory)
+            {
+                Factories.Remove((Factory)module);
+            }
+            if (module is Storage)
+            {
+                Storages.Remove((Storage)module);
+            }
+            if (module is Service)
+            {
+                string need = ((Service)module).NeedFulfilled;
+                Services[need].Remove((Service)module);
+                if (Services[need].Count == 0)
+                {
+                    Services.Remove(need);
+                }
+            }
+        }
     }
 
     #endregion
@@ -955,13 +994,11 @@ public class World
         {
             return null;
         }
-
-#if DEBUG
+        
         if (Tiles[tilePosition.X, tilePosition.Y, tilePosition.Height] == null)
         {
             return null;
         }
-#endif
 
         return Tiles[tilePosition.X, tilePosition.Y, tilePosition.Height];
     }

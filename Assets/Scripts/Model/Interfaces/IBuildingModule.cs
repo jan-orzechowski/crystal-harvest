@@ -5,6 +5,9 @@ using System;
 
 public interface IBuildingModule
 {
-    string GetSelectionText();
+    string DEBUG_GetSelectionText();
     bool HidesCharacter { get; }
+    bool IsReadyForDeconstruction();
+    void StartDeconstructionPreparation();
+    void CancelDeconstructionPreparation();
 }

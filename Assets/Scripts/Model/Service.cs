@@ -8,7 +8,7 @@ public class Service : IBuildingModule
     public Building Building { get; protected set; }
     public BuildingPrototype Prototype { get { return Building.Prototype; } }
 
-    public StorageWithRequirements InputStorage;
+    public StorageWithRequirements InputStorage { get; protected set; }
 
     public Character ServicedCharacter { get; protected set; }
 
@@ -21,6 +21,8 @@ public class Service : IBuildingModule
     float NeedFulfillmentPerSecond;
 
     public bool HidesCharacter { get { return Prototype.HidesCharacter; } }
+
+    bool haltedForDeconstruction;
 
     public Service(Building building)
     {
@@ -92,7 +94,9 @@ public class Service : IBuildingModule
 
     public bool CanReserveService(Character character)
     {
-        return ((reservation == character || reservation == null) && ServicedCharacter == null);
+        return (haltedForDeconstruction == false
+                && (reservation == character || reservation == null) 
+                && ServicedCharacter == null);
     }
 
     public bool ReserveService(Character character)
@@ -117,6 +121,31 @@ public class Service : IBuildingModule
         }
     }
 
+    public void StartDeconstructionPreparation()
+    {
+        if (ServicedCharacter != null)
+        {
+            ServicedCharacter.InterruptActivity();
+            ServicedCharacter = null;
+        }
+        haltedForDeconstruction = true;
+        reservation = null;
+        serviceDuration = Prototype.ServiceDuration;
+        InputStorage.StartDeconstructionPreparation();
+    }
+
+    public void CancelDeconstructionPreparation()
+    {
+        InputStorage.CancelDeconstructionPreparation();
+        haltedForDeconstruction = false;
+    }
+
+    public bool IsReadyForDeconstruction()
+    {
+        return (ServicedCharacter == null
+                && InputStorage.IsReadyForDeconstruction());
+    }
+
     public float GetServicePercentage()
     {
         return ((Prototype.ServiceDuration - serviceDuration) / Prototype.ServiceDuration);
@@ -132,7 +161,7 @@ public class Service : IBuildingModule
         return Building.GetAccessTileRotation();
     }
 
-    public string GetSelectionText()
+    public string DEBUG_GetSelectionText()
     {
         string s = "";
 
@@ -150,7 +179,7 @@ public class Service : IBuildingModule
             s += reservation.Name + "\n";
         }
 
-        s += InputStorage.GetSelectionText();
+        s += InputStorage.DEBUG_GetSelectionText();
         return s;
     }
 }

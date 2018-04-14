@@ -56,11 +56,11 @@ public class ConstructionSite : IWorkplace
         constructionTime = Prototype.ConstructionTime;
 
         Halted = false;
-
+                
         if (deconstruction)
         {
             CanAbort = false;
-            Stage = ConstructionStage.Deconstruction;                         
+            Stage = ConstructionStage.Deconstruction;                                     
             stageTimeLeft = constructionTime;          
         }
         else
@@ -79,7 +79,12 @@ public class ConstructionSite : IWorkplace
                 LoadRequiredResourcesForScaffoldingConstruction();
                 stageTimeLeft = scaffoldingStageTime;
             }
-        }                
+        }
+
+        if (ConstructionStorage == null)
+            ConstructionStorage = new StorageWithRequirements(Building, null);
+        if (DeconstructionStorage == null)
+            DeconstructionStorage = new Storage(Building, null, true);                
     }
 
     public void UpdateConstructionSite(float deltaTime)
@@ -206,6 +211,21 @@ public class ConstructionSite : IWorkplace
         Halted = halted;
     }
 
+    public bool IsReadyForDeconstruction()
+    {
+        return false;
+    }
+
+    public void StartDeconstructionPreparation()
+    {
+        Debug.LogWarning("Próbujemy dekonstruować sam plac");
+    }
+
+    public void CancelDeconstructionPreparation()
+    {
+        Debug.LogWarning("Próbujemy zatrzymać dekonstrukcję samego placu");
+    }
+
     public bool CanReserveJob(Character character)
     {
         return (Halted == false
@@ -323,7 +343,7 @@ public class ConstructionSite : IWorkplace
         else return Rotation.N;
     }
   
-    public string GetSelectionText()
+    public string DEBUG_GetSelectionText()
     {
         string s = "";
 
@@ -348,11 +368,11 @@ public class ConstructionSite : IWorkplace
 
         if (ConstructionMode)
         {
-            s += ConstructionStorage.GetSelectionText();
+            s += ConstructionStorage.DEBUG_GetSelectionText();
         }
         else if (DeconstructionMode)
         {
-            s += DeconstructionStorage.GetSelectionText();
+            s += DeconstructionStorage.DEBUG_GetSelectionText();
         }
 
         return s;

@@ -67,9 +67,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        Building spaceship = World.InstantBuild(
-                           new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
-                           Rotation.N, World.GetBuildingPrototype("Spaceship"));
+        World.InstantBuild(new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
+                          Rotation.N, World.GetBuildingPrototype("Spaceship"));
 
         World.PlaceNaturalResources();
     }
@@ -172,13 +171,6 @@ public class GameManager : MonoBehaviour
         return selectableObject;
     }
 
-    public void RemoveConstructionSiteDisplay(ConstructionSite siteToRemove)
-    {
-        siteToRemove.Building.DisplayObject.transform.gameObject.SetActive(false);
-        siteToRemove.Building.DisplayObject.ModelObject = null;
-        siteToRemove.Building.DisplayObject = null;
-    }
-
     public void ShowPreview(TilePosition position, Rotation rotation, BuildingPrototype prototype)
     {
         bool isPositionValid = World.IsValidBuildingPosition(position, rotation, prototype);
@@ -205,10 +197,10 @@ public class GameManager : MonoBehaviour
         }
 
         GameObject preview = SimplePool.Spawn(
-            model, 
-            new Vector3(position.X, position.Height * LevelHeightOffset, position.Y), 
+            model,
+            new Vector3(position.X, position.Height * LevelHeightOffset, position.Y),
             Quaternion.identity);
-       
+
         if (isPositionValid && prototype.HasAccessTile)
         {
             TilePosition arrowPosition = prototype.NormalizedAccessTilePosition;
@@ -222,7 +214,7 @@ public class GameManager : MonoBehaviour
 
             RotateGameObject(accessArrow, prototype.NormalizedAccessTileRotation);
 
-            accessArrow.transform.SetParent(preview.transform);            
+            accessArrow.transform.SetParent(preview.transform);
         }
 
         if (isPositionValid && prototype.HasSecondAccessTile)
@@ -245,6 +237,20 @@ public class GameManager : MonoBehaviour
 
         preview.transform.SetParent(PreviewsParent.transform);
         previewObjects.Add(preview);
+    }
+
+    public void RemoveConstructionSiteDisplay(ConstructionSite siteToRemove)
+    {
+        SimplePool.Despawn(siteToRemove.Building.DisplayObject.gameObject);
+        siteToRemove.Building.DisplayObject.ModelObject = null;
+        siteToRemove.Building.DisplayObject = null;
+    }
+
+    public void RemoveDisplayForBuilding(Building building)
+    {
+        SimplePool.Despawn(building.DisplayObject.gameObject);
+        building.DisplayObject.ModelObject = null;
+        building.DisplayObject = null;
     }
 
     public void HidePreviews()
@@ -282,13 +288,6 @@ public class GameManager : MonoBehaviour
             }
         }
         return result;
-    }
-
-    public void RemoveDisplayForBuilding(Building building)
-    {
-        building.DisplayObject.transform.gameObject.SetActive(false);
-        building.DisplayObject.ModelObject = null;
-        building.DisplayObject = null;
     }
 
     void GenerateDisplayForTiles()

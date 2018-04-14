@@ -180,9 +180,19 @@ public class Storage : IBuildingModule
         return false;
     }
 
-    public virtual void SetEmptyingMode(bool requiresEmptying)
+    public void StartDeconstructionPreparation()
     {
-        RequiresEmptying = requiresEmptying;
+        RequiresEmptying = true;
+    }
+
+    public void CancelDeconstructionPreparation()
+    {
+        RequiresEmptying = false;
+    }
+
+    public virtual bool IsReadyForDeconstruction()
+    {
+        return (CurrentResourceCount == 0 && FreeSpaceReservations.Count == 0);
     }
 
     public Dictionary<int, int> GetAllResources()
@@ -212,7 +222,7 @@ public class Storage : IBuildingModule
         return Building.GetAccessTileRotation();
     }
 
-    public string GetSelectionText()
+    public string DEBUG_GetSelectionText()
     {
         string s = "";
 

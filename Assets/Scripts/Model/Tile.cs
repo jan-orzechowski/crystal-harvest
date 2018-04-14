@@ -18,7 +18,7 @@ public class Tile
     public int Y { get { return Position.Y; } }
     public int Height { get { return Position.Height; } }
 
-    public float MovementCost = 2f;
+    public float MovementCost;
     public TileType Type;
 
     public bool ReservedForAccess;
@@ -27,10 +27,11 @@ public class Tile
 
     static World world;
 
-    public Tile (int x, int y, int height, TileType type)
+    public Tile (int x, int y, int height, TileType type, float movementCost)
     {
         Position = new TilePosition(x, y, height);
         Type = type;
+        MovementCost = movementCost;
     }
 
     public static bool CheckPassability(Tile t)

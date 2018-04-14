@@ -295,11 +295,6 @@ public class Character : ISelectable
         }
     }
 
-    void LoadNeeds(bool isRobot)
-    {
-        
-    }
-
     Quaternion GetRotationForNextTile(Tile nextTile)
     {
         Vector3 rotationVector = new Vector3(nextTile.X - CurrentTile.X, 0, nextTile.Y - CurrentTile.Y);
@@ -326,6 +321,7 @@ public class Character : ISelectable
     {
         agentMemory.SetNewWorkplace(null);
         agentMemory.SetNewService(null);
+        UsingService = false;
     }
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)

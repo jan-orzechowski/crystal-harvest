@@ -16,7 +16,7 @@ public class Building : ISelectable
 
     public SelectableDisplayObject DisplayObject;
 
-    public IBuildingModule Module;
+    public IBuildingModule Module { get; protected set; }
 
     public BuildingPrototype Prototype { get; protected set; }
 
@@ -55,6 +55,11 @@ public class Building : ISelectable
         {
             Module = new Storage(this, Prototype.InitialStorage, false);
         }        
+    }
+
+    public void RemoveModule()
+    {
+        Module = null;
     }
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
@@ -133,7 +138,7 @@ public class Building : ISelectable
         accessTileRotation = Rotation.N;
         return null;
     }
-   
+
     public string DEBUG_GetSelectionText()
     {
         string s = "";
@@ -141,10 +146,12 @@ public class Building : ISelectable
         s += "Obrót: " + Rotation + ". Obrót pola dostępu: " + accessTileRotation + "\n";
         if (Module != null)
         {
-            s += Module.GetSelectionText();
+            s += Module.DEBUG_GetSelectionText() + "\n";
+            s += "Moduł gotowy do dekonstrukcji: " + Module.IsReadyForDeconstruction();
         }
         return s;
     }
+
     public SelectableDisplayObject GetDisplayObject()
     {
         if (DisplayObject == null)

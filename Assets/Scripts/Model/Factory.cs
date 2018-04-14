@@ -231,14 +231,31 @@ public class Factory : IWorkplace, IBuildingModule
         return result;
     }
 
-    public void Deconstruct()
+    public void StartDeconstructionPreparation()
     {
-        WorkingCharacter.InterruptActivity();
-        WorkingCharacter = null;
-        jobReservation = null;
+        if (WorkingCharacter != null)
+        {
+            WorkingCharacter.InterruptActivity();
+            WorkingCharacter = null;
+        }
+
+        ProductionStarted = false;
         Halted = true;
-        GameManager.Instance.World.UnregisterResources(InputStorage.Resources);
-        GameManager.Instance.World.UnregisterResources(OutputStorage.Resources);
+        jobReservation = null;
+        InputStorage.StartDeconstructionPreparation();
+    }
+
+    public void CancelDeconstructionPreparation()
+    {
+        Halted = false;
+        InputStorage.CancelDeconstructionPreparation();
+    }
+    
+    public bool IsReadyForDeconstruction()
+    {
+        return (InputStorage.IsReadyForDeconstruction() 
+                && OutputStorage.IsReadyForDeconstruction()
+                && Halted && WorkingCharacter == null);
     }
 
     public Tile GetAccessTile()
@@ -251,7 +268,7 @@ public class Factory : IWorkplace, IBuildingModule
         return Building.GetAccessTileRotation();
     }
 
-    public string GetSelectionText()
+    public string DEBUG_GetSelectionText()
     {
         string s = "";
 
@@ -279,8 +296,8 @@ public class Factory : IWorkplace, IBuildingModule
             s += "Pozostałe cykle produkcji: " + RemainingProductionCycles + "\n";
         }
 
-        s += InputStorage.GetSelectionText();
-        s += OutputStorage.GetSelectionText();
+        s += InputStorage.DEBUG_GetSelectionText();
+        s += OutputStorage.DEBUG_GetSelectionText();
 
         return s;
     }

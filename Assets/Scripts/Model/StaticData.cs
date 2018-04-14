@@ -22,6 +22,14 @@ public static class StaticData
 
     public const int CrystalsAmountToGather = 100;
    
+    public static Dictionary<TileType, float> LoadTilesMovementCosts()
+    {
+        return new Dictionary<TileType, float>(){ {TileType.Empty, 0f},
+                                                  {TileType.WalkableEmpty, 2f},
+                                                  {TileType.Sand, 1f},
+                                                  {TileType.Rock, 2f} };
+    }
+
     public static Dictionary<int, ResourceInfo> LoadResources()
     {
         Dictionary<int, ResourceInfo> resources = new Dictionary<int, ResourceInfo>();

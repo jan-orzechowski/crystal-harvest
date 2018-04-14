@@ -157,6 +157,8 @@ public class MapGenerator
 
     Tile[,,] GetGeneratedTiles()
     {
+        Dictionary<TileType, float> movementCosts = StaticData.LoadTilesMovementCosts();
+                
         Tile[,,] newMap = new Tile[xSize, ySize, 2];
 
         Tile newTile = null;
@@ -168,23 +170,23 @@ public class MapGenerator
 
                 if (value == sand)
                 {
-                    newTile = new Tile(x, y, 0, TileType.Sand);
+                    newTile = new Tile(x, y, 0, TileType.Sand, movementCosts[TileType.Sand]);
                     newMap[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Empty);
+                    newTile = new Tile(x, y, 1, TileType.Empty, movementCosts[TileType.Empty]);
                     newMap[x, y, 1] = newTile;
                 }
                 else if (value == rock)
                 {
-                    newTile = new Tile(x, y, 0, TileType.Empty);
+                    newTile = new Tile(x, y, 0, TileType.Empty, movementCosts[TileType.Empty]);
                     newMap[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Rock);
+                    newTile = new Tile(x, y, 1, TileType.Rock, movementCosts[TileType.Rock]);
                     newMap[x, y, 1] = newTile;
                 }                                
                 else
                 {
-                    newTile = new Tile(x, y, 0, TileType.Empty);
+                    newTile = new Tile(x, y, 0, TileType.Empty, movementCosts[TileType.Empty]);
                     newMap[x, y, 0] = newTile;
-                    newTile = new Tile(x, y, 1, TileType.Empty);
+                    newTile = new Tile(x, y, 1, TileType.Empty, movementCosts[TileType.Empty]);
                     newMap[x, y, 1] = newTile;
                 }
             }

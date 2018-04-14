@@ -48,6 +48,8 @@ public class StorageWithRequirements : Storage
         {
             PendingResources.Remove(character);
             MissingResourcesCount--;
+            CurrentResourceCount++;
+
             if (Resources.ContainsKey(resourceID))
             {
                 Resources[resourceID] = Resources[resourceID] + 1;
@@ -122,7 +124,14 @@ public class StorageWithRequirements : Storage
             ReservedResources.Remove(character);
             character.AddResource(resourceID);
 
-            MissingResources.Add(resourceID, 1);
+            if (MissingResources.ContainsKey(resourceID))
+            {
+                MissingResources[resourceID] = MissingResources[resourceID] + 1;
+            }
+            else
+            {
+                MissingResources.Add(resourceID, 1);
+            }            
             MissingResourcesCount++;
 
             CurrentResourceCount--;
@@ -140,12 +149,12 @@ public class StorageWithRequirements : Storage
         return (PendingResources.Keys.Count > 0);
     }
 
-    public override void SetEmptyingMode(bool requiresEmptying)
+    public override bool IsReadyForDeconstruction()
     {
-
+        return (base.IsReadyForDeconstruction() && IsWaitingForResources() == false);
     }
-    
-    public new string GetSelectionText()
+ 
+    public new string DEBUG_GetSelectionText()
     {
         string s = "";
 
