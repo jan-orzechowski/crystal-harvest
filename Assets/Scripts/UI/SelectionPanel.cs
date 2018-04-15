@@ -140,8 +140,8 @@ public class SelectionPanel : MonoBehaviour
 
     public void RemoveSelection()
     {
-        InputManager.RemoveSelection();
         HidePanels();
+        InputManager.RemoveSelection();
     }
 
     public static List<int> GetResourcesList(Dictionary<int, int> resources)

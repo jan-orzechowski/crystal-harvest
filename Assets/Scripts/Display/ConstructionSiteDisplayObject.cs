@@ -8,152 +8,176 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     public ConstructionSite ConstructionSite;
 
     public GameObject ConstructionPlane;
-
     public GameObject Scaffolding;
     public GameObject ClippableScaffolding;
-
     public GameObject Building;
     public GameObject ClippableBuilding;
 
+    public bool TwoLevelBuilding = false;
     public float HeightOffset = 0f;
-
+    
     float minColliderHeight = 0.1f;
 
+    float scaffoldingHeight = 1.2f;
+    float scaffoldingColliderHeightDifference = 0.05f;
+
+    bool constructionWithoutScaffolding;
+
+    GameObject currentBuilding;
+    GameObject currentScaffolding;
+
+    float levelOffset;
+
     float colliderBottomPlane;
-    float colliderMaxUpperPlane;
+    
+    float startingScaffoldingUpperPlanePosition;
+    float finalScaffoldingUpperPlanePosition;
 
-    bool builtOnSecondLevel = false;  
-
-    float maxY;
-    float minY;
+    float startingBuildingYPosition;
+    float finalBuildingYPosition;
 
     void Awake()
     {
-        if (ClippableBuilding == null && Building == null)
+        if (ClippableBuilding == null || Building == null)
         {
             Debug.LogError("Brak modelu budynku");     
         }
-        else if (ClippableBuilding == null) ClippableBuilding = Building;
-        else if (Building == null) Building = ClippableBuilding;
-
-        if (ClippableScaffolding == null && Scaffolding == null)
-        {
-            Debug.LogError("Brak rusztowania");
-        }
-        else if (ClippableScaffolding == null) ClippableScaffolding = Scaffolding;
-        else if (Scaffolding == null) Scaffolding = ClippableScaffolding;
        
-        colliderBottomPlane = Collider.transform.position.y + Collider.center.y - (Collider.size.y / 2);
-        colliderMaxUpperPlane = Collider.transform.position.y + Collider.center.y + (Collider.size.y / 2);
-
-        minY = colliderBottomPlane - colliderMaxUpperPlane - 0.21f - HeightOffset;
-
-        maxY = colliderBottomPlane;
+        if (ClippableScaffolding == null || Scaffolding == null)
+        {
+            Debug.LogError("Brak modelu rusztowania");
+        }
     }
 
     void Update()
     {
         if (ConstructionSite == null) return;
 
-        // if (ConstructionPlane.activeSelf && ConstructionSite.GetCompletionPercentage() > 0.05f) ConstructionPlane.SetActive(false);
-
         if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
         {
-            float y = Mathf.Lerp(minY, maxY, ConstructionSite.GetStageCompletionPercentage());
-            MoveScaffolding(y);
-            ResizeCollider();
+            float y = Mathf.Lerp(startingScaffoldingUpperPlanePosition,
+                                 finalScaffoldingUpperPlanePosition, 
+                                 ConstructionSite.GetStageCompletionPercentage());
+
+            SetScaffoldingUpperPlanePosition(y);
+            SetColliderUpperPlanePosition(y - scaffoldingColliderHeightDifference);
         }
         else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
         {
-            float y = Mathf.Lerp(maxY, minY, ConstructionSite.GetStageCompletionPercentage());
-            MoveScaffolding(y);
-            ResizeCollider();
+            float y = Mathf.Lerp(finalScaffoldingUpperPlanePosition,
+                                 startingScaffoldingUpperPlanePosition,                                 
+                                 ConstructionSite.GetStageCompletionPercentage());
+
+            SetScaffoldingUpperPlanePosition(y);
+            SetColliderUpperPlanePosition(y - scaffoldingColliderHeightDifference);
         }
         else if (ConstructionSite.Stage == ConstructionStage.Construction)
         {
-            float y = Mathf.Lerp(minY, maxY, ConstructionSite.GetStageCompletionPercentage() * 1.42f);
-            MoveBuilding(y);
+            float y = Mathf.Lerp(startingBuildingYPosition,
+                                 finalBuildingYPosition,
+                                 ConstructionSite.GetStageCompletionPercentage() * 1.42f);
+            SetBuilidingYPosition(y);
         }
         else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
         {
-            float y = Mathf.Lerp(maxY, minY, ConstructionSite.GetStageCompletionPercentage());
-            MoveBuilding(y);
+            float y = Mathf.Lerp(finalBuildingYPosition,
+                                 startingBuildingYPosition,
+                                 ConstructionSite.GetStageCompletionPercentage());
+            SetBuilidingYPosition(y);
+
+            if (constructionWithoutScaffolding == false)
+            {
+                SetScaffoldingUpperPlanePosition(finalScaffoldingUpperPlanePosition);
+                SetColliderUpperPlanePosition(finalScaffoldingUpperPlanePosition - scaffoldingColliderHeightDifference);
+            }
+               
         }      
     }
 
-    void MoveBuilding(float y)
-    {
-        if (builtOnSecondLevel)
-        {
-            ClippableBuilding.transform.SetPositionAndRotation(
-                new Vector3(ClippableBuilding.transform.position.x, y, ClippableBuilding.transform.position.z),
-                ClippableBuilding.transform.rotation);
-        }
-        else
-        {
-            Building.transform.SetPositionAndRotation(
-                new Vector3(Building.transform.position.x, y, Building.transform.position.z),
-                Building.transform.rotation);
-        }
+    void SetBuilidingYPosition(float y)
+    {        
+        currentBuilding.transform.SetPositionAndRotation(
+            new Vector3(currentBuilding.transform.position.x, y, currentBuilding.transform.position.z),
+            currentBuilding.transform.rotation);
     }
 
-    void MoveScaffolding(float y)
+    void SetScaffoldingUpperPlanePosition(float y)
     {
-        if (builtOnSecondLevel)
-        {
-            ClippableScaffolding.transform.SetPositionAndRotation(
-                new Vector3(ClippableScaffolding.transform.position.x, y, ClippableScaffolding.transform.position.z),
-                ClippableScaffolding.transform.rotation);
-        }
-        else
-        {
-            Scaffolding.transform.SetPositionAndRotation(
-                new Vector3(Scaffolding.transform.position.x, y, Scaffolding.transform.position.z),
-                Scaffolding.transform.rotation);
-        }
+        float newScaffoldingYPosition = y - scaffoldingHeight;
+        if (TwoLevelBuilding) newScaffoldingYPosition -= scaffoldingHeight;
+
+        currentScaffolding.transform.SetPositionAndRotation(
+            new Vector3(currentScaffolding.transform.position.x, 
+                        newScaffoldingYPosition, 
+                        currentScaffolding.transform.position.z),
+            currentScaffolding.transform.rotation);    
     }
 
-    void ResizeCollider()
+    void SetColliderUpperPlanePosition(float y)
     {
-        float newColliderHeight = Mathf.Lerp(0, colliderMaxUpperPlane, ConstructionSite.GetStageCompletionPercentage());
-        if (newColliderHeight < minColliderHeight) { newColliderHeight = minColliderHeight; }
+        float newColliderHeight = y - colliderBottomPlane; 
 
-        float newYSize = newColliderHeight;
-        float newYCenter = newColliderHeight / 2;
+        if (newColliderHeight < minColliderHeight) newColliderHeight = minColliderHeight;
 
-        Collider.size = new Vector3(Collider.size.x, newYSize, Collider.size.z);
-        Collider.center = new Vector3(Collider.center.x, newYCenter, Collider.center.z);
+        float newSizeY = newColliderHeight;
+        float newCenterY = newColliderHeight / 2;
+
+        Collider.size = new Vector3(Collider.size.x, newSizeY, Collider.size.z);
+        Collider.center = new Vector3(Collider.center.x, newCenterY, Collider.center.z);
     }
 
     public void AssignConstructionSite(ConstructionSite constructionSite, bool builtOnSecondLevel)
     {
-        this.ConstructionSite = constructionSite;
-        this.builtOnSecondLevel = builtOnSecondLevel;
+        ConstructionSite = constructionSite;
         ModelObject = constructionSite.Building;
+
+        Scaffolding.SetActive(false);
+        Building.SetActive(false);
+        ClippableBuilding.SetActive(false);
+        ClippableScaffolding.SetActive(false);
 
         if (builtOnSecondLevel)
         {
-            Scaffolding.SetActive(false);
-            Building.SetActive(false);
-            ClippableBuilding.SetActive(true);
-            ClippableScaffolding.SetActive(true);
+            currentBuilding = ClippableBuilding;
+            currentScaffolding = ClippableScaffolding;
         }
         else
         {
-            Scaffolding.SetActive(true);
-            Building.SetActive(true);
-            ClippableBuilding.SetActive(false);
-            ClippableScaffolding.SetActive(false);
+            currentBuilding = Building;
+            currentScaffolding = Scaffolding;
         }
 
-        MoveScaffolding(minY);
-        MoveBuilding(minY);
+        currentBuilding.SetActive(true);
+        currentScaffolding.SetActive(true);
 
-        Collider.transform.position = new Vector3(
-            Collider.transform.position.x, 
-            constructionSite.Building.Tiles[0].Height,
-            Collider.transform.position.z);
+        constructionWithoutScaffolding = ConstructionSite.Building.Prototype.ConstructionWithoutScaffolding;
+
+        levelOffset = builtOnSecondLevel ? 1f : 0f;
+       
+        colliderBottomPlane = levelOffset + 0.005f;
+
+        startingScaffoldingUpperPlanePosition = levelOffset - 0.1f;
+        finalScaffoldingUpperPlanePosition = levelOffset + scaffoldingHeight;
+
+        startingBuildingYPosition = levelOffset - HeightOffset - 1.2f;
+        finalBuildingYPosition = levelOffset;
+
+        if (TwoLevelBuilding)
+        {
+            startingBuildingYPosition -= 1.3f;
+            startingScaffoldingUpperPlanePosition -= 1.3f;
+            finalScaffoldingUpperPlanePosition += scaffoldingHeight;
+        }
+
+        SetScaffoldingUpperPlanePosition(startingScaffoldingUpperPlanePosition);
+        SetBuilidingYPosition(startingBuildingYPosition);
+
+        Collider.transform.SetPositionAndRotation(
+            new Vector3(Collider.transform.position.x,
+                        levelOffset,
+                        Collider.transform.position.z),
+            Collider.transform.rotation);
+
+        SetColliderUpperPlanePosition(levelOffset);
     }
-
-
 }

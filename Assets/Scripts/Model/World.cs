@@ -355,7 +355,7 @@ public class World
 
             GameManager.Instance.ShowConstructionSite(newConstructionSite);
 
-            Debug.Log("Nowy plac budowy: " + newBuilding.Tiles[0].Position.ToString());
+            // Debug.Log("Nowy plac budowy: " + newBuilding.Tiles[0].Position.ToString());
 
             return newConstructionSite;
         }

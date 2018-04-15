@@ -289,7 +289,7 @@ Transform:
   m_GameObject: {fileID: 1115569745395588}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5, y: 0.021, z: 0.5}
-  m_LocalScale: {x: 0.81, y: 0.1, z: -0.81}
+  m_LocalScale: {x: 0.81, y: 0.1, z: 0.81}
   m_Children: []
   m_Father: {fileID: 4913769112505434}
   m_RootOrder: 5
@@ -418,6 +418,7 @@ MonoBehaviour:
   ClippableScaffolding: {fileID: 1104625529500910}
   Building: {fileID: 1543919393420322}
   ClippableBuilding: {fileID: 1763790699446832}
+  TwoLevelBuilding: 0
   HeightOffset: 0
 --- !u!114 &114923939065073986
 MonoBehaviour:
