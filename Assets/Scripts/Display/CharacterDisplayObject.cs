@@ -15,15 +15,65 @@ public class CharacterDisplayObject : SelectableDisplayObject
     float hideTimer;
     bool gameObjectsDeactivated;
 
+    public bool DeathAnimationStarted { get; private set; }
+
+    float deathAnimationPercentage;
+    float deathAnimationPercentagePerSecond = 0.3f;
+
+    public bool DeathAnimationPlayed { get; protected set; }
+
     void Awake()
     {
         CharacterModel.SetActive(false);
         CharacterHoldingModel.SetActive(false);
+        CharacterModel.transform.localPosition = Vector3.zero;
+        CharacterModel.transform.localRotation = Quaternion.identity;
+        CharacterHoldingModel.transform.localPosition = Vector3.zero;
+        CharacterHoldingModel.transform.localRotation = Quaternion.identity;
     }
 
     void Update()
     {
         if (character == null) { return; }
+
+        if (DeathAnimationStarted && DeathAnimationPlayed == false)
+        {
+            deathAnimationPercentage += deathAnimationPercentagePerSecond * Time.deltaTime;
+
+            if (deathAnimationPercentage >= 1f)
+            {
+                DeathAnimationPlayed = true;
+                return;
+            }
+
+            GameObject currentModel = heldResource ? CharacterHoldingModel : CharacterModel;
+
+            float xAxisRotation;
+            float yPos;
+
+            if (deathAnimationPercentage <= 0.5f)
+            {
+                xAxisRotation = Mathf.Lerp(0f, -90f, deathAnimationPercentage * 2f);
+                yPos = 0;
+            }
+            else
+            {
+                xAxisRotation = -90f;
+                yPos = Mathf.Lerp(0f, -0.2f, (deathAnimationPercentage - 0.5f) * 2f);
+            }
+
+            currentModel.transform.localPosition =
+                new Vector3(currentModel.transform.localPosition.x,
+                            yPos,
+                            currentModel.transform.localPosition.z);
+
+            currentModel.transform.localRotation = 
+                Quaternion.Euler(xAxisRotation,
+                                 currentModel.transform.localRotation.eulerAngles.y,
+                                 currentModel.transform.localRotation.eulerAngles.z);
+
+            return;
+        }
 
         if (Hidden)
         {
@@ -56,7 +106,7 @@ public class CharacterDisplayObject : SelectableDisplayObject
             if (CharacterModel.activeSelf) CharacterModel.SetActive(false);
             if (CharacterHoldingModel.activeSelf == false) CharacterHoldingModel.SetActive(true);
 
-            if(heldResource == null)
+            if (heldResource == null)
             {
                 ResourceDisplayInfo info = GameManager.Instance.GetResourceDisplayInfo(character.Resource);
                 heldResource = SimplePool.Spawn(
@@ -118,4 +168,14 @@ public class CharacterDisplayObject : SelectableDisplayObject
             Hidden = true;
         }
     }
+
+    public void PlayDeathAnimation()
+    {
+        if (DeathAnimationStarted == false)
+        {
+            DeathAnimationStarted = true;
+            deathAnimationPercentage = 0f;
+        }        
+    }
+
 }

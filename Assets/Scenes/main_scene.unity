@@ -1689,6 +1689,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e6a69e8c1b52e418a5eb08d820ffda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SelectionPanel: {fileID: 1502185286}
   HealthBar: {fileID: 1680294705}
   HungerBar: {fileID: 1764048040}
   TextSubpanel: {fileID: 871137383}

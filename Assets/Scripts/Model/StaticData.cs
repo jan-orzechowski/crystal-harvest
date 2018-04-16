@@ -54,14 +54,14 @@ public static class StaticData
             character.Needs = new Dictionary<string, float>()
             { {"Condition", 0f} };
             character.NeedGrowthPerSecond = new Dictionary<string, float>()
-            { {"Condition", 0.05f} };
+            { {"Condition", 0.02f} };
         }
         else
         {
             character.Needs = new Dictionary<string, float>()
             { {"Health", 0f}, {"Hunger", 0f} };
             character.NeedGrowthPerSecond = new Dictionary<string, float>()
-            { {"Health", 0.05f}, {"Hunger", 0.05f} };
+            { {"Health", 0.02f}, {"Hunger", 0.02f} };
         }
     }
 

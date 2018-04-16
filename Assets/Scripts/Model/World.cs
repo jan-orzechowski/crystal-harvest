@@ -27,6 +27,7 @@ public class World
     public Dictionary<Tile, Building> Platforms { get; protected set; }
 
     List<Building> buildingsMarkedForDeconstruction;
+    List<Character> charactersMarkedForDeletion;
 
     public Dictionary<int, int> AllResources { get; protected set; }
 
@@ -105,6 +106,7 @@ public class World
         Platforms = new Dictionary<Tile, Building>();
 
         buildingsMarkedForDeconstruction = new List<Building>();
+        charactersMarkedForDeletion = new List<Character>();
 
         ConstructionSites = new List<ConstructionSite>();
 
@@ -153,6 +155,18 @@ public class World
                 buildingsMarkedForDeconstruction.RemoveAt(i);
             }
         }
+
+        for (int i = charactersMarkedForDeletion.Count - 1;
+             i >= 0;
+             i--)
+        {
+            Character c = charactersMarkedForDeletion[i];
+            if (c.IsReadyForDeletion())
+            {
+                DeleteCharacter(c);
+                charactersMarkedForDeletion.RemoveAt(i);
+            }
+        }
     }
 
     #region CharactersManagement
@@ -183,6 +197,40 @@ public class World
             return true;
         }
         return false;
+    }
+
+    public void MarkCharacterForDeletion(Character c)
+    {
+        if (charactersMarkedForDeletion.Contains(c) == false)
+        {
+            c.StartPreparingForDeletion();
+            charactersMarkedForDeletion.Add(c);            
+        }
+    }
+
+    void DeleteCharacter(Character c)
+    {
+        Characters.Remove(c);
+        if (c.IsRobot) RobotNumber--; else HumanNumber--;
+
+        if (c.HasResource)
+        {
+            UnregisterResources(new Dictionary<int, int>(){ { c.Resource, 1 } });
+            c.RemoveResource();
+        }
+
+        if (c.Reservation != null)
+        {
+            c.Reservation.SourceStorage.RemoveResourceReservation(c);
+            c.Reservation.TargetStorage.RemoveFreeSpaceReservation(c);
+            c.ReservationUsed();
+        }
+
+        Pathfinder.RemoveCharacter(c);
+
+        Debug.Log("Postać zmarła: " + c.Name);
+
+        GameManager.Instance.RemoveDisplayForCharacter(c);
     }
 
     public bool IsCharacterOnTile(Tile tile)

@@ -6,7 +6,7 @@ using System;
 
 public class CharacterPanel : MonoBehaviour 
 {
-    [HideInInspector]
+    public SelectionPanel SelectionPanel;
     public Character Character { get; protected set; }
 
     public ProgressBar HealthBar;
@@ -15,7 +15,14 @@ public class CharacterPanel : MonoBehaviour
 
     void Update()
     {
-        if (Character == null) return;
+        if (Character == null 
+            || Character.DisplayObject == null 
+            || Character.DisplayObject.DeathAnimationStarted)
+        {
+            SelectionPanel.RemoveSelection();
+            Character = null;
+            return;
+        }
 
         HealthBar.SetFillPercentage(Character.Needs["Health"]);
         HungerBar.SetFillPercentage(Character.Needs["Hunger"]);

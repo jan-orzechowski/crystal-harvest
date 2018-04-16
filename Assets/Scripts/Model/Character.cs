@@ -23,7 +23,7 @@ public class Character : ISelectable
     Quaternion lastTileRotation;
 
     AStar path;
-    Pathfinder pathfinder;
+    static Pathfinder pathfinder;
     public bool PathNeedsReplacement;
 
     BT_Tree behaviourTree;
@@ -39,11 +39,13 @@ public class Character : ISelectable
 
     public CharacterDisplayObject DisplayObject { get; protected set; }
 
-    World world;
+    static World world;
 
     public bool UsingService;
 
     public bool IsRobot { get; protected set; }
+
+    public bool PreparingForDeletion { get; protected set; }
 
     public Character(string name, Tile currentTile, BT_Tree behaviourTree, bool isRobot)
     {
@@ -72,10 +74,16 @@ public class Character : ISelectable
         agentMemory.DeltaTime = deltaTime;
         behaviourTree.Tick(agentMemory);
         UpdateNeeds(deltaTime);
+
         if (UsingService == false)
         {
             Move(deltaTime);
         }
+        
+        if (PreparingForDeletion)
+        {
+            DisplayObject.PlayDeathAnimation();
+        }        
     }
 
     public void Move(float deltaTime)
@@ -118,6 +126,13 @@ public class Character : ISelectable
 
         if (NextTile == null)
         {
+            if (PreparingForDeletion)
+            {
+                // Nie bierzemy następnego pola - zatrzymujemy się
+                path = null;
+                return;
+            }
+
             NextTile = path.Dequeue();
             targetRotation = GetRotationForNextTile(NextTile);
         }
@@ -132,7 +147,7 @@ public class Character : ISelectable
             return;
         }
 
-        if(AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
+        if (AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
         {
             CurrentRotation = Quaternion.RotateTowards(
                 CurrentRotation, targetRotation,
@@ -164,7 +179,10 @@ public class Character : ISelectable
 
     public void TryGetNewPath()
     {
-        if (DestinationTile == null || DestinationTile == CurrentTile || DestinationTile.MovementCost == 0f)
+        if (DestinationTile == null 
+            || DestinationTile == CurrentTile 
+            || DestinationTile.MovementCost == 0f
+            || PreparingForDeletion)
         {
             DestinationTile = null;
             return;
@@ -295,6 +313,24 @@ public class Character : ISelectable
         }
     }
 
+    public void StartPreparingForDeletion()
+    {
+        PreparingForDeletion = true;
+        InterruptActivity();
+    }
+
+    public bool IsReadyForDeletion()
+    {
+        if (PreparingForDeletion == false) return false;
+
+        return (agentMemory.Workplace == null 
+                && agentMemory.Service == null
+                && UsingService == false
+                && NextTile == null 
+                && DisplayObject.DeathAnimationPlayed
+                && MovementPercentage <= 0.05f);
+    }
+
     Quaternion GetRotationForNextTile(Tile nextTile)
     {
         Vector3 rotationVector = new Vector3(nextTile.X - CurrentTile.X, 0, nextTile.Y - CurrentTile.Y);
@@ -330,11 +366,14 @@ public class Character : ISelectable
         {
             DisplayObject = (CharacterDisplayObject)displayObject;
         }
+        else if (displayObject == null)
+        {
+            DisplayObject = null;
+        }
         else
         {
             Debug.LogWarning("Niewłaściwy SelectableDisplayObject dla postaci");
         }
-        
     }
 
     public string DEBUG_GetSelectionText()

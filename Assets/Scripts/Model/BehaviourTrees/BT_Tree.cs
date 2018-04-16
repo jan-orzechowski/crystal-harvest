@@ -99,8 +99,9 @@ public class BT_Tree
                         new BT_StartUsingService()
                         ),
                     Subtree(new BT_MemSequence(),
-                        new BT_IsNeedHigherThan("Health", 0.5f),
-                        new BT_FindService("Health")
+                        new BT_IsNeedHigherThan("Health", 0.9f),
+                        new BT_Die()
+                        //new BT_FindService("Health")
                         ),
                     Subtree(new BT_MemSequence(),
                         new BT_IsNeedHigherThan("Hunger", 0.5f),

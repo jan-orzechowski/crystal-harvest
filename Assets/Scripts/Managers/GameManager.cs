@@ -95,6 +95,13 @@ public class GameManager : MonoBehaviour
         return displayObject;
     }
 
+    public void RemoveDisplayForCharacter(Character c)
+    {
+        SimplePool.Despawn(c.DisplayObject.gameObject);
+        c.DisplayObject.ModelObject = null;
+        c.AssignDisplayObject(null);
+    }
+
     public SelectableDisplayObject ShowBuilding(Building building, TilePosition positionForDisplay)
     {
         GameObject model = null;

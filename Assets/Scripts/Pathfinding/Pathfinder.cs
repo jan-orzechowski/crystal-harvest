@@ -166,5 +166,11 @@ namespace Pathfinding
                 && currentPaths[character].Start == start && currentPaths[character].Goal == goal);
             }            
         }
+
+        public void RemoveCharacter(Character c)
+        {
+            if (newPaths.ContainsKey(c)) newPaths.Remove(c);
+            if (currentPaths.ContainsKey(c)) currentPaths.Remove(c);
+        }
     }
 }
