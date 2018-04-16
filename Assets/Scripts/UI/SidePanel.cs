@@ -25,6 +25,8 @@ public class SidePanel : MonoBehaviour
         PanelVisible = true;
         HideButtons();
         BuildPanel.SetActive(true);
+        InputManager.RemoveSelection();
+        InputManager.SelectionPanel.HidePanels();
         InputManager.SetBuildMode(false);
     }
 
@@ -33,6 +35,8 @@ public class SidePanel : MonoBehaviour
         PanelVisible = true;
         HideButtons();
         StatsPanel.SetActive(true);
+        InputManager.RemoveSelection();
+        InputManager.SelectionPanel.HidePanels();
         InputManager.SetBuildMode(false);
     }
 
@@ -44,11 +48,14 @@ public class SidePanel : MonoBehaviour
 
     public void HidePanels()
     {
-        PanelVisible = false;
-        BuildPanel.SetActive(false);
-        StatsPanel.SetActive(false);
-        BuildPanelButton.SetActive(true);
-        StatsPanelButton.SetActive(true);
-        GameManager.Instance.Tooltip.Hide();
+        if (PanelVisible)
+        {
+            PanelVisible = false;
+            BuildPanel.SetActive(false);
+            StatsPanel.SetActive(false);
+            BuildPanelButton.SetActive(true);
+            StatsPanelButton.SetActive(true);
+            GameManager.Instance.Tooltip.Hide();
+        }
     }
 }

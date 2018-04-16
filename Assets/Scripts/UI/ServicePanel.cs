@@ -53,6 +53,10 @@ public class ServicePanel : MonoBehaviour
     public void SetService(Service s)
     {
         Service = s;
-        if (s != null && s.Building != null) TextSubpanel.text = s.Building.Type;
+        if (s != null)
+        {
+            if (s.Building != null) TextSubpanel.text = s.Building.Name;
+            Update();
+        }
     }
 }

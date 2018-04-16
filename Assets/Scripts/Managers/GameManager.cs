@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject ConstructionSitesParent;
 
     public Tooltip Tooltip;
+    public DialogBox DialogBox;
 
     public GameObject AccessArrowPrefab;
 
@@ -42,20 +43,20 @@ public class GameManager : MonoBehaviour
     GameObject accessArrow;
     GameObject secondAccessArrow;
 
-    Dictionary<ConstructionSite, GameObject> constructionSitesDisplay;
+    Dictionary<string, string> strings;
 
     void OnEnable()
     {
         if (Instance != null) { Debug.LogError("Dwie instancje klasy GameManager!"); }
         Instance = this;
-       
+
+        strings = StaticData.LoadStrings();
+
         int startingAreaXSize = 5;
         int startingAreaYSize = 8;
 
         World = new World(StaticData.WorldWidth, StaticData.WorldLenght,
                           startingAreaXSize, startingAreaYSize);
-
-        constructionSitesDisplay = new Dictionary<ConstructionSite, GameObject>();
 
         GenerateDisplayForTiles();
        
@@ -376,5 +377,18 @@ public class GameManager : MonoBehaviour
         UpdateSinglePlatformDisplay(t.GetSouthEastNeighbour());
         UpdateSinglePlatformDisplay(t.GetSouthWestNeighbour());
         UpdateSinglePlatformDisplay(t.GetNorthWestNeighbour());
+    }
+
+    public string GetText(string key)
+    {
+        if (strings.ContainsKey(key)) return strings[key];
+        else return (key + " - NO TEXT FOUND");
+    }
+
+    public string GetResourceName(int resourceID)
+    {
+        if (World.ResourcesInfo.ContainsKey(resourceID))
+            return GetText(World.ResourcesInfo[resourceID].Name);
+        else return (resourceID + " - NO RESOURCE INFO");
     }
 }

@@ -74,7 +74,7 @@ public class StoragePanel : MonoBehaviour
 
             activePanel.gameObject.SetActive(true);
 
-            activePanel.TextSubpanel.text = Storage.Building.Type;
+            activePanel.TextSubpanel.text = Storage.Building.Name;
            
             ShowResourcesInStorage();
         }

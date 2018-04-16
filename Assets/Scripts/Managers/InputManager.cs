@@ -121,8 +121,17 @@ public class InputManager : MonoBehaviour
     void HandleUserInput()
     {        
         if (Input.GetMouseButtonDown(0)) // LPM
-        {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
+        {            
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                // Kursor jest nad elementem UI
+                return;
+            }
+            else
+            {
+                SelectionPanel.HidePanels();
+                SidePanel.HidePanels();
+            }
 
             if (buildMode)
             {
@@ -177,6 +186,7 @@ public class InputManager : MonoBehaviour
         || Input.GetKeyDown(KeyCode.Escape))
         {
             if (SidePanel.PanelVisible) SidePanel.HidePanels();
+            if (SelectionPanel.PanelVisible) SelectionPanel.HidePanels();
 
             SetBuildMode(false);
             RemoveSelection();

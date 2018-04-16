@@ -7,11 +7,11 @@ using System;
 
 public class HoverElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public string HoverText;
+    public string HoverTextKey;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        GameManager.Instance.Tooltip.SetText(HoverText);
+        GameManager.Instance.Tooltip.SetText(GameManager.Instance.GetText(HoverTextKey));
     }
 
     public void OnPointerExit(PointerEventData eventData)

@@ -5,6 +5,7 @@ using System;
 
 public class Building : ISelectable 
 {
+    public string Name { get { return GameManager.Instance.GetText(Type); } }
     public string Type { get { return Prototype.Type; } }
     public List<Tile> Tiles { get; protected set; }
     public Rotation Rotation { get; protected set; }

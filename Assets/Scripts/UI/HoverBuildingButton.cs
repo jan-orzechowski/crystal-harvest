@@ -14,7 +14,8 @@ public class HoverBuildingButton : MonoBehaviour, IPointerEnterHandler, IPointer
         BuildingPrototype prototype = GameManager.Instance.World.GetBuildingPrototype(PrototypeName);
         if (prototype != null)
         {
-            GameManager.Instance.Tooltip.SetText(prototype.Description, 0.1f);
+            GameManager.Instance.Tooltip.SetText(
+                GameManager.Instance.GetText(prototype.DescriptionKey), 0.1f);
         }        
     }
 

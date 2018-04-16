@@ -56,15 +56,15 @@ public class ConstructionPanel : MonoBehaviour
         if (ConstructionSite.Building != null)
         {            
             if (ConstructionSite.Stage == ConstructionStage.Construction)
-                Text.text = "Plac budowy";
+                Text.text = GameManager.Instance.GetText("s_construction_site");
             else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
-                Text.text = "Budowa rusztowania";
+                Text.text = GameManager.Instance.GetText("s_scaffolding_construction");
             else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
-                Text.text = "Rozbiórka";
+                Text.text = GameManager.Instance.GetText("s_deconstruction_site");
             else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
-                Text.text = "Rozbiórka rusztowania";
+                Text.text = GameManager.Instance.GetText("s_scaffolding_deconstruction");
 
-            SubText.text = ConstructionSite.Building.Type;
+            SubText.text = ConstructionSite.Building.Name;
         }
 
         float percentage = ConstructionSite.GetStageCompletionPercentage();
@@ -74,7 +74,7 @@ public class ConstructionPanel : MonoBehaviour
         if (ConstructionSite.Halted)
         {
             ProgressBar.SetFillPercentageWithoutText(percentage);
-            ProgressBar.SetText("Wstrzymane");
+            ProgressBar.SetText(GameManager.Instance.GetText("s_halted"));
         }
         else
         {
@@ -117,6 +117,7 @@ public class ConstructionPanel : MonoBehaviour
 
     public void SetConstructionSite(ConstructionSite cs)
     {
-        ConstructionSite = cs;  
+        ConstructionSite = cs;
+        if (cs != null) Update();
     }
 }

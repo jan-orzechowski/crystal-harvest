@@ -29,6 +29,7 @@ public class RobotPanel : MonoBehaviour
         {
             Character = c;
             TextSubpanel.text = c.Name;
-        }
+            Update();
+        }        
     }
 }

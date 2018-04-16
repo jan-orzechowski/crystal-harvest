@@ -85,9 +85,19 @@ public class BuildingModulePanel : MonoBehaviour
 
     public void DeconstructButtonAction()
     {
-        if (Module == null) return;
-        GameManager.Instance.World.MarkBuildingForDenconstruction(Module.Building);
-        changed = true;
+        if (Module == null || Module.Building == null) return;
+
+        Action action = () => 
+        {
+            if (Module == null || Module.Building == null) return;
+            GameManager.Instance.World.MarkBuildingForDenconstruction(Module.Building);
+            changed = true;
+        };
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_deconstruction_prompt",
+            "s_yes", action,
+            "s_no", null);        
     }
 
     public void CancelDeconstructionButtonAction()
@@ -101,7 +111,7 @@ public class BuildingModulePanel : MonoBehaviour
     {
         if (Module == null) return;
         Module.SetHalt(true);
-        changed = true;
+        changed = true;       
     }
 
     public void StartButtonAction()
@@ -141,5 +151,6 @@ public class BuildingModulePanel : MonoBehaviour
         }
 
         changed = true;
+        Update();
     }
 }

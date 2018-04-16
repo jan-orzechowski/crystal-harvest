@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class InfoPanel : MonoBehaviour 
+public class DEBUG_InfoPanel : MonoBehaviour 
 {
     Text text;
     InputManager mouseManager;

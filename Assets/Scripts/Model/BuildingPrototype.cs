@@ -63,7 +63,7 @@ public class BuildingPrototype
 
     public bool HidesCharacter = false;
     
-    public string Description = "NO DESCRIPTION \n NO DESCRIPTION \n NO DESCRIPTION";
+    public string DescriptionKey = "";
 
     public static List<TilePosition> GetNormalizedTilePositions(int xSize, int ySize)
     {

@@ -27,16 +27,17 @@ public class OtherBuildingPanel : MonoBehaviour
         building = b;
         if (building != null)
         {
-            Text.text = building.Type;
+            Text.text = building.Name;
+            Update();
         }        
     }
 
     public void DeconstructButtonAction()
     {
-        if (building != null)
-        {
+        if (building == null) return;
+        
             GameManager.Instance.World.MarkBuildingForDenconstruction(building);
             building = null;
-        }        
+                
     }
 }

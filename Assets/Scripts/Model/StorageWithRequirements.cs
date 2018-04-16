@@ -164,7 +164,7 @@ public class StorageWithRequirements : Storage
         s += "StorageWithRequirements - jest: " + "\n";
         foreach (int resourceID in Resources.Keys)
         {
-            s += "- " + GameManager.Instance.World.ResourcesInfo[resourceID].Name + " - "
+            s += "- " + GameManager.Instance.GetResourceName(resourceID) + " - "
                 + Resources[resourceID] + "\n";
         }
         s += "\n";
@@ -172,7 +172,7 @@ public class StorageWithRequirements : Storage
         if (MissingResourcesCount > 0)
             foreach (int resourceID in MissingResources.Keys)
             {
-                s += "- " + GameManager.Instance.World.ResourcesInfo[resourceID].Name + " - "
+                s += "- " + GameManager.Instance.GetResourceName(resourceID) + " - "
                     + MissingResources[resourceID] + "\n";
             }
 
@@ -181,14 +181,14 @@ public class StorageWithRequirements : Storage
         foreach (Character character in PendingResources.Keys)
         {
             s += "- " + character.Name + " - "
-                + GameManager.Instance.World.ResourcesInfo[PendingResources[character]].Name + "\n";
+                + GameManager.Instance.GetResourceName(PendingResources[character]) + "\n";
         }
         s += "\n";
 
         s += "Rezerwacje zasobów: " + "\n";
         foreach (Character character in ReservedResources.Keys)
         {
-            s += "- " + character.Name + "- " + GameManager.Instance.World.ResourcesInfo[ReservedResources[character]].Name + "\n";
+            s += "- " + character.Name + "- " + GameManager.Instance.GetResourceName(ReservedResources[character]) + "\n";
         }
 
         return s;

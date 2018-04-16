@@ -38,6 +38,7 @@ public class CharacterPanel : MonoBehaviour
         {
             Character = c;
             TextSubpanel.text = c.Name;
-        }      
+            Update();
+        }        
     }
 }

@@ -27,6 +27,8 @@ public class SelectionPanel : MonoBehaviour
     public BuildingModulePanel BuildingModulePanel;
     public OtherBuildingPanel OtherBuildingPanel;
 
+    public bool PanelVisible { get; protected set; }
+
     void Start()
     {
         HidePanels();
@@ -38,6 +40,8 @@ public class SelectionPanel : MonoBehaviour
 
         if (obj is Building)
         {
+            PanelVisible = true;
+
             Building building = (Building)obj;
             
             if (building.Module == null)
@@ -94,6 +98,8 @@ public class SelectionPanel : MonoBehaviour
         else
         if (obj is Character)
         {
+            PanelVisible = true;
+
             Character c = (Character)obj;
             if (c.IsRobot)
             {
@@ -110,6 +116,8 @@ public class SelectionPanel : MonoBehaviour
 
     public void HidePanels()
     {
+        if (PanelVisible == false) return;
+
         ServicePanel.gameObject.SetActive(false);
         ServicePanel.SetService(null);
 
@@ -136,6 +144,10 @@ public class SelectionPanel : MonoBehaviour
 
         OtherBuildingPanel.gameObject.SetActive(false);
         OtherBuildingPanel.SetOtherBuilding(null);
+
+        GameManager.Instance.Tooltip.Hide();
+
+        PanelVisible = false;
     }
 
     public void RemoveSelection()

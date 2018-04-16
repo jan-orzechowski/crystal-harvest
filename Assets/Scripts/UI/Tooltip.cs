@@ -15,6 +15,8 @@ public class Tooltip : MonoBehaviour
 
     TextGenerator textGen;
 
+    float yOffset = 10f;
+
     void Start()
     {
         textGen = new TextGenerator();
@@ -37,17 +39,24 @@ public class Tooltip : MonoBehaviour
         }
 
         if (Display.gameObject.activeSelf)
-        {
+        {            
             if (Input.mousePosition.x + Display.rect.width > Screen.width)
             {
+                // Nie mieści się - wyświetlanie po lewej
                 Display.transform.SetPositionAndRotation(
                     new Vector3(Input.mousePosition.x - Display.rect.width,
-                                Input.mousePosition.y, Input.mousePosition.z),
+                                Input.mousePosition.y + yOffset, 
+                                Input.mousePosition.z),
                     Quaternion.identity);
             }
             else
             {
-                Display.transform.SetPositionAndRotation(Input.mousePosition, Quaternion.identity);
+                // Wyświetlanie po prawej
+                Display.transform.SetPositionAndRotation(
+                    new Vector3(Input.mousePosition.x,
+                                Input.mousePosition.y + yOffset,
+                                Input.mousePosition.z),
+                    Quaternion.identity);
             }
         }
     }
@@ -55,7 +64,7 @@ public class Tooltip : MonoBehaviour
     public void SetText(string newText, float timeToShow)
     {
         if (textToSet == newText) return;
-
+        
         timeToShow = Timer;
         textToSet = newText;
     }

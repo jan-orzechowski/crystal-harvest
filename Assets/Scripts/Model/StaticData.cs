@@ -22,6 +22,89 @@ public static class StaticData
 
     public const int CrystalsAmountToGather = 100;
    
+    public static Dictionary<string, string> LoadStrings()
+    {
+        return new Dictionary<string, string>()
+        {
+             // Zasoby
+            {"s_crystals", "Kryształy" },
+            {"s_metal", "Metal" },
+            {"s_gas", "Gaz" },
+            {"s_ore", "Ruda" },
+            {"s_plants", "Rośliny" },
+            {"s_medicine", "Leki" },
+            {"s_food", "Żywność" },
+            {"s_parts", "Części zamienne" },
+            
+            // Potrzeby
+            {"Hunger", "Głód" },
+            {"Health", "Zdrowie" },
+            {"Condition", "Stan" },            
+
+            // Budynki
+            {"Spaceship", "Statek kosmiczny" },
+            {"OreDeposit", "Ruda" },
+            {"CrystalsDeposit", "Kryształy" },
+            {"Stairs", "Schody" },
+            {"Platform", "Platforma" },
+            {"Slab", "Chodnik" },
+            {"Greenhouse", "Szklarnia" },
+            {"Storage", "Magazyn" },
+            {"HealingChamber", "Komora lecznicza" },
+            {"Quarters", "Kwatery" },
+            {"Metalworks", "Huta" },
+            {"Refinery", "Rafineria" },
+            {"Laboratory", "Laboratorium" },
+            {"FoodSynthesizer", "Syntezator żywności" },
+            {"RobotFactory", "Fabryka robotów" },
+            {"PartsFactory", "Fabryka części zamiennych" },
+            {"RepairStation", "Stacja napraw" },
+            {"CrystalStorage", "Magazyn na kryształy" },            
+
+            // Opisy budynków
+            {"SpaceshipDesc", "" },
+            {"OreDepositDesc", "" },
+            {"CrystalsDepositDesc", "" },
+            {"StairsDesc", "Pozwalają na wchodzenie na platformy i skały." },
+            {"PlatformDesc", "Zapewnia więcej przestrzeni na stawianie budynków." },
+            {"SlabDesc", "Pozwala na szybsze poruszanie się." },
+            {"GreenhouseDesc", "Tutaj hodowane są rośliny potrzebne do produkcji żywności oraz leków." },
+            {"StorageDesc", "Pozwala przechowywać dowolne zasoby poza kryształami." },
+            {"HealingChamberDesc", "Pozwala na wyleczenie kontuzji, jakich mogą nabawić się kosmonauci podczas pracy." },
+            {"QuartersDesc", "Tutaj kosmonauci mogą spożyć posiłek i odpocząć." },
+            {"MetalworksDesc", "Przetapia rudę na metal." },
+            {"RefineryDesc", "W tym budynku wydobywany jest i przygotowywany do użycia gaz." },
+            {"LaboratoryDesc", "Służy do wytwarzania leków dla kosmonautów." },
+            {"FoodSynthesizerDesc", "Syntezator produkuje żywność z roślin." },
+            {"RobotFactoryDesc", "Produkuje roboty pomagające kosmonautom w pracy." },
+            {"PartsFactoryDesc", "Produkuje części potrzebne do konstrukcji i naprawy robotów." },
+            {"RepairStationDesc", "Służy do naprawy uszkodzonych robotów." },
+            {"CrystalStorageDesc", "Tylko w tym magazynie można przechowywać kryształy." },
+
+            // Budowa
+            {"s_halted", "Wstrzymane" },
+            {"s_scaffolding_construction", "Budowa rusztowania" },
+            {"s_scaffolding_deconstruction", "Rozbiórka rusztowania" },
+            {"s_construction_site", "Plac budowy" },
+            {"s_deconstruction_site", "Rozbiórka" },
+
+            {"s_cancel_deconstruction_button", "Przywróć budynek" },
+            {"s_deconstruction_button", "Dekonstrukcja" },
+            {"s_halt_button", "Wstrzymaj działanie" },
+            {"s_start_button", "Wznów działanie" },
+            {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
+
+            {"s_stats_button", "Statystki" },
+            {"s_build_button", "Konstrukcja" },
+            {"s_timer_hover", "Czas pozostały do zakończenia misji" },
+            {"s_counter_hover", "Kryształy do zebrania" },
+            {"s_robots_hover", "Roboty" },
+            {"s_humans_hover", "Załoga" },
+            {"s_yes", "Tak" },
+            {"s_no", "Nie" },
+        };
+    }
+
     public static Dictionary<TileType, float> LoadTilesMovementCosts()
     {
         return new Dictionary<TileType, float>(){ {TileType.Empty, 0f},
@@ -34,15 +117,15 @@ public static class StaticData
     {
         Dictionary<int, ResourceInfo> resources = new Dictionary<int, ResourceInfo>();
 
-        resources.Add(0, new ResourceInfo() { Name = "Kryształy" });
-        resources.Add(1, new ResourceInfo() { Name = "Metal" });
-        resources.Add(2, new ResourceInfo() { Name = "Gaz" });
-        resources.Add(3, new ResourceInfo() { Name = "Ruda" });
-        resources.Add(4, new ResourceInfo() { Name = "Rośliny" });
-        resources.Add(5, new ResourceInfo() { Name = "Leki" });
-        resources.Add(6, new ResourceInfo() { Name = "Żywność" });
-        resources.Add(7, new ResourceInfo() { Name = "Części zamienne" });
-        resources.Add(8, new ResourceInfo() { Name = "Mózg elektronowy" });
+        resources.Add(0, new ResourceInfo() { Name = "s_crystals" });
+        resources.Add(1, new ResourceInfo() { Name = "s_metal" });
+        resources.Add(2, new ResourceInfo() { Name = "s_gas" });
+        resources.Add(3, new ResourceInfo() { Name = "s_ore" });
+        resources.Add(4, new ResourceInfo() { Name = "s_plants" });
+        resources.Add(5, new ResourceInfo() { Name = "s_medicine" });
+        resources.Add(6, new ResourceInfo() { Name = "s_food" });
+        resources.Add(7, new ResourceInfo() { Name = "s_parts" });
+        resources.Add(8, new ResourceInfo() { Name = "s_brain" });
 
         return resources;
     }
@@ -76,6 +159,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Spaceship";
+        bp.DescriptionKey = "SpaceshipDesc";
 
         bp.CanBeBuiltOnRock = true;
 
@@ -106,6 +190,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "OreDeposit";
+        bp.DescriptionKey = "OreDepositDesc";
 
         bp.CanBeBuiltOnRock = true;
 
@@ -129,7 +214,8 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "CrystalsDeposit";
-       
+        bp.DescriptionKey = "CrystalsDepositDesc";
+
         bp.CanBeBuiltOnRock = true;
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 1);
@@ -152,6 +238,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Stairs";
+        bp.DescriptionKey = "StairsDesc";
 
         bp.CanBeBuiltOnSand = true;
 
@@ -172,9 +259,7 @@ public static class StaticData
         bp.ConstructionWithoutScaffolding = true;
 
         bp.MousePivotPoint = new TilePosition(1, 0, 0);
-
-        bp.Description = "Pozwalają na wchodzenie na platformy i skały.";
-
+       
         prototypes.Add(bp);
 
 
@@ -184,7 +269,8 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Platform";
-        
+        bp.DescriptionKey = "PlatformDesc";
+
         bp.CanBeBuiltOnSand = true;
 
         bp.MultipleBuildMode = true;
@@ -202,8 +288,6 @@ public static class StaticData
         bp.ConstructionTime = 3f;
         bp.ConstructionResources = new Dictionary<int, int>() { { 1, 1 } };
         bp.ConstructionWithoutScaffolding = true;
-        
-        bp.Description = "Zapewnia więcej przestrzeni na stawianie budynków.";
 
         prototypes.Add(bp);
 
@@ -214,6 +298,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Slab";
+        bp.DescriptionKey = "SlabDesc";
 
         bp.CanBeBuiltOnSand = true;
         bp.CanBeBuiltOnRock = true;
@@ -233,8 +318,6 @@ public static class StaticData
         bp.ConstructionResources = new Dictionary<int, int>() { { 1, 1 } };
         bp.ConstructionWithoutScaffolding = true;
 
-        bp.Description = "Pozwala na szybsze poruszanie się.";
-
         prototypes.Add(bp);
 
 
@@ -244,6 +327,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Greenhouse";
+        bp.DescriptionKey = "GreenhouseDesc";
 
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
@@ -263,8 +347,6 @@ public static class StaticData
 
         bp.HidesCharacter = true;
 
-        bp.Description = "Tutaj hodowane są rośliny potrzebne do produkcji żywności oraz leków.";
-
         prototypes.Add(bp);
 
 
@@ -274,6 +356,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Storage";
+        bp.DescriptionKey = "StorageDesc";
 
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
@@ -290,8 +373,6 @@ public static class StaticData
 
         bp.MaxStorage = 18;
 
-        bp.Description = "Pozwala przechowywać dowolne zasoby poza kryształami.";
-
         prototypes.Add(bp);
 
 
@@ -301,6 +382,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "HealingChamber";
+        bp.DescriptionKey = "HealingChamberDesc";
 
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
@@ -328,8 +410,6 @@ public static class StaticData
 
         bp.HidesCharacter = true;
 
-        bp.Description = "Pozwala na wyleczenie kontuzji, jakich mogą nabawić się kosmonauci podczas pracy.";
-
         prototypes.Add(bp);
 
 
@@ -339,6 +419,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Quarters";
+        bp.DescriptionKey = "QuartersDesc";
 
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
@@ -360,8 +441,6 @@ public static class StaticData
 
         bp.HidesCharacter = true;
 
-        bp.Description = "Tutaj kosmonauci mogą spożyć posiłek i odpocząć.";
-
         prototypes.Add(bp);
 
 
@@ -371,6 +450,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Metalworks";
+        bp.DescriptionKey = "MetalworksDesc";
 
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
@@ -391,8 +471,6 @@ public static class StaticData
         bp.ConsumedResources = new Dictionary<int, int>() { { 3, 1 } };
         bp.ProducedResources = new Dictionary<int, int>() { { 1, 2 } };
 
-        bp.Description = "Przetapia rudę na metal.";
-
         prototypes.Add(bp);
 
 
@@ -402,6 +480,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Refinery";
+        bp.DescriptionKey = "RefineryDesc";
 
         bp.CanBeBuiltOnSand = true;
 
@@ -420,8 +499,6 @@ public static class StaticData
         bp.ProductionTime = 10f;
         bp.ProducedResources = new Dictionary<int, int>() { { 2, 3 } };
 
-        bp.Description = "W tym budynku wydobywany jest i przygotowywany do użycia gaz.";
-
         prototypes.Add(bp);
 
 
@@ -431,6 +508,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "Laboratory";
+        bp.DescriptionKey = "LaboratoryDesc";
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(2, 2);
 
@@ -451,8 +529,6 @@ public static class StaticData
         bp.ConsumedResources = new Dictionary<int, int>() { { 2, 1 }, { 4, 1 } };
         bp.ProducedResources = new Dictionary<int, int>() { { 5, 1 } };
 
-        bp.Description = "Służy do wytwarzania leków dla kosmonautów.";
-
         prototypes.Add(bp);
 
 
@@ -462,6 +538,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "FoodSynthesizer";
+        bp.DescriptionKey = "FoodSynthesizerDesc";
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 2);
 
@@ -480,8 +557,6 @@ public static class StaticData
         bp.ConsumedResources = new Dictionary<int, int>() { { 4, 1 } };
         bp.ProducedResources = new Dictionary<int, int>() { { 6, 1 } };
 
-        bp.Description = "Syntezator produkuje żywność z roślin.";
-
         prototypes.Add(bp);
 
 
@@ -491,7 +566,8 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "RobotFactory";
-        
+        bp.DescriptionKey = "RobotFactoryDesc";
+
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
         
@@ -514,8 +590,6 @@ public static class StaticData
         bp.ConsumedResources = new Dictionary<int, int>() { { 1, 1 }, { 2, 1 }, { 7, 2 } };        
         bp.ProducesRobot = true;
 
-        bp.Description = "Produkuje roboty pomagające kosmonautom w pracy."; 
-
         prototypes.Add(bp);
 
 
@@ -525,6 +599,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "PartsFactory";
+        bp.DescriptionKey = "PartsFactoryDesc";
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(2, 4);
 
@@ -543,8 +618,6 @@ public static class StaticData
         bp.ConsumedResources = new Dictionary<int, int>() { { 1, 1 }, { 2, 1 } };
         bp.ProducedResources = new Dictionary<int, int>() { { 7, 1 } };
 
-        bp.Description = "Produkuje części potrzebne do konstrukcji i naprawy robotów.";
-
         prototypes.Add(bp);
 
 
@@ -554,6 +627,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "RepairStation";
+        bp.DescriptionKey = "RepairStationDesc";
 
         bp.CanBeBuiltOnRock = true;
         bp.CanBeBuiltOnPlatform = true;
@@ -577,8 +651,6 @@ public static class StaticData
 
         bp.HidesCharacter = true;
 
-        bp.Description = "Służy do naprawy uszkodzonych robotów.";
-
         prototypes.Add(bp);
 
 
@@ -588,6 +660,7 @@ public static class StaticData
 
         bp = new BuildingPrototype();
         bp.Type = "CrystalStorage";
+        bp.DescriptionKey = "CrystalStorageDesc";
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 1);
 
@@ -604,8 +677,6 @@ public static class StaticData
 
         bp.MaxStorage = 12;
         bp.RestrictedResources = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-        bp.Description = "Tylko w tym magazynie można przechowywać kryształy.";
 
         prototypes.Add(bp);
 

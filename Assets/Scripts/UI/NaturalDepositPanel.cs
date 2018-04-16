@@ -29,7 +29,8 @@ public class NaturalDepositPanel : MonoBehaviour
         else
         {
             Deposit = f;
-            if (f != null && f.Building != null) TextSubpanel.text = f.Building.Type;
-        }      
+            if (f.Building != null) TextSubpanel.text = f.Building.Name;
+            Update();
+        }        
     }
 }

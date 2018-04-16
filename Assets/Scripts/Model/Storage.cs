@@ -248,7 +248,7 @@ public class Storage : IBuildingModule
         var resourcesToPrint = GetAllResources();
         foreach (int resourceID in resourcesToPrint.Keys)
         {
-            s += "- " + GameManager.Instance.World.ResourcesInfo[resourceID].Name + " - " + resourcesToPrint[resourceID] + "\n";
+            s += "- " + GameManager.Instance.GetResourceName(resourceID) + " - " + resourcesToPrint[resourceID] + "\n";
         }
         s += "\n";
 
@@ -264,7 +264,7 @@ public class Storage : IBuildingModule
         s += "Rezerwacje zasobów: " + "\n";
         foreach (Character character in ReservedResources.Keys)
         {
-            s += "- " + character.Name + "- " + GameManager.Instance.World.ResourcesInfo[ReservedResources[character]].Name + "\n";
+            s += "- " + character.Name + "- " + GameManager.Instance.GetResourceName(ReservedResources[character]) + "\n";
         }
 
         return s;

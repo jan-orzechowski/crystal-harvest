@@ -411,7 +411,7 @@ public class Character : ISelectable
 
         if (HasResource)
         {
-            s += "Resource: " + GameManager.Instance.World.ResourcesInfo[Resource].Name + "\n";
+            s += "Resource: " + GameManager.Instance.GetResourceName(Resource) + "\n";
         }
 
         return s;

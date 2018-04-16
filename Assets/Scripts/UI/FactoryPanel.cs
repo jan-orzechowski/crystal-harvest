@@ -69,7 +69,7 @@ public class FactoryPanel : MonoBehaviour
         if (Factory.Halted)
         {
             ProgressBar.SetFillPercentageWithoutText(Factory.GetCompletionPercentage());
-            ProgressBar.SetText("Wstrzymane");
+            ProgressBar.SetText(GameManager.Instance.GetText("s_halted"));
         }
         else
         {
@@ -115,7 +115,8 @@ public class FactoryPanel : MonoBehaviour
         Factory = f;
         if (f != null && f.Building != null)
         {
-            TextSubpanel.text = f.Building.Type;       
-        }
+            TextSubpanel.text = f.Building.Name;
+            Update();
+        }        
     }    
 }
