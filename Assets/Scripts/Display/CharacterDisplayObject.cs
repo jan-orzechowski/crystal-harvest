@@ -162,6 +162,12 @@ public class CharacterDisplayObject : SelectableDisplayObject
 
     public void CharacterUsesModule(IBuildingModule module)
     {
+        if (module == null)
+        {
+            Hidden = false;
+            return;
+        }
+
         if (module.HidesCharacter)
         {
             hideTimer = 0.1f;

@@ -123,6 +123,7 @@ public class Factory : IWorkplace, IBuildingModule
                 {                 
                     ProductionStarted = false;
                     RemainingProductionCycles -= 1;
+                    workingCharacter.WorkFinished();
                     return true;
                 }
                 else
@@ -267,14 +268,14 @@ public class Factory : IWorkplace, IBuildingModule
                 && Halted && WorkingCharacter == null);
     }
 
-    public Tile GetAccessTile()
+    public Tile GetAccessTile(bool second = false)
     {
-        return Building.GetAccessTile();
+        return Building.GetAccessTile(second);
     }
 
-    public Rotation GetAccessTileRotation()
+    public Rotation GetAccessTileRotation(bool second = false)
     {
-        return Building.GetAccessTileRotation();
+        return Building.GetAccessTileRotation(second);
     }
 
     public string DEBUG_GetSelectionText()

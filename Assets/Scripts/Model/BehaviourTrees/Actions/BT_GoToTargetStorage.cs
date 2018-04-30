@@ -5,15 +5,24 @@ using System;
 
 public class BT_GoToTargetStorage : BT_GoTo 
 {
+    public override bool CheckConditions(BT_AgentMemory am)
+    {
+        return (am.Character.Reservation != null 
+                && am.Character.HasResource);
+    }
+
+    public override void WhileRunning(BT_AgentMemory am)
+    {
+        return;
+    }
+
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
-        if (am.Character.Reservation == null) { return null; }
-        return am.Character.Reservation.TargetStorage.GetAccessTile();
+        return am.Character.Reservation.TargetStorage.GetAccessTile(false);
     }
 
     public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
     {
-        if (am.Character.Reservation == null) { return Rotation.N; }
-        return am.Character.Reservation.TargetStorage.GetAccessTileRotation();
+        return am.Character.Reservation.TargetStorage.GetAccessTileRotation(false);
     }
 }

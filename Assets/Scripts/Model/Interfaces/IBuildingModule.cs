@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public interface IBuildingModule
+public interface IBuildingModule : IAccessible
 {
     string DEBUG_GetSelectionText();
     Building Building { get; }

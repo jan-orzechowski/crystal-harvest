@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_GoToRandomTile : BT_GoTo 
+public class BT_GoToRandomTile //: BT_GoTo 
 {
     int maxDistanceFromCharacter;
     static int maxSearchesNumber = 100;
@@ -13,7 +13,7 @@ public class BT_GoToRandomTile : BT_GoTo
         this.maxDistanceFromCharacter = maxDistanceFromCharacter;
     }
 
-    public override Tile GetDestinationTile(BT_AgentMemory am)
+    public Tile GetDestinationTile(BT_AgentMemory am)
     {
         Tile newTile;
         TilePosition pos = am.Character.CurrentTile.Position;
@@ -47,7 +47,7 @@ public class BT_GoToRandomTile : BT_GoTo
         return null;
     }
 
-    public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
+    public Rotation GetDestinationTileRotation(BT_AgentMemory am)
     {
         int r = UnityEngine.Random.Range(0, 4);
         if (r == 0) return Rotation.N;

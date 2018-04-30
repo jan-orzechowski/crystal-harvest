@@ -3,17 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_GoToWorkplace : BT_GoTo 
+public class BT_GoToWorkplace : BT_GoTo
 {
+    public override bool CheckConditions(BT_AgentMemory am)
+    {
+        return (am.Workplace != null);
+    }
+
+    public override void WhileRunning(BT_AgentMemory am)
+    {
+        if (am.Character.Reservation != null
+            && am.Character.Reservation.TargetStorage == am.Workplace.InputStorage)
+        {
+            am.Workplace.RenewJobReservation(am.Character);
+        }
+    }
+
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
-        if (am.Workplace == null) { return null; }
-        return am.Workplace.GetAccessTile();
+        return am.Workplace.GetAccessTile(am.UseWorkplaceSecondAccessTile);
     }
 
     public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
     {
-        if (am.Workplace == null) { return Rotation.N; }
-        return am.Workplace.GetAccessTileRotation();
+        return am.Workplace.GetAccessTileRotation(am.UseWorkplaceSecondAccessTile);
     }
 }

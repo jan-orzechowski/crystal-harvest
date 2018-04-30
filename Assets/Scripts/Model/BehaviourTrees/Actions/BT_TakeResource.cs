@@ -9,7 +9,8 @@ public class BT_TakeResource : BT_Node
     {
         if (am.Character.Reservation != null 
             && am.Character.HasResource == false
-            && am.Character.Reservation.SourceStorage.GetAccessTile() == am.Character.CurrentTile)
+            && (am.Character.Reservation.SourceStorage.GetAccessTile(false) == am.Character.CurrentTile 
+                || am.Character.Reservation.SourceStorage.GetAccessTile(true) == am.Character.CurrentTile))
         {
             if (am.Character.Reservation.SourceStorage.TransferFromStorage(am.Character.Reservation.Resource, am.Character))
             {

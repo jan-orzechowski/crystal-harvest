@@ -75,7 +75,6 @@ public class BT_Tree
         root =
         Subtree(new BT_Priority(),
                     new BT_IsUsingService(),
-                    new BT_Move(),
                     // Rezerwacje
                     Subtree(new BT_MemSequence(),
                         new BT_HasReservation(),
@@ -93,15 +92,23 @@ public class BT_Tree
                     // Potrzeby
                     Subtree(new BT_MemSequence(),
                         new BT_HasService(),
+                        new BT_Inverter(new BT_IsServiceReady()),
+                        new BT_GetTransportJobForService()
+                        ),
+                    Subtree(new BT_MemSequence(),
+                        new BT_HasService(),
                         new BT_IsServiceReady(),
                         new BT_GoToService(),
                         new BT_Wait(waitBeforeEntering),
                         new BT_StartUsingService()
                         ),
                     Subtree(new BT_MemSequence(),
+                        new BT_IsNeedHigherThan("Health", 0.2f),
+                        new BT_FindService("Health")
+                        ),
+                    Subtree(new BT_MemSequence(),
                         new BT_IsNeedHigherThan("Health", 0.9f),
                         new BT_Die()
-                        //new BT_FindService("Health")
                         ),
                     Subtree(new BT_MemSequence(),
                         new BT_IsNeedHigherThan("Hunger", 0.5f),
@@ -121,16 +128,13 @@ public class BT_Tree
                         new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
                         new BT_GetTransportJobForWorkplace()
                         ),
+                    //Subtree(new BT_MemSequence(),
+                    //    new BT_GetTransportJob()
+                    //    ),
                     Subtree(new BT_MemSequence(),
-                        new BT_GetRandomWorkplace()
+                        new BT_FindWorkplace()
                         ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_GetTransportJob()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_GoToRandomTile(4),
-                        new BT_WaitRandom(1f, 2f)
-                        )
+                        new BT_Wait(10f)                       
         );
 
         AssignIDs(root);
@@ -138,64 +142,69 @@ public class BT_Tree
 
     public void LoadRobotTree()
     {
-        float waitBeforeEntering = 0.2f;
+        // float waitBeforeEntering = 0.2f;
 
-        root =
-        Subtree(new BT_Priority(),
-                    new BT_IsUsingService(),
-                    new BT_Move(),
-                    // Rezerwacje
-                    Subtree(new BT_MemSequence(),
-                        new BT_HasReservation(),
-                        new BT_HasResourceForReservation(),
-                        new BT_GoToTargetStorage(),
-                        new BT_Wait(waitBeforeEntering),
-                        new BT_DepositResource()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_HasReservation(),
-                        new BT_GoToSourceStorage(),
-                        new BT_Wait(waitBeforeEntering),
-                        new BT_TakeResource()
-                        ),
-                    // Potrzeby
-                    Subtree(new BT_MemSequence(),
-                        new BT_HasService(),
-                        new BT_IsServiceReady(),
-                        new BT_GoToService(),
-                        new BT_Wait(waitBeforeEntering),
-                        new BT_StartUsingService()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_IsNeedHigherThan("Condition", 0.5f),
-                        new BT_FindService("Condition")
-                        ),
-                    // Praca
-                    Subtree(new BT_MemSequence(),
-                        new BT_HasWorkplace(),
-                        new BT_IsWorkplaceReadyForProduction(),
-                        new BT_ReserveJob(),
-                        new BT_GoToWorkplace(),
-                        new BT_Wait(waitBeforeEntering),
-                        new BT_Work()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_HasWorkplace(),
-                        new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
-                        new BT_GetTransportJobForWorkplace()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_GetRandomWorkplace()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_GetTransportJob()
-                        ),
-                    Subtree(new BT_MemSequence(),
-                        new BT_GoToRandomTile(4),
-                        new BT_WaitRandom(1f, 2f)
-                        )
-        );
+        //root =
+        //Subtree(new BT_Priority(),
+        //            new BT_IsUsingService(),
+        //            new BT_RenewServiceAndWorkReservations(),
+        //            // Rezerwacje zasobów
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_HasReservation(),
+        //                new BT_HasResourceForReservation(),
+        //                new BT_GoToTargetStorage(),
+        //                new BT_Wait(waitBeforeEntering),
+        //                new BT_DepositResource()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_HasReservation(),
+        //                new BT_GoToSourceStorage(),
+        //                new BT_Wait(waitBeforeEntering),
+        //                new BT_TakeResource()
+        //                ),
+        //            // Potrzeby
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_HasService(),
+        //                new BT_Inverter(new BT_IsServiceReady()),
+        //                new BT_GetTransportJobForService()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_HasService(),
+        //                new BT_IsServiceReady(),
+        //                new BT_GoToService(),
+        //                new BT_Wait(waitBeforeEntering),
+        //                new BT_StartUsingService()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_IsNeedHigherThan("Condition", 0.5f),
+        //                new BT_FindService("Condition")
+        //                ),
+        //            // Praca
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_HasWorkplace(),
+        //                new BT_IsWorkplaceReadyForProduction(),
+        //                new BT_ReserveJob(),
+        //                new BT_GoToWorkplace(),
+        //                new BT_Wait(waitBeforeEntering),
+        //                new BT_Work()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_HasWorkplace(),
+        //                new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
+        //                new BT_GetTransportJobForWorkplace()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_GetRandomWorkplace()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_GetTransportJob()
+        //                ),
+        //            Subtree(new BT_MemSequence(),
+        //                new BT_GoToRandomTile(4),
+        //                new BT_WaitRandom(1f, 2f)
+        //                )
+        //);
 
-        AssignIDs(root);
+        //AssignIDs(root);
     }
 }

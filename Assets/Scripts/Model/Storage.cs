@@ -228,14 +228,14 @@ public class Storage : IBuildingModule
         return result;
     }
     
-    public Tile GetAccessTile()
+    public Tile GetAccessTile(bool second = false)
     {
-        return Building.GetAccessTile();
+        return Building.GetAccessTile(second);
     }
 
-    public Rotation GetAccessTileRotation()
+    public Rotation GetAccessTileRotation(bool second = false)
     {
-        return Building.GetAccessTileRotation();
+        return Building.GetAccessTileRotation(second);
     }
 
     public string DEBUG_GetSelectionText()

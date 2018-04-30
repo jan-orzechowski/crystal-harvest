@@ -157,6 +157,7 @@ public class ConstructionSite : IWorkplace
 
         if (stageTimeLeft <= 0)
         {
+            WorkingCharacter.WorkFinished();
             WorkingCharacter = null;
 
             if (Stage == ConstructionStage.ScaffoldingConstruction)
@@ -334,17 +335,17 @@ public class ConstructionSite : IWorkplace
         return result;
     }
     
-    public Tile GetAccessTile()
+    public Tile GetAccessTile(bool second = false)
     {
         if (Building != null)
-            return Building.GetAccessTile();
+            return Building.GetAccessTile(second);
         else return null;
     }
 
-    public Rotation GetAccessTileRotation()
+    public Rotation GetAccessTileRotation(bool second = false)
     {
         if (Building != null)
-            return Building.GetAccessTileRotation();
+            return Building.GetAccessTileRotation(second);
         else return Rotation.N;
     }
   

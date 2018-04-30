@@ -3,17 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_GoToService : BT_GoTo 
+public class BT_GoToService : BT_GoTo
 {
+    public override bool CheckConditions(BT_AgentMemory am)
+    {
+        return (am.Service != null);
+    }
+
+    public override void WhileRunning(BT_AgentMemory am)
+    {
+        if (am.Character.Reservation != null 
+            && am.Character.Reservation.TargetStorage == am.Service.InputStorage)
+        {
+            am.Service.RenewServiceReservation(am.Character);
+        }
+    }
+
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
-        if (am.Service == null) { return null; }
-        return am.Service.GetAccessTile();
+        return am.Service.GetAccessTile(am.UseServiceSecondAccessTile);
     }
 
     public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
     {
-        if (am.Service == null) { return Rotation.N; }
-        return am.Service.GetAccessTileRotation();
+        return am.Service.GetAccessTileRotation(am.UseServiceSecondAccessTile);
     }
 }

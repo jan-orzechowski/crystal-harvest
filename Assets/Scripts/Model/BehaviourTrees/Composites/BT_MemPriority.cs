@@ -10,7 +10,7 @@ public class BT_MemPriority : BT_CompositeNode
         if (am.IsRunning(ID) == false)
         {
             am.SetInt(ID, "lastRunningNode", 0);
-            am.SetRunning(ID, true);
+            am.StartRunning(ID);
         }
 
         for (int node = am.GetInt(ID, "lastRunningNode", 0); node < Children.Count; node++)
@@ -28,12 +28,12 @@ public class BT_MemPriority : BT_CompositeNode
             }            
             else
             {
-                am.SetRunning(ID, false);
+                am.StopRunning(ID);
                 return result;
             }
         }
 
-        am.SetRunning(ID, false);
+        am.StopRunning(ID);
         return BT_Result.FAILURE;
     }
 }

@@ -17,7 +17,7 @@ public class BT_Timer : BT_DecoratorNode
         if (am.IsRunning(ID) == false)
         {
             am.SetFloat(ID, "timer", timer);
-            am.SetRunning(ID, true);
+            am.StartRunning(ID);
         }
 
         timer = am.GetFloat(ID, "timer", 0f);
@@ -26,7 +26,7 @@ public class BT_Timer : BT_DecoratorNode
 
         if (timer <= 0)
         {
-            am.SetRunning(ID, false);
+            am.StopRunning(ID);
             return Child.Tick(am);
         }
         else

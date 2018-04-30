@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 using Pathfinding;
 
 public class World
@@ -953,26 +954,83 @@ public class World
         return false;
     }
 
-    public Service GetClosestService(string need, Character character)
+    public IWorkplace GetAvailableWorkplace(Character character)
     {
-        Service result = null;
-        if (Services.ContainsKey(need))
+        List<IWorkplace> availableWorkplaces = new List<IWorkplace>();
+
+        for (int attempt = 0; attempt < 5; attempt++)
         {
-            float distance = Mathf.Infinity;
-            for (int i = 0; i < Services[need].Count; i++)
+            if (ConstructionSites.Count == 0) break;
+
+            int index = UnityEngine.Random.Range(0, ConstructionSites.Count);
+
+            if (character.IsTileMarkedAsInaccessible(ConstructionSites[index].GetAccessTile(false))
+                && (ConstructionSites[index].GetAccessTile(true) != null 
+                    && character.IsTileMarkedAsInaccessible(ConstructionSites[index].GetAccessTile(true))))
             {
-                Service service = Services[need][i];
-                float newDistance = character.CurrentTile.DistanceTo(service.GetAccessTile());
-                if (newDistance < distance)
-                {
-                    distance = newDistance;
-                    result = service;
-                }
+                Debug.Log("inaccessible: " + ConstructionSites[index].GetAccessTile().ToString());
+                continue;
+            }
+
+            if (ConstructionSites[index].CanReserveJob(character))
+            {
+                return ConstructionSites[index];
             }
         }
-        return result;
+
+        for (int attempt = 0; attempt < 5; attempt++)
+        {
+            if (Factories.Count == 0) break;
+
+            int index = UnityEngine.Random.Range(0, Factories.Count);
+
+            if (character.IsTileMarkedAsInaccessible(Factories[index].GetAccessTile(false))
+                && (Factories[index].GetAccessTile(true) != null
+                    && character.IsTileMarkedAsInaccessible(Factories[index].GetAccessTile(true))))
+            {
+                //Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
+                continue;
+            }
+
+            if (Factories[index].CanReserveJob(character))
+            {
+                return Factories[index];                
+            }
+        }
+
+        return null;
     }
 
+    public Service GetClosestAvailableService(string need, Character character)
+    {
+        if (Services.ContainsKey(need) == false || Services[need].Count == 0) return null;
+        
+        List<Service> availableServices = new List<Service>();
+
+        foreach (Service s in Services[need])
+        {
+            if (s.CanReserveService(character)
+                && character.IsTileMarkedAsInaccessible(s.GetAccessTile()) == false)
+            {
+                availableServices.Add(s);
+            }
+        }
+
+        Service result = null;
+        float distance = Mathf.Infinity;
+        foreach (Service s in availableServices)
+        {
+            float newDistance = character.CurrentTile.DistanceTo(s.GetAccessTile());
+            if (newDistance < distance)
+            {
+                distance = newDistance;
+                result = s;
+            }
+        }
+
+        return result;
+    }
+   
     public void RegisterResources(Dictionary<int, int> newResources)
     {
         if (newResources == null) return;

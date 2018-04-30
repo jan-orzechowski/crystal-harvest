@@ -5,12 +5,26 @@ using System;
 using System.Linq;
 using Pathfinding;
 
-public class Character : ISelectable 
+public enum CharacterState
+{
+    PreparingForDeletion,
+    PreparingForCheckingPath,
+    CheckingPath,
+    Movement,
+    IdleWithPath,
+    IdleAtDestination,
+    UsingService
+}
+
+
+public class Character : ISelectable
 {
     public string Name { get; protected set; }
     public Tile CurrentTile { get; protected set; }
     public Tile NextTile { get; protected set; }
     public Tile DestinationTile { get; protected set; }
+
+    public CharacterState State { get; protected set; }
 
     public float MovementPercentage { get; protected set; }
     float movementSpeed = 9f; // 3f
@@ -22,7 +36,7 @@ public class Character : ISelectable
     bool isLastTileRotationSet;
     Quaternion lastTileRotation;
 
-    AStar path;
+    public AStar Path { get; protected set; }
     static Pathfinder pathfinder;
     public bool PathNeedsReplacement;
 
@@ -41,20 +55,21 @@ public class Character : ISelectable
 
     static World world;
 
-    public bool UsingService;
-
     public bool IsRobot { get; protected set; }
 
-    public bool PreparingForDeletion { get; protected set; }
+    static float inaccessibleTileDefaultTimer = 10f;
+    Dictionary<Tile, float> inaccessibleTilesTimers;
 
     public Character(string name, Tile currentTile, BT_Tree behaviourTree, bool isRobot)
     {
-        this.Name = name;
+        Name = name;
         world = GameManager.Instance.World;
-        
+
+        State = CharacterState.IdleAtDestination;
+
         CurrentTile = currentTile;
         IsRobot = isRobot;
-        
+
         pathfinder = world.Pathfinder;
         MovementPercentage = 0f;
 
@@ -67,46 +82,81 @@ public class Character : ISelectable
         targetRotation = Quaternion.identity;
         lastTileRotation = Quaternion.identity;
         isLastTileRotationSet = false;
+
+        inaccessibleTilesTimers = new Dictionary<Tile, float>();
+
+        DestinationTile = CurrentTile;
     }
-    
+
     public void UpdateCharacter(float deltaTime)
     {
         agentMemory.DeltaTime = deltaTime;
         behaviourTree.Tick(agentMemory);
         UpdateNeeds(deltaTime);
 
-        if (UsingService == false)
+        if (State == CharacterState.CheckingPath)
+        {
+            TryGetNewPath();
+        }
+
+        if (State == CharacterState.Movement
+            || State == CharacterState.PreparingForCheckingPath
+            || State == CharacterState.PreparingForDeletion)
         {
             Move(deltaTime);
         }
         
-        if (PreparingForDeletion)
+        if (State == CharacterState.PreparingForDeletion)
         {
             DisplayObject.PlayDeathAnimation();
-        }        
+        }
+
+        foreach (Tile tile in inaccessibleTilesTimers.Keys.ToList())
+        {
+            inaccessibleTilesTimers[tile] -= deltaTime;
+            if (inaccessibleTilesTimers[tile] <= 0)
+            {
+                inaccessibleTilesTimers.Remove(tile);
+            }
+        }
     }
+
+    #region Movement
 
     public void Move(float deltaTime)
     {
-        if (DestinationTile == CurrentTile) { DestinationTile = null; }
-
-        if (DestinationTile == null)
+        if (DestinationTile == null
+            || IsTileMarkedAsInaccessible(DestinationTile))
         {
-            if (isLastTileRotationSet && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
+            DestinationTile = CurrentTile;
+        }
+
+        // Obrót na ostatnim polu
+        if (CurrentTile == DestinationTile)
+        {
+            if (isLastTileRotationSet
+                && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
             {
                 CurrentRotation = Quaternion.RotateTowards(
-                                    CurrentRotation, lastTileRotation,
-                                    deltaTime * degreesPerSecond);
+                                     CurrentRotation, lastTileRotation,
+                                     deltaTime * degreesPerSecond);
 
                 if (AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation))
                 {
                     isLastTileRotationSet = false;
+                    if (State == CharacterState.PreparingForDeletion) return;        
+                    else State = CharacterState.IdleAtDestination;
                 }
+            }
+            else
+            {
+                if (State == CharacterState.PreparingForDeletion) return;
+                else State = CharacterState.IdleAtDestination;
             }
             return;
         }
-
-        if (path == null || path.Goal != DestinationTile )
+        
+        if (Path == null || Path.Goal != DestinationTile)
         {
             TryGetNewPath();
             return;
@@ -115,38 +165,36 @@ public class Character : ISelectable
         if (PathNeedsReplacement)
         {
             TryGetNewPath();
+
+            if (Path == null) return;
         }
         
-        // Tutaj występuje NullReferenceException gdy budynek jest niedostępny
-        if (path.GetLength() == 0 && NextTile != DestinationTile)
-        {
-            path = null;
-            return;
-        }
-
         if (NextTile == null)
         {
-            if (PreparingForDeletion)
+            // Nie bierzemy następnego pola - zatrzymujemy się
+            if (State == CharacterState.PreparingForCheckingPath)
             {
-                // Nie bierzemy następnego pola - zatrzymujemy się
-                path = null;
+                State = CharacterState.CheckingPath;
+            }
+            else if (State == CharacterState.PreparingForDeletion)
+            {
                 return;
             }
-
-            NextTile = path.Dequeue();
-            targetRotation = GetRotationForNextTile(NextTile);
+            
+            NextTile = Path.Dequeue();
+            targetRotation = GetRotationForNextTile(NextTile);        
         }
 
-        // Czy w ogóle możemy wejść na to pole?
         if (NextTile.MovementCost == 0)
         {
             // Coś poszło nie tak
             NextTile = null;
             MovementPercentage = 0f;
-            path = null;
+            Path = null;
             return;
         }
 
+        // Obrót w kierunku następnego pola
         if (AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
         {
             CurrentRotation = Quaternion.RotateTowards(
@@ -155,6 +203,7 @@ public class Character : ISelectable
             return;
         }
 
+        // Ruch po linii prostej
         if (MovementPercentage < 1.0f)
         {
             float meanMovementCost = (CurrentTile.MovementCost + NextTile.MovementCost) / 2;
@@ -170,21 +219,30 @@ public class Character : ISelectable
         }
         else
         {
-            // Przechodzimy do nastepnego pola
+            // Przechodzimy do następnego pola
             CurrentTile = NextTile;            
             NextTile = null;
             MovementPercentage = 0f;
         }        
     }
 
-    public void TryGetNewPath()
+    void TryGetNewPath()
     {
-        if (DestinationTile == null 
-            || DestinationTile == CurrentTile 
-            || DestinationTile.MovementCost == 0f
-            || PreparingForDeletion)
+        if (DestinationTile == CurrentTile
+            || State == CharacterState.PreparingForDeletion)
         {
-            DestinationTile = null;
+            return;
+        }
+
+        if (DestinationTile.MovementCost == 0f)
+        {
+            MarkTileAsInaccessible(DestinationTile);
+        }
+
+        if (IsTileMarkedAsInaccessible(DestinationTile))
+        {
+            CurrentTile = DestinationTile;
+            State = CharacterState.IdleAtDestination;
             return;
         }
 
@@ -203,25 +261,31 @@ public class Character : ISelectable
                 //    + newPath.Start.Position.ToString() + " do " 
                 //    + newPath.Goal.Position.ToString() + " niemożliwa.");
 
-                DestinationTile = null;
+                MarkTileAsInaccessible(newPath.Goal);
+                DestinationTile = CurrentTile;
+
                 isLastTileRotationSet = false;
                 MovementPercentage = 0f;
                 NextTile = null;
-                path = null;
+                Path = null;
+
+                State = CharacterState.IdleAtDestination;                
             }
             else
             {
                 PathNeedsReplacement = false;
-                path = newPath;
+                Path = newPath;
+
+                if (State == CharacterState.CheckingPath) State = CharacterState.IdleWithPath;
 
                 // Czy nowa ścieżka pokrywa się ze starą co do następnego pola?
-                if (path.Peek() == CurrentTile)
+                if (Path.Peek() == CurrentTile)
                 {
-                    path.Dequeue();
+                    Path.Dequeue();
                 }
-                if (path.Peek() == NextTile)
+                if (Path.Peek() == NextTile)
                 {
-                    path.Dequeue();
+                    Path.Dequeue();
                 }
                 else
                 {
@@ -231,27 +295,62 @@ public class Character : ISelectable
             }
         }
     }
-
-    public void SetNewDestination(Tile tile)
+    
+    public bool SetNewDestination(Tile tile, bool startMovement)
     {
-        if (DestinationTile == tile)
+        if (State == CharacterState.PreparingForDeletion
+            || State == CharacterState.UsingService)
         {
-            return;
+            return false;
+        }
+
+        if (tile == null || inaccessibleTilesTimers.ContainsKey(tile))
+        {
+            DestinationTile = CurrentTile;
+            return false;
+        }
+
+        if (tile == DestinationTile)
+        {
+            if (startMovement) State = CharacterState.Movement;
+            return true;
+        }
+
+        DestinationTile = tile;
+
+        if (Path != null && Path.Goal != tile)
+        {
+            NextTile = null;
+            MovementPercentage = 0f;
+            Path = null;
+        }
+     
+        State = startMovement ? CharacterState.Movement : CharacterState.PreparingForCheckingPath;
+
+        return true;                
+    }
+        
+    public bool IsTileMarkedAsInaccessible(Tile tile)
+    {
+        if (tile == null) return true;
+        else
+        {
+            Debug.Log(tile.ToString() + " inaccessible: " + inaccessibleTilesTimers.ContainsKey(tile));
+            return inaccessibleTilesTimers.ContainsKey(tile);
+        }
+    }
+    
+    void MarkTileAsInaccessible(Tile tile)
+    {
+        if (inaccessibleTilesTimers.ContainsKey(tile))
+        {
+            inaccessibleTilesTimers[tile] = inaccessibleTileDefaultTimer;
         }
         else
         {
-            //Debug.Log("Nowy cel: " + tile.Position.ToString());
-            DestinationTile = tile;
-            NextTile = null;
-            MovementPercentage = 0f;
-            path = null;
-        }        
-    }
-
-    public void SetNewDestination(Tile tile, Rotation finalRotation)
-    {
-        SetNewDestination(tile);
-        SetLastTileRotation(finalRotation);
+            inaccessibleTilesTimers.Add(tile, inaccessibleTileDefaultTimer);
+        }
+        Debug.Log(tile.ToString() + " - oznaczone jako niedostępne");
     }
 
     public void SetLastTileRotation(Rotation rotation)
@@ -259,6 +358,30 @@ public class Character : ISelectable
         isLastTileRotationSet = true;
         lastTileRotation = Quaternion.Euler(rotation.ToEulerAngles());
     }
+
+    Quaternion GetRotationForNextTile(Tile nextTile)
+    {
+        Vector3 rotationVector = new Vector3(nextTile.X - CurrentTile.X, 0, nextTile.Y - CurrentTile.Y);
+        float rotationAngle = Vector3.SignedAngle(Vector3.back, rotationVector, Vector3.up);
+        return Quaternion.Euler(new Vector3(0f, rotationAngle, 0f));
+    }
+
+    bool AreRotationsEqualInYAxis(Quaternion quaternionA, Quaternion quaternionB)
+    {
+        float range = 0.01f;
+        return (Mathf.Abs(quaternionA.eulerAngles.y - quaternionB.eulerAngles.y) <= range);
+    }
+
+    public bool IsMoving()
+    {
+        return (MovementPercentage > 0.2f
+                || (NextTile != null && AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
+                || (isLastTileRotationSet && CurrentTile == DestinationTile
+                        && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
+                );
+    }
+    
+    #endregion
 
     public bool AddResource(int id)
     {
@@ -298,8 +421,47 @@ public class Character : ISelectable
 
     public void ServiceEnded()
     {
-        UsingService = false;
-        agentMemory.SetNewService(null);
+        State = CharacterState.IdleAtDestination;
+        agentMemory.Service = null;
+        agentMemory.UseServiceSecondAccessTile = false;
+    }
+    
+    public void WorkFinished()
+    {
+        agentMemory.Workplace = null;
+        agentMemory.UseWorkplaceSecondAccessTile = false;
+    }
+
+    public void InterruptActivity()
+    {
+        agentMemory.Workplace = null;
+        agentMemory.UseWorkplaceSecondAccessTile = false;
+        agentMemory.Service = null;
+        agentMemory.UseServiceSecondAccessTile = false;
+
+        if (State == CharacterState.UsingService) State = CharacterState.IdleAtDestination;
+    }
+
+    public void StartUsingService()
+    {
+        State = CharacterState.UsingService;
+    }
+ 
+    public void StartPreparingForDeletion()
+    {
+        State = CharacterState.PreparingForDeletion;
+        InterruptActivity();
+    }
+
+    public bool IsReadyForDeletion()
+    {
+        if (State != CharacterState.PreparingForDeletion) return false;
+
+        return (agentMemory.Workplace == null 
+                && agentMemory.Service == null
+                && NextTile == null 
+                && DisplayObject.DeathAnimationPlayed
+                && MovementPercentage <= 0.05f);
     }
 
     void UpdateNeeds(float deltaTime)
@@ -311,53 +473,6 @@ public class Character : ISelectable
             if (Needs[need] > 1f)
                 Needs[need] = 1f;
         }
-    }
-
-    public void StartPreparingForDeletion()
-    {
-        PreparingForDeletion = true;
-        InterruptActivity();
-    }
-
-    public bool IsReadyForDeletion()
-    {
-        if (PreparingForDeletion == false) return false;
-
-        return (agentMemory.Workplace == null 
-                && agentMemory.Service == null
-                && UsingService == false
-                && NextTile == null 
-                && DisplayObject.DeathAnimationPlayed
-                && MovementPercentage <= 0.05f);
-    }
-
-    Quaternion GetRotationForNextTile(Tile nextTile)
-    {
-        Vector3 rotationVector = new Vector3(nextTile.X - CurrentTile.X, 0, nextTile.Y - CurrentTile.Y);
-        float rotationAngle = Vector3.SignedAngle(Vector3.back, rotationVector, Vector3.up);
-        return Quaternion.Euler(new Vector3(0f, rotationAngle, 0f));
-    }
-
-    bool AreRotationsEqualInYAxis(Quaternion quaternionA, Quaternion quaternionB)
-    {
-        float range = 0.01f;
-        return (Mathf.Abs(quaternionA.eulerAngles.y - quaternionB.eulerAngles.y) <= range);
-    }
-
-    public bool IsMoving()
-    {
-        return (MovementPercentage > 0.2f
-                || (NextTile != null && AreRotationsEqualInYAxis(CurrentRotation, targetRotation) == false)
-                || (isLastTileRotationSet && CurrentTile == DestinationTile
-                        && AreRotationsEqualInYAxis(CurrentRotation, lastTileRotation) == false)
-                );
-    }
-
-    public void InterruptActivity()
-    {
-        agentMemory.SetNewWorkplace(null);
-        agentMemory.SetNewService(null);
-        UsingService = false;
     }
 
     public void AssignDisplayObject(SelectableDisplayObject displayObject)
@@ -381,7 +496,10 @@ public class Character : ISelectable
         string s = "";
         s += Name + "\n";
 
-        foreach(string need in Needs.Keys)
+        s += "State: " + State.ToString() + "\n";
+        s += "Workplace: " + (agentMemory.Workplace == null ? "" : agentMemory.Workplace.Building.Name) + "\n";
+
+        foreach (string need in Needs.Keys)
         {
             s += need + ": " + Needs[need] + "\n";
         }
@@ -413,7 +531,7 @@ public class Character : ISelectable
         {
             s += "Resource: " + GameManager.Instance.GetResourceName(Resource) + "\n";
         }
-
+     
         return s;
     }
 

@@ -173,6 +173,11 @@ public class Tile
     {
         Tile.world = world;
     }
+
+    public override string ToString()
+    {
+        return Position.ToString();
+    }
 }
 
 

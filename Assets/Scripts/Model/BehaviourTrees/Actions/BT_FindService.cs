@@ -13,32 +13,54 @@ public class BT_FindService : BT_Node
     }
 
     public override BT_Result Tick(BT_AgentMemory am)
-    {     
-        if (am.Character.Reservation != null) { return BT_Result.FAILURE; }
-
-        Service service = GameManager.Instance.World.GetClosestService(need, am.Character);
-
-        if (service == null)
+    {        
+        if (am.Service != null
+            && am.Character.IsTileMarkedAsInaccessible(
+               am.Service.GetAccessTile(am.UseServiceSecondAccessTile)) == false)
         {
-            return BT_Result.FAILURE;
+            Debug.Log("mamy już dostępną usługę");
+            return BT_Result.SUCCESS;
         }
 
-        if (service.CanReserveService(am.Character)
-            && GameManager.Instance.World.GetReservationForFillingInput(am.Character, service.InputStorage))
+        if (am.PotentialService == null)
         {
-            if (service.ReserveService(am.Character))
+            am.Service = null;
+
+            am.PotentialService = GameManager.Instance.World.GetClosestAvailableService(need, am.Character);
+
+            if (am.PotentialService == null) return BT_Result.FAILURE;
+
+            am.Character.SetNewDestination(am.PotentialService.GetAccessTile(), false);
+            
+            return BT_Result.RUNNING;
+        }
+        else
+        {
+            if (am.Character.Path == null 
+                || am.Character.Path.Goal != am.PotentialService.GetAccessTile())
             {
-                am.SetNewService(service);
-                return BT_Result.SUCCESS;
+                am.PotentialService = null;
+                return BT_Result.RUNNING;
+            }
+
+            if (am.Character.Path.IsReady)
+            {
+                if (am.Character.Path.IsImpossible)
+                {
+                    am.PotentialService = null;
+                    return BT_Result.RUNNING;
+                }
+                else
+                {
+                    am.Service = am.PotentialService;
+                    am.PotentialService = null;
+                    return BT_Result.SUCCESS;
+                }
             }
             else
             {
-                return BT_Result.FAILURE;
-            }
-        }
-        else
-        {            
-            return BT_Result.FAILURE;
-        }
+                return BT_Result.RUNNING;
+            }           
+        }       
     }
 }

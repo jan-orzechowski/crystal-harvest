@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public interface IWorkplace : IBuildingModule
+public interface IWorkplace : IBuildingModule, IAccessible
 {
     bool Work(float deltaTime, Character character);
     bool CanReserveJob(Character character);
@@ -11,6 +11,4 @@ public interface IWorkplace : IBuildingModule
     void RenewJobReservation(Character character);
     StorageWithRequirements InputStorage { get; }
     Storage OutputStorage { get; }
-    Tile GetAccessTile();
-    Rotation GetAccessTileRotation();
 }

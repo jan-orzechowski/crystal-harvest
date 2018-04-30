@@ -7,10 +7,18 @@ public class BT_AgentMemory
 {
     Dictionary<int, Dictionary<string, float>> floats;
     Dictionary<int, Dictionary<string, int>> ints;
-    Dictionary<int, Dictionary<string, Tile>> tiles;
+    HashSet<int> runningNodes;
 
-    public IWorkplace Workplace { get; protected set; }
-    public Service Service { get; protected set; }
+    public IWorkplace Workplace;
+    public IWorkplace PotentialWorkplace;
+    public bool UseWorkplaceSecondAccessTile;
+
+    public Service Service;
+    public Service PotentialService;
+    public bool UseServiceSecondAccessTile;
+
+    // public IAccessible Destination { get; protected set; }
+    // public bool UseDestinationSecondAccessTile { get; protected set; }
 
     public Character Character { get; protected set; }
 
@@ -21,12 +29,12 @@ public class BT_AgentMemory
     {
         floats = new Dictionary<int, Dictionary<string, float>>();
         ints = new Dictionary<int, Dictionary<string, int>>();
-        tiles = new Dictionary<int, Dictionary<string, Tile>>();
+        runningNodes = new HashSet<int>();
         World = GameManager.Instance.World;
         Character = character;
     }
 
-    public float GetFloat(int id, string key, float notFoundValue)
+    public float GetFloat(int id, string key, float notFoundValue = 0f)
     {
         if (floats.ContainsKey(id) && floats[id].ContainsKey(key))
         {
@@ -46,18 +54,8 @@ public class BT_AgentMemory
         }
         floats[id][key] = value;
     }
-
-    public float GetGlobalFloat(string key, float notFoundValue)
-    {
-        return GetFloat(0, key, notFoundValue);
-    }
-
-    public void SetGlobalFloat(string key, float value)
-    {
-        SetFloat(0, key, value);
-    }
-
-    public int GetInt(int id, string key, int notFoundValue)
+    
+    public int GetInt(int id, string key, int notFoundValue = 0)
     {
         if (ints.ContainsKey(id) && ints[id].ContainsKey(key))
         {
@@ -77,80 +75,19 @@ public class BT_AgentMemory
         }
         ints[id][key] = value;
     }
-
-    public int GetGlobalInt(string key, int notFoundValue)
+   
+    public void StartRunning(int id)
     {
-        return GetInt(0, key, notFoundValue);
+        if (runningNodes.Contains(id) == false) runningNodes.Add(id);
     }
 
-    public void SetGlobalInt(string key, int value)
+    public void StopRunning(int id)
     {
-        SetInt(0, key, value);
+        if (runningNodes.Contains(id)) runningNodes.Remove(id);
     }
     
-    public Tile GetTile(int id, string key)
-    {
-        if (tiles.ContainsKey(id) && tiles[id].ContainsKey(key))
-        {
-            return tiles[id][key];
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    public void SetTile(int id, string key, Tile tile)
-    {
-        if (tiles.ContainsKey(id) == false)
-        {
-            tiles.Add(id, new Dictionary<string, Tile>());
-        }
-        tiles[id][key] = tile;
-    }
-
-    public Tile GetGlobalTile(string key)
-    {
-        return GetTile(0, key);
-    }
-
-    public void SetGlobalTile(string key, Tile tile)
-    {
-        SetTile(0, key, tile);
-    }
-       
-    public void SetNewWorkplace(IWorkplace workplace)
-    {
-        Workplace = workplace;
-    }
-
-    public void SetNewService(Service service)
-    {        
-        Service = service;     
-    }
-
-    public void SetRunning(int id, bool running)
-    {
-        if (running)
-        {
-            SetInt(id, "_running", 1);
-        }
-        else
-        {
-            SetInt(id, "_running", 0);
-        }        
-    }
-
     public bool IsRunning(int id)
     {
-        int i = GetInt(id, "_running", 0);
-        if (i == 1)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }        
+        return (runningNodes.Contains(id));
     }
 }

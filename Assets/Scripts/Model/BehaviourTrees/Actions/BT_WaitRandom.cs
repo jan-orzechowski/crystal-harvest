@@ -21,7 +21,7 @@ public class BT_WaitRandom : BT_Node
         {
             waitingTime = UnityEngine.Random.Range(minWaitingTime, maxWaitingTime);
             am.SetFloat(ID, "timer", waitingTime);
-            am.SetRunning(ID, true);
+            am.StartRunning(ID);
         }
 
         float timer = am.GetFloat(ID, "timer", 0f);
@@ -30,7 +30,7 @@ public class BT_WaitRandom : BT_Node
 
         if (timer <= 0)
         {
-            am.SetRunning(ID, false);
+            am.StopRunning(ID);
             return BT_Result.SUCCESS;
         }
         else

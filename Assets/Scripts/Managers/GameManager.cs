@@ -60,13 +60,14 @@ public class GameManager : MonoBehaviour
 
         GenerateDisplayForTiles();
        
-        for (int x = World.StartingAreaX + 1; x < World.StartingAreaX + 4; x++)
-        {
-            for (int y = World.StartingAreaY; y < World.StartingAreaY + 2; y++)
-            {
-                World.CreateNewCharacter(new TilePosition(x, y, 1), false);
-            }
-        }
+        //for (int x = World.StartingAreaX + 1; x < World.StartingAreaX + 4; x++)
+        //{
+        //    for (int y = World.StartingAreaY; y < World.StartingAreaY + 2; y++)
+        //    {
+        //        World.CreateNewCharacter(new TilePosition(x, y, 1), false);
+        //    }
+        //}
+        World.CreateNewCharacter(new TilePosition(World.StartingAreaX + 1, World.StartingAreaY, 1), false);
 
         World.InstantBuild(new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
                           Rotation.N, World.GetBuildingPrototype("Spaceship"));

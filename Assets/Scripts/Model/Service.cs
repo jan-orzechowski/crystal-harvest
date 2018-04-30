@@ -84,7 +84,7 @@ public class Service : IBuildingModule
         if ((reservation == null || reservation == character) && Consume())
         {
             ServicedCharacter = character;
-            ServicedCharacter.UsingService = true;
+            ServicedCharacter.StartUsingService();
             serviceDuration = Prototype.ServiceDuration;
             return true;
         }
@@ -163,14 +163,14 @@ public class Service : IBuildingModule
         return;
     }
 
-    public Tile GetAccessTile()
+    public Tile GetAccessTile(bool second = false)
     {
-        return Building.GetAccessTile();
+        return Building.GetAccessTile(second);
     }
 
-    public Rotation GetAccessTileRotation()
+    public Rotation GetAccessTileRotation(bool second = false)
     {
-        return Building.GetAccessTileRotation();
+        return Building.GetAccessTileRotation(second);
     }
 
     public string DEBUG_GetSelectionText()
