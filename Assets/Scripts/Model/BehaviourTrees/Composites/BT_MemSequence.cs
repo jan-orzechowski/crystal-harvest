@@ -17,7 +17,7 @@ public class BT_MemSequence : BT_CompositeNode
         
         for (int node = am.GetInt(ID, "lastRunningNode", 0); node < Children.Count; node++)
         {
-            BT_Result result = Children[node].Tick(am);
+            BT_Result result = TickChild(Children[node], am);
 
             if (result == BT_Result.SUCCESS)
             {

@@ -13,7 +13,7 @@ public class BT_RepeatUntilFail : BT_DecoratorNode
 
         do
         {
-            result = Child.Tick(am);
+            result = TickChild(Child, am);
         }
         while (result == BT_Result.SUCCESS || result == BT_Result.RUNNING);
 

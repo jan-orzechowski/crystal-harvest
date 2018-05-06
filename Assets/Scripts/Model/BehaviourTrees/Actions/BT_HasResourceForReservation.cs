@@ -5,6 +5,8 @@ using System;
 
 public class BT_HasResourceForReservation : BT_Node
 {
+    public override bool IsAction { get { return false; } }
+
     public override BT_Result Tick(BT_AgentMemory am)
     {
         if (am.Character.Reservation == null) { return BT_Result.ERROR; }

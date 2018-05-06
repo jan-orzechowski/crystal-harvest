@@ -5,8 +5,11 @@ using System;
 
 public class BT_IsNeedHigherThan : BT_Node 
 {
+    public override bool IsAction { get { return false; } }
+
     string need;
     float threshold;
+
     public BT_IsNeedHigherThan(string need, float threshold) : base()
     {
         this.need = need;

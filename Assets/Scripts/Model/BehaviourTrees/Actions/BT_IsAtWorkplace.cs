@@ -5,6 +5,8 @@ using System;
 
 public class BT_IsAtWorkplace : BT_Node 
 {
+    public override bool IsAction { get { return false; } }
+
     public override BT_Result Tick(BT_AgentMemory am)
     {
         if (am.Workplace == null)

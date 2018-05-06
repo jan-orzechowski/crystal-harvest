@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_GoToRandomTile //: BT_GoTo 
+public class BT_GoToRandomTile : BT_Node 
 {
     int maxDistanceFromCharacter;
     static int maxSearchesNumber = 100;

@@ -13,43 +13,35 @@ public enum BT_Result : int
 
 public class BT_Tree
 {
-    int lastNodeID = 0;
+    public BT_Node Root { get; protected set; }
 
-    public BT_Node root;
+    Dictionary<int, BT_Node> nodes = new Dictionary<int, BT_Node>();
+
+    int lastNodeID = 0;
 
     public BT_Result Tick(BT_AgentMemory am)
     {
-        BT_Result result = root.Tick(am);
+        am.ResetActiveNodesList();
+        am.CurrentTree = this;
+
+        BT_Result result = BT_Node.TickChild(Root, am);
+        Debug.Log(am.PrintNodesActiveThisTick());
         return result;
     }
-
-    void AssignIDs(BT_Node node)
+     
+    public BT_Node GetNodeByID(int id)
     {
-        // Funkcja wzywana rekursywnie dla każdego węzła
+        if (nodes.ContainsKey(id)) return nodes[id];
+        else return null;
+    }
 
-        if (node == null)
-        {
-            return;
-        }
+    #region TreeConstruction
 
-        node.ID = lastNodeID;
-        lastNodeID++;
-
-        if (node is BT_CompositeNode)
-        {
-            BT_CompositeNode compositeNode = (BT_CompositeNode)node;
-            if (compositeNode.Children != null)
-            {
-                for (int i = 0; i < compositeNode.Children.Count; i++)
-                {
-                    AssignIDs(compositeNode.Children[i]);
-                }
-            }
-        } 
-        else if (node is BT_DecoratorNode)
-        {
-            AssignIDs((node as BT_DecoratorNode).Child);
-        }
+    void AssignIDs()
+    {
+        int idCounter = 1;
+        Root.AssignID(0, ref idCounter, nodes);
+        lastNodeID = idCounter;
     }
 
     BT_CompositeNode Subtree(BT_CompositeNode parent, params BT_Node[] nodes)
@@ -61,18 +53,12 @@ public class BT_Tree
 
         return parent;
     }
-
-    BT_DecoratorNode Subtree(BT_DecoratorNode parent, BT_Node node)
-    {
-        parent.Add(node);
-        return parent;
-    }
-
+   
     public void LoadHumanTree()
     {
         float waitBeforeEntering = 0.2f;
 
-        root =
+        Root =
         Subtree(new BT_Priority(),
                     new BT_IsUsingService(),
                     // Rezerwacje
@@ -137,7 +123,7 @@ public class BT_Tree
                         new BT_Wait(10f)                       
         );
 
-        AssignIDs(root);
+        AssignIDs();
     }
 
     public void LoadRobotTree()
@@ -207,4 +193,6 @@ public class BT_Tree
 
         //AssignIDs(root);
     }
+
+    #endregion
 }

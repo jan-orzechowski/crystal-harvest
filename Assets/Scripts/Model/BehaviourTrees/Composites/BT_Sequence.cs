@@ -12,7 +12,7 @@ public class BT_Sequence : BT_CompositeNode
 	{
         for (int i = 0; i < Children.Count; i++)
         {
-            BT_Result result = Children[i].Tick(am);
+            BT_Result result = TickChild(Children[i], am);
 
             if (result != BT_Result.SUCCESS)
             {

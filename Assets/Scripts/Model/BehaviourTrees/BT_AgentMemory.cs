@@ -7,6 +7,8 @@ public class BT_AgentMemory
 {
     Dictionary<int, Dictionary<string, float>> floats;
     Dictionary<int, Dictionary<string, int>> ints;
+    Dictionary<int, object> objects;
+
     HashSet<int> runningNodes;
 
     public IWorkplace Workplace;
@@ -17,8 +19,9 @@ public class BT_AgentMemory
     public Service PotentialService;
     public bool UseServiceSecondAccessTile;
 
-    // public IAccessible Destination { get; protected set; }
-    // public bool UseDestinationSecondAccessTile { get; protected set; }
+    public BT_Tree CurrentTree;
+    List<int> nodesActivePreviousTick = new List<int>();
+    List<int> nodesActiveThisTick = new List<int>();
 
     public Character Character { get; protected set; }
 
@@ -29,9 +32,81 @@ public class BT_AgentMemory
     {
         floats = new Dictionary<int, Dictionary<string, float>>();
         ints = new Dictionary<int, Dictionary<string, int>>();
+        objects = new Dictionary<int, object>();
+
         runningNodes = new HashSet<int>();
         World = GameManager.Instance.World;
         Character = character;
+    }
+
+    public void ResetActiveNodesList()
+    {
+        nodesActivePreviousTick = nodesActiveThisTick;
+        nodesActiveThisTick = new List<int>();
+    }
+
+    public void ActivateNode(int nodeToActivateID)
+    {
+        if (nodesActiveThisTick.Contains(nodeToActivateID)) Debug.Log("Błąd!");
+
+        nodesActiveThisTick.Add(nodeToActivateID);
+       
+        // Czy jest jakaś ścieżka, którą możemy dezaktywować?
+        if (nodesActiveThisTick.Count > nodesActivePreviousTick.Count)
+        {
+            CurrentTree.GetNodeByID(nodeToActivateID).Activate(this);
+            return;
+        }
+
+        // Jeśli węzeł był aktywny poprzednim razem, nie robimy nic
+        // Jeśli nie był, to po kolei dezaktywujemy węzły na ścieżce, którą pominęliśmy
+        int currentIndex = (nodesActiveThisTick.Count - 1);
+        if (nodesActiveThisTick[currentIndex] != nodesActivePreviousTick[currentIndex])
+        {
+            for (int previousTickNodeIndex = (nodesActivePreviousTick.Count - 1); 
+                previousTickNodeIndex >= currentIndex; 
+                previousTickNodeIndex--)
+            {
+                int nodeToDeactivateID = nodesActivePreviousTick[previousTickNodeIndex];
+
+                nodesActivePreviousTick.RemoveAt(previousTickNodeIndex);
+
+                CurrentTree.GetNodeByID(nodeToDeactivateID).Deactivate(this);
+            }
+
+            CurrentTree.GetNodeByID(nodeToActivateID).Activate(this);
+        }        
+    }
+
+    public string PrintNodesActiveThisTick()
+    {
+        if (nodesActiveThisTick == null || nodesActiveThisTick.Count == 0)
+        {
+            return "Brak aktywnych węzłów";
+        }
+        else
+        {
+            string result = "Aktywne węzły: ";
+            result += nodesActiveThisTick[0].ToString();
+            for (int i = 1; i < nodesActiveThisTick.Count; i++)
+            {
+                result += (", " + nodesActiveThisTick[i]);
+            }
+            return result;
+        }
+    }
+
+    public void DeactivateNode(int nodeToDeactivateID)
+    {
+        if (nodesActiveThisTick.Contains(nodeToDeactivateID) == false ||
+            nodesActiveThisTick[nodesActiveThisTick.Count - 1] != nodeToDeactivateID)
+        {
+            Debug.Log("Błąd - węzeł dezaktywowany w niewłaściwej kolejności");
+            return;
+        }
+
+        nodesActiveThisTick.RemoveAt(nodesActiveThisTick.Count - 1);
+        CurrentTree.GetNodeByID(nodeToDeactivateID).Deactivate(this);
     }
 
     public float GetFloat(int id, string key, float notFoundValue = 0f)
@@ -75,7 +150,18 @@ public class BT_AgentMemory
         }
         ints[id][key] = value;
     }
-   
+
+    public object GetObject(int id)
+    {
+        if (objects.ContainsKey(id)) return objects[id];
+        else return null;
+    }
+
+    public void SetObject(int id, object obj)
+    {
+        objects[id] = obj;
+    }
+
     public void StartRunning(int id)
     {
         if (runningNodes.Contains(id) == false) runningNodes.Add(id);
@@ -85,7 +171,7 @@ public class BT_AgentMemory
     {
         if (runningNodes.Contains(id)) runningNodes.Remove(id);
     }
-    
+
     public bool IsRunning(int id)
     {
         return (runningNodes.Contains(id));

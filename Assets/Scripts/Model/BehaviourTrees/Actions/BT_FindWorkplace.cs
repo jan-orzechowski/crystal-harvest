@@ -5,6 +5,16 @@ using System;
 
 public class BT_FindWorkplace : BT_Node 
 {
+    public override void Activate(BT_AgentMemory am)
+    {
+        Debug.Log("FindWorkplace - activate");
+    }
+
+    public override void Deactivate(BT_AgentMemory am)
+    {
+        Debug.Log("FindWorkplace - deactivate");
+    }
+
     public override BT_Result Tick(BT_AgentMemory am)
     {
         if (am.Workplace != null
@@ -26,10 +36,10 @@ public class BT_FindWorkplace : BT_Node
 
             if (am.PotentialWorkplace == null) return BT_Result.FAILURE;
 
-            //if (am.Character.IsTileMarkedAsInaccessible(am.PotentialWorkplace.GetAccessTile(false))
-            //    && am.Character.IsTileMarkedAsInaccessible(am.PotentialWorkplace.GetAccessTile(true)) == false)
-            //    am.UseWorkplaceSecondAccessTile = true;
-            
+            if (am.Character.IsTileMarkedAsInaccessible(am.PotentialWorkplace.GetAccessTile(false))
+                && am.Character.IsTileMarkedAsInaccessible(am.PotentialWorkplace.GetAccessTile(true)) == false)
+                am.UseWorkplaceSecondAccessTile = true;
+
             am.Character.SetNewDestination(am.PotentialWorkplace.GetAccessTile(am.UseWorkplaceSecondAccessTile), false);
 
             return BT_Result.RUNNING;

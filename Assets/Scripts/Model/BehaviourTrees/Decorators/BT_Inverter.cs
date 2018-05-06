@@ -9,7 +9,7 @@ public class BT_Inverter : BT_DecoratorNode
 
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        BT_Result result = Child.Tick(am);
+        BT_Result result = TickChild(Child, am);
 
         if (result == BT_Result.FAILURE)
         {

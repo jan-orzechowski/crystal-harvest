@@ -30,7 +30,7 @@ public abstract class BT_GoTo : BT_Node
         {
             WhileRunning(am);
 
-            Debug.Log("GoTo: " + goal.ToString());
+            // Debug.Log("GoTo: " + goal.ToString());
 
             if (am.Character.CurrentTile == goal)
             {

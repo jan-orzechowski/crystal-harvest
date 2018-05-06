@@ -335,7 +335,7 @@ public class Character : ISelectable
         if (tile == null) return true;
         else
         {
-            Debug.Log(tile.ToString() + " inaccessible: " + inaccessibleTilesTimers.ContainsKey(tile));
+            // Debug.Log(tile.ToString() + " inaccessible: " + inaccessibleTilesTimers.ContainsKey(tile));
             return inaccessibleTilesTimers.ContainsKey(tile);
         }
     }

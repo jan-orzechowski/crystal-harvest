@@ -5,12 +5,10 @@ using System;
 
 public class BT_CompositeNode : BT_Node
 {
-    public List<BT_Node> Children;
+    public override bool IsAction { get { return false; } }
 
-    public BT_CompositeNode()
-    {
-        Children = new List<BT_Node>();
-    }
+    public List<BT_Node> Children { get; protected set; }
+    
     public BT_CompositeNode(params BT_Node[] children)
     {
         Children = new List<BT_Node>(children);
@@ -20,5 +18,15 @@ public class BT_CompositeNode : BT_Node
     {
         Children.Add(node);
         return node;
+    }
+
+    public override void AssignID(int parentId, ref int idCounter, Dictionary<int, BT_Node> nodes)
+    {
+        base.AssignID(parentId, ref idCounter, nodes);
+
+        foreach (BT_Node child in Children)
+        {
+            child.AssignID(ID, ref idCounter, nodes);
+        }
     }
 }

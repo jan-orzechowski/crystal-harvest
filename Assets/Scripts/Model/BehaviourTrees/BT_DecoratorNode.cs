@@ -5,16 +5,19 @@ using System;
 
 public class BT_DecoratorNode : BT_Node
 {
-    public BT_Node Child;
+    public override bool IsAction { get { return false; } }
+
+    public BT_Node Child { get; protected set; }
 
     public BT_DecoratorNode(BT_Node child)
     {
         Child = child;
     }
 
-    public BT_Node Add(BT_Node node)
+    public override void AssignID(int parentId, ref int idCounter, Dictionary<int, BT_Node> nodes)
     {
-        Child = node;
-        return node;
+        base.AssignID(parentId, ref idCounter, nodes);
+
+        Child.AssignID(ID, ref idCounter, nodes);        
     }
 }
