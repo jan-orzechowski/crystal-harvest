@@ -339,7 +339,13 @@ public class Character : ISelectable
             return inaccessibleTilesTimers.ContainsKey(tile);
         }
     }
-    
+
+    public bool AreBothAccessTilesMarkedAsInaccessbile(IAccessible building)
+    {
+        return (IsTileMarkedAsInaccessible(building.GetAccessTile(false))
+                && IsTileMarkedAsInaccessible(building.GetAccessTile(true)));
+    }
+
     void MarkTileAsInaccessible(Tile tile)
     {
         if (inaccessibleTilesTimers.ContainsKey(tile))

@@ -2,24 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class BT_AgentMemory
 {
     Dictionary<int, Dictionary<string, float>> floats;
     Dictionary<int, Dictionary<string, int>> ints;
     Dictionary<int, object> objects;
+    Dictionary<int, float> timers;
 
     HashSet<int> runningNodes;
 
     public IWorkplace Workplace;
-    public IWorkplace PotentialWorkplace;
     public bool UseWorkplaceSecondAccessTile;
 
     public Service Service;
-    public Service PotentialService;
     public bool UseServiceSecondAccessTile;
 
     public BT_Tree CurrentTree;
+
     List<int> nodesActivePreviousTick = new List<int>();
     List<int> nodesActiveThisTick = new List<int>();
 
@@ -33,6 +34,7 @@ public class BT_AgentMemory
         floats = new Dictionary<int, Dictionary<string, float>>();
         ints = new Dictionary<int, Dictionary<string, int>>();
         objects = new Dictionary<int, object>();
+        timers = new Dictionary<int, float>();
 
         runningNodes = new HashSet<int>();
         World = GameManager.Instance.World;
@@ -175,5 +177,34 @@ public class BT_AgentMemory
     public bool IsRunning(int id)
     {
         return (runningNodes.Contains(id));
+    }
+
+    public void SetTimer(int id, float timeBeforeNextActivation)
+    {
+        if (timers.ContainsKey(id) == false)
+        {
+            timers.Add(id, timeBeforeNextActivation);
+        }
+        else
+        {
+            timers[id] = timeBeforeNextActivation;
+        }
+    }
+
+    public bool HasTimerElapsed(int id)
+    {
+        return (timers.ContainsKey(id) == false);
+    }
+
+    public void ProcessTimers(float deltaTime)
+    {
+        foreach (int id in timers.Keys.ToList())
+        {
+            timers[id] -= deltaTime;
+            if (timers[id] <= 0)
+            {
+                timers.Remove(id);
+            }
+        }
     }
 }

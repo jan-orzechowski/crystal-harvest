@@ -5,7 +5,7 @@ using System;
 
 public class BT_GoToSourceStorage : BT_GoTo 
 {
-    public override bool CheckConditions(BT_AgentMemory am)
+    public override bool CheckPrecondition(BT_AgentMemory am)
     {
         return (am.Character.Reservation != null
                 && am.Character.HasResource == false);
@@ -18,11 +18,13 @@ public class BT_GoToSourceStorage : BT_GoTo
 
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
-        return am.Character.Reservation.SourceStorage.GetAccessTile(false);
+        bool useSecondAccessTile = am.Character.Reservation.UseSourceStorageSecondAccessTile;
+        return am.Character.Reservation.SourceStorage.GetAccessTile(useSecondAccessTile);
     }
 
     public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
     {
-        return am.Character.Reservation.SourceStorage.GetAccessTileRotation(false);
+        bool useSecondAccessTile = am.Character.Reservation.UseSourceStorageSecondAccessTile;
+        return am.Character.Reservation.SourceStorage.GetAccessTileRotation(useSecondAccessTile);
     }
 }

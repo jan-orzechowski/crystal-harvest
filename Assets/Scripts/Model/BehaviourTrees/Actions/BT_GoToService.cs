@@ -5,7 +5,7 @@ using System;
 
 public class BT_GoToService : BT_GoTo
 {
-    public override bool CheckConditions(BT_AgentMemory am)
+    public override bool CheckPrecondition(BT_AgentMemory am)
     {
         return (am.Service != null);
     }

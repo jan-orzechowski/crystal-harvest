@@ -9,6 +9,11 @@ public abstract class BT_Node
     public int ParentID { get; protected set; }
     public virtual bool IsAction { get { return true; } }
 
+    public virtual bool CheckPrecondition(BT_AgentMemory am)
+    {
+        return true;
+    }
+
     public virtual void Activate(BT_AgentMemory am)
     {
         // Debug.Log(ID + " - " + this.GetType().ToString() +  " - activate");
@@ -35,6 +40,8 @@ public abstract class BT_Node
 
     public static BT_Result TickChild(BT_Node child, BT_AgentMemory am)
     {
+        if (child.CheckPrecondition(am) == false) return BT_Result.FAILURE;
+
         if (child.IsAction == false)
         {
             child.Activate(am);

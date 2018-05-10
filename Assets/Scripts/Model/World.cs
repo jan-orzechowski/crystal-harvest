@@ -706,49 +706,65 @@ public class World
 
     #region ResourcesManagement
 
-    public bool GetReservationForFillingInput(Character character)
+    public ResourceReservation GetReservationForFillingInput(Character character)
     {
+        ResourceReservation result = null;
+
         foreach (Factory factory in Factories)
         {
-            if (factory.Halted) continue;
+            if (factory.Halted || character.AreBothAccessTilesMarkedAsInaccessbile(factory))
+                continue;
 
-            if (GetReservationForFillingInput(character, factory.InputStorage)) return true;
+            result = GetReservationForFillingInput(character, factory.InputStorage);
+            if (result != null) return result;
         }
 
         foreach (ConstructionSite site in ConstructionSites)
         {
-            if (site.Halted) continue;
+            if (site.Halted || character.AreBothAccessTilesMarkedAsInaccessbile(site))
+                continue;
 
-            if (GetReservationForFillingInput(character, site.InputStorage)) return true;
+            result = GetReservationForFillingInput(character, site.InputStorage);
+            if (result != null) return result;
         }
 
-        return false;
+        return result;
     }
 
-    public bool GetReservationForFillingInput(Character character, StorageWithRequirements storageToFill)
+    public ResourceReservation GetReservationForFillingInput(Character character, StorageWithRequirements storageToFill)
     {
         if (character.Reservation != null
             || storageToFill.AreRequirementsMet
             || storageToFill.RequiresEmptying)
         {
-            return false;
+            return null;
         }
 
         ResourceReservation newReservation = null;
-        
+
+        bool storageToFillSecondAccessTile = (character.IsTileMarkedAsInaccessible(storageToFill.GetAccessTile(false)));
+
         foreach (int resourceID in storageToFill.MissingResources.Keys)
         {
             // Czy nie ma potrzebnych zasobów w jakiejś fabryce do opróżnienia?
             foreach (Factory factoryToCheck in Factories)
-            {                
+            {
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(factoryToCheck))
+                    continue;
+
+                bool factoryToCheckSecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                        factoryToCheck.GetAccessTile(false)));
+
                 if (factoryToCheck.OutputStorage.Resources.ContainsKey(resourceID))
                 {
                     if (factoryToCheck.OutputStorage.CanReserveResource(resourceID, character)
                         && storageToFill.CanReserveFreeSpace(resourceID, character))
-                    {
+                    {                        
                         newReservation = new ResourceReservation(
                             factoryToCheck.OutputStorage,
-                            storageToFill, 
+                            factoryToCheckSecondAccessTile,
+                            storageToFill,
+                            storageToFillSecondAccessTile,
                             resourceID);
                         break;
                     }
@@ -761,7 +777,9 @@ public class World
                     {
                         newReservation = new ResourceReservation(
                             factoryToCheck.InputStorage,
+                            factoryToCheckSecondAccessTile,
                             storageToFill,
+                            storageToFillSecondAccessTile,
                             resourceID);
                         break;
                     }
@@ -776,6 +794,12 @@ public class World
             // Czy nie ma potrzebnych zasobów w jakimś magazynie?
             foreach (Storage storageToCheck in Storages)
             {
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(storageToCheck))
+                    continue;
+
+                bool storageToCheckSecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                       storageToCheck.GetAccessTile(false)));
+
                 if (storageToCheck.Resources.ContainsKey(resourceID))
                 {
                     if (storageToCheck.CanReserveResource(resourceID, character)
@@ -783,7 +807,9 @@ public class World
                     {
                         newReservation = new ResourceReservation(
                             storageToCheck,
+                            storageToCheckSecondAccessTile,
                             storageToFill, 
+                            storageToFillSecondAccessTile,
                             resourceID);
                         break;
                     }
@@ -801,68 +827,91 @@ public class World
             if (newReservation.SourceStorage.ReserveResource(newReservation.Resource, character)
                && newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character))
             {
-                character.SetNewReservation(newReservation);
-                return true;
+                return newReservation;
             }
             else
             {
                 newReservation.SourceStorage.RemoveResourceReservation(character);
                 newReservation.TargetStorage.RemoveFreeSpaceReservation(character);
-                return false;
+                return null;
             }
         }
 
         // Nie udało się nic znaleźć
-        return false;        
+        return null;        
     }
     
-    public bool GetReservationForEmptying(Character character)
+    public ResourceReservation GetReservationForEmptying(Character character)
     {
+        ResourceReservation result = null;
+
         foreach (Factory factory in Factories)
         {
-            if (GetReservationForEmptying(character, factory.OutputStorage)
-                || (factory.InputStorage.RequiresEmptying 
-                    && GetReservationForEmptying(character, factory.InputStorage)))
+            if (character.AreBothAccessTilesMarkedAsInaccessbile(factory))
+                continue;
+
+            result = GetReservationForEmptying(character, factory.OutputStorage);
+
+            if (result == null && factory.InputStorage.RequiresEmptying)
             {
-                return true;
+                result = GetReservationForEmptying(character, factory.InputStorage);
             }
+
+            if (result != null) return result;
         }
 
         foreach (ConstructionSite site in ConstructionSites)
         {
-            if (site.DeconstructionMode && GetReservationForEmptying(character, site.OutputStorage))
+            if (character.AreBothAccessTilesMarkedAsInaccessbile(site))
+                continue;
+
+            if (site.DeconstructionMode)
             {
-                return true;
+                result = GetReservationForEmptying(character, site.OutputStorage);
+                if (result != null) return result;
             }
         }
 
         foreach (Storage storage in Storages)
         {
-            if (storage.RequiresEmptying
-                && GetReservationForEmptying(character, storage))
+            if (character.AreBothAccessTilesMarkedAsInaccessbile(storage))
+                continue;
+
+            if (storage.RequiresEmptying)
             {
-                return true;
+                result = GetReservationForEmptying(character, storage);
+                if (result != null) return result;
             }
         }
 
-        return false;
+        return result;
     }
 
-    public bool GetReservationForEmptying(Character character, Storage storageToEmpty)
+    public ResourceReservation GetReservationForEmptying(Character character, Storage storageToEmpty)
     {
         if (character.Reservation != null || storageToEmpty.IsEmpty)
         {
-            return false;
+            return null;
         }
 
         ResourceReservation newReservation = null;
 
+        bool storageToEmptySecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                storageToEmpty.GetAccessTile(false)));
+
         foreach (int resourceID in storageToEmpty.Resources.Keys)
         {
+
+
             // Czy jakaś fabryka nie potrzebuje tego zasobu?
             foreach (Factory factoryToCheck in Factories)
             {
-                if (factoryToCheck.Halted || factoryToCheck.InputStorage.RequiresEmptying) continue;
+                if (factoryToCheck.Halted 
+                    || character.AreBothAccessTilesMarkedAsInaccessbile(factoryToCheck)
+                    || factoryToCheck.InputStorage.RequiresEmptying) continue;
+
+                bool factoryToCheckSecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                        factoryToCheck.GetAccessTile(false)));
 
                 if (factoryToCheck.InputStorage.AreRequirementsMet == false
                     && factoryToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
@@ -871,8 +920,10 @@ public class World
                         && factoryToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
-                            storageToEmpty, 
-                            factoryToCheck.InputStorage, 
+                            storageToEmpty,
+                            storageToEmptySecondAccessTile,
+                            factoryToCheck.InputStorage,
+                            factoryToCheckSecondAccessTile,
                             resourceID);
                         break;
                     }
@@ -887,7 +938,12 @@ public class World
             // Czy jakiś plac budowy nie potrzebuje tego zasobu?
             foreach (ConstructionSite siteToCheck in ConstructionSites)
             {
-                if (siteToCheck.DeconstructionMode) continue;
+                if (siteToCheck.DeconstructionMode
+                    || character.AreBothAccessTilesMarkedAsInaccessbile(siteToCheck))
+                    continue;
+
+                bool siteToCheckSecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                    siteToCheck.GetAccessTile(false)));
 
                 if (siteToCheck.InputStorage.AreRequirementsMet == false
                     && siteToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
@@ -896,8 +952,10 @@ public class World
                         && siteToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
-                            storageToEmpty, 
-                            siteToCheck.InputStorage, 
+                            storageToEmpty,
+                            storageToEmptySecondAccessTile,
+                            siteToCheck.InputStorage,
+                            siteToCheckSecondAccessTile,
                             resourceID);
                         break;
                     }
@@ -912,7 +970,12 @@ public class World
             // Czy w jakimś magazynie jest wolne miejsce?
             foreach (Storage storageToCheck in Storages)
             {
-                if (storageToCheck.RequiresEmptying) continue;
+                if (storageToCheck.RequiresEmptying
+                    || character.AreBothAccessTilesMarkedAsInaccessbile(storageToCheck))
+                    continue;
+
+                bool storageToCheckSecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                        storageToCheck.GetAccessTile(false)));
 
                 if (storageToCheck.UnreservedFreeSpace > 0)
                 {
@@ -920,8 +983,10 @@ public class World
                         && storageToCheck.CanReserveFreeSpace(resourceID, character))
                     {
                         newReservation = new ResourceReservation(
-                            storageToEmpty, 
-                            storageToCheck, 
+                            storageToEmpty,
+                            storageToEmptySecondAccessTile,
+                            storageToCheck,
+                            storageToCheckSecondAccessTile,
                             resourceID);
                         break;
                     }
@@ -939,19 +1004,18 @@ public class World
             if (newReservation.SourceStorage.ReserveResource(newReservation.Resource, character)
                 && newReservation.TargetStorage.ReserveFreeSpace(newReservation.Resource, character))
             {
-                character.SetNewReservation(newReservation);
-                return true;
+                return newReservation;
             }
             else
             {
                 newReservation.SourceStorage.RemoveResourceReservation(character);
                 newReservation.TargetStorage.RemoveFreeSpaceReservation(character);
-                return false;
+                return null;
             }
         }
 
         // Nie udało się nic znaleźć
-        return false;
+        return null;
     }
 
     public IWorkplace GetAvailableWorkplace(Character character)

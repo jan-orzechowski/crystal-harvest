@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BT_FindService : BT_Node 
+public class BT_FindService : BT_Find 
 {
     string need;
 
@@ -12,55 +12,21 @@ public class BT_FindService : BT_Node
         this.need = need;
     }
 
-    public override BT_Result Tick(BT_AgentMemory am)
-    {        
-        if (am.Service != null
-            && am.Character.IsTileMarkedAsInaccessible(
-               am.Service.GetAccessTile(am.UseServiceSecondAccessTile)) == false)
-        {
-            Debug.Log("mamy już dostępną usługę");
-            return BT_Result.SUCCESS;
-        }
-
-        if (am.PotentialService == null)
-        {
-            am.Service = null;
-
-            am.PotentialService = GameManager.Instance.World.GetClosestAvailableService(need, am.Character);
-
-            if (am.PotentialService == null) return BT_Result.FAILURE;
-
-            am.Character.SetNewDestination(am.PotentialService.GetAccessTile(), false);
-            
-            return BT_Result.RUNNING;
-        }
-        else
-        {
-            if (am.Character.Path == null 
-                || am.Character.Path.Goal != am.PotentialService.GetAccessTile())
-            {
-                am.PotentialService = null;
-                return BT_Result.RUNNING;
-            }
-
-            if (am.Character.Path.IsReady)
-            {
-                if (am.Character.Path.IsImpossible)
-                {
-                    am.PotentialService = null;
-                    return BT_Result.RUNNING;
-                }
-                else
-                {
-                    am.Service = am.PotentialService;
-                    am.PotentialService = null;
-                    return BT_Result.SUCCESS;
-                }
-            }
-            else
-            {
-                return BT_Result.RUNNING;
-            }           
-        }       
+    public override bool IsSearchNeededCondition(BT_AgentMemory am)
+    {
+        return (am.Service == null
+                || am.Character.IsTileMarkedAsInaccessible(
+                   am.Service.GetAccessTile(am.UseServiceSecondAccessTile)));
     }
+
+    public override IAccessible GetPotentialDestination(BT_AgentMemory am, bool secondAccessTile)
+    {
+        return GameManager.Instance.World.GetClosestAvailableService(need, am.Character);
+    }
+
+    public override void Found(BT_AgentMemory am, IAccessible matchingCandidate, bool secondAccessTileUsed)
+    {
+        am.Service = matchingCandidate as Service;
+        am.UseServiceSecondAccessTile = secondAccessTileUsed;
+    }    
 }

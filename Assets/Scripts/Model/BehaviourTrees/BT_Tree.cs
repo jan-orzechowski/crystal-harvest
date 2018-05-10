@@ -22,6 +22,7 @@ public class BT_Tree
     public BT_Result Tick(BT_AgentMemory am)
     {
         am.ResetActiveNodesList();
+        am.ProcessTimers(am.DeltaTime);
         am.CurrentTree = this;
 
         BT_Result result = BT_Node.TickChild(Root, am);
@@ -114,9 +115,9 @@ public class BT_Tree
                         new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
                         new BT_GetTransportJobForWorkplace()
                         ),
-                    //Subtree(new BT_MemSequence(),
-                    //    new BT_GetTransportJob()
-                    //    ),
+                    Subtree(new BT_MemSequence(),
+                        new BT_FindTransportJob()
+                        ),
                     Subtree(new BT_MemSequence(),
                         new BT_FindWorkplace()
                         ),

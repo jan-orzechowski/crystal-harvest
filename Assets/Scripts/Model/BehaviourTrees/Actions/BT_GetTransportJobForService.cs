@@ -12,15 +12,19 @@ public class BT_GetTransportJobForService : BT_Node
 
         World world = GameManager.Instance.World;
 
-        if (world.GetReservationForFillingInput(am.Character, am.Service.InputStorage)
-            || (am.Service.InputStorage.RequiresEmptying
-                && world.GetReservationForEmptying(am.Character, am.Service.InputStorage)))
+        ResourceReservation newReservation = world.GetReservationForFillingInput(am.Character, am.Service.InputStorage);
+        if (newReservation == null && am.Service.InputStorage.RequiresEmptying)
         {
+            newReservation = world.GetReservationForEmptying(am.Character, am.Service.InputStorage);
+        }
+        if (newReservation != null)
+        {
+            am.Character.SetNewReservation(newReservation);
             return BT_Result.SUCCESS;
         }
         else
         {
             return BT_Result.FAILURE;
-        }
+        }        
     }
 }

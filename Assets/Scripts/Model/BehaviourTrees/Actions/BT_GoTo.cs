@@ -7,8 +7,6 @@ public abstract class BT_GoTo : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (CheckConditions(am) == false) return BT_Result.FAILURE;
-
         Tile goal = GetDestinationTile(am);
 
         if (goal == null) return BT_Result.FAILURE;
@@ -30,7 +28,7 @@ public abstract class BT_GoTo : BT_Node
         {
             WhileRunning(am);
 
-            // Debug.Log("GoTo: " + goal.ToString());
+            Debug.Log("GoTo: " + goal.ToString());
 
             if (am.Character.CurrentTile == goal)
             {
@@ -50,7 +48,6 @@ public abstract class BT_GoTo : BT_Node
         }
     }
 
-    public abstract bool CheckConditions(BT_AgentMemory am);
     public abstract void WhileRunning(BT_AgentMemory am);
     public abstract Tile GetDestinationTile(BT_AgentMemory am);
     public abstract Rotation GetDestinationTileRotation(BT_AgentMemory am);
