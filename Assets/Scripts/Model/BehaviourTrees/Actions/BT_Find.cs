@@ -5,7 +5,7 @@ using System;
 
 public abstract class BT_Find : BT_Node 
 {
-    static float timeoutAfterNullResults = 1f;
+    static float timeoutAfterNullResults = 5f;
 
     class BT_FindNodeData
     {

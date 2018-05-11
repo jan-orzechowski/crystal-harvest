@@ -36,8 +36,6 @@ public class BT_Tree
         else return null;
     }
 
-    #region TreeConstruction
-
     void AssignIDs()
     {
         int idCounter = 1;
@@ -65,6 +63,11 @@ public class BT_Tree
                     // Rezerwacje
                     Subtree(new BT_MemSequence(),
                         new BT_HasReservation(),
+                        new BT_Inverter(new BT_AreReservedStoragesAccessible()),
+                        new BT_RemoveReservation()
+                        ),
+                    Subtree(new BT_MemSequence(),
+                        new BT_HasReservation(),
                         new BT_HasResourceForReservation(),
                         new BT_GoToTargetStorage(),
                         new BT_Wait(waitBeforeEntering),
@@ -75,6 +78,11 @@ public class BT_Tree
                         new BT_GoToSourceStorage(),
                         new BT_Wait(waitBeforeEntering),
                         new BT_TakeResource()
+                        ),
+                    Subtree(new BT_MemSequence(),
+                        new BT_HasResource(),
+                        new BT_Inverter(new BT_HasReservation()),
+                        new BT_FindNewStorageForResource()
                         ),
                     // Potrzeby
                     Subtree(new BT_MemSequence(),
@@ -194,6 +202,4 @@ public class BT_Tree
 
         //AssignIDs(root);
     }
-
-    #endregion
 }

@@ -222,8 +222,10 @@ public class World
 
         if (c.Reservation != null)
         {
-            c.Reservation.SourceStorage.RemoveResourceReservation(c);
+            if (c.Reservation.SourceStorage != null)
+                c.Reservation.SourceStorage.RemoveResourceReservation(c);
             c.Reservation.TargetStorage.RemoveFreeSpaceReservation(c);
+
             c.ReservationUsed();
         }
 
@@ -1052,7 +1054,7 @@ public class World
                 && (Factories[index].GetAccessTile(true) != null
                     && character.IsTileMarkedAsInaccessible(Factories[index].GetAccessTile(true))))
             {
-                //Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
+                Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
                 continue;
             }
 
@@ -1063,6 +1065,22 @@ public class World
         }
 
         return null;
+    }
+
+    public ResourceReservation GetReservationToStoreCurrentResource(Character character)
+    {
+        ResourceReservation result = null;
+        foreach (Storage s in Storages)
+        {
+            if (s.CanReserveFreeSpace(character.Resource, character)
+                && character.IsTileMarkedAsInaccessible(s.GetAccessTile()) == false)
+            {
+                result = new ResourceReservation(null, false, s, false, character.Resource);
+
+                return result;
+            }
+        }
+        return result;
     }
 
     public Service GetClosestAvailableService(string need, Character character)

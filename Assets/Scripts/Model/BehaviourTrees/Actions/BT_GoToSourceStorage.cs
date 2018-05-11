@@ -8,6 +8,7 @@ public class BT_GoToSourceStorage : BT_GoTo
     public override bool CheckPrecondition(BT_AgentMemory am)
     {
         return (am.Character.Reservation != null
+                && am.Character.Reservation.SourceStorage != null
                 && am.Character.HasResource == false);
     }
 

@@ -9,7 +9,7 @@ public abstract class BT_GoTo : BT_Node
     {
         Tile goal = GetDestinationTile(am);
 
-        if (goal == null) return BT_Result.FAILURE;
+        if (goal == null) return BT_Result.FAILURE;        
 
         if (am.IsRunning(ID) == false)
         {
@@ -27,6 +27,12 @@ public abstract class BT_GoTo : BT_Node
         else
         {
             WhileRunning(am);
+
+            if (am.Character.DestinationTile == goal
+                && am.Character.State == CharacterState.IdleWithPath)
+            {
+                am.Character.SetNewDestination(goal, true);
+            }
 
             Debug.Log("GoTo: " + goal.ToString());
 

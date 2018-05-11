@@ -5,7 +5,7 @@ using System;
 
 public class BT_FindTransportJob : BT_Node 
 {
-    static float timeoutAfterNullResults = 1f;
+    static float timeoutAfterNullResults = 2f;
 
     BT_FindTargetStorage findTargetStorageNode;
     BT_FindSourceStorage findSourceStorageNode;
