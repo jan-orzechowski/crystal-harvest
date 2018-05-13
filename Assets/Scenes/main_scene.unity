@@ -10296,6 +10296,7 @@ MonoBehaviour:
   DialogBox: {fileID: 1389756040}
   AccessArrowPrefab: {fileID: 1448314325074952, guid: 3bcb6664f12c80044ac3c6d5ab565df2,
     type: 2}
+  CameraManager: {fileID: 855187726}
   DebugBuildingPreviewPrefab: {fileID: 1459769429501506, guid: fd74e2ff043880245852887e2584f489,
     type: 2}
   LevelHeightOffset: 1

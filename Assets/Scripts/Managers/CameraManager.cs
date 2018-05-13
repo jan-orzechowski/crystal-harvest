@@ -17,17 +17,25 @@ public class CameraManager : MonoBehaviour
     float moveMultiplier = 0.25f;
     float zoomMultiplier = 1f;
     float rotationSpeed = 1f;
-
+   
     void Start()
     {
         mainCamera = Camera.main.transform;        
-        mainCamera.position = new Vector3(0, startingHeight, -(startingHeight *Mathf.Tan(cameraAngle * Mathf.Deg2Rad)));
+        mainCamera.position = new Vector3(0, startingHeight, -(startingHeight * Mathf.Tan(cameraAngle * Mathf.Deg2Rad)));
+
+        Quaternion lookRotation = Quaternion.LookRotation(-mainCamera.localPosition);
+        mainCamera.rotation = lookRotation;
 
         cameraRig = mainCamera.parent;
 
-        // Wyśrodkowanie kamery
-        //cameraRig.position = new Vector3(
-        //    GameManager.Instance.World.XSize / 2, 0f, GameManager.Instance.World.YSize / 2);
+        float startingCameraXPosition = GameManager.Instance.World.StartingAreaX + 2.5f;
+        float startingCameraYPosition = GameManager.Instance.World.StartingAreaY + 3f;
+
+        cameraRig.SetPositionAndRotation(
+            new Vector3(startingCameraXPosition, 0f, startingCameraYPosition), 
+            Quaternion.identity);
+
+        mainCamera.RotateAround(cameraRig.position, cameraRig.up, 45f);
     }
 
     void Update()
@@ -50,7 +58,7 @@ public class CameraManager : MonoBehaviour
     void ZoomCamera()
     {
         float input = -Input.GetAxis("Mouse ScrollWheel");
-
+      
         Vector3 translation = mainCamera.localPosition * zoomMultiplier * input;
         Vector3 newPosition = mainCamera.localPosition + translation;
         if (newPosition.normalized.y < 0.01f)
@@ -75,9 +83,6 @@ public class CameraManager : MonoBehaviour
             rotation -= rotationSpeed;
         }
 
-        mainCamera.RotateAround(cameraRig.position, mainCamera.up, rotation);
-
-        Quaternion lookRotation = Quaternion.LookRotation(-mainCamera.localPosition);
-        mainCamera.rotation = lookRotation;
+        mainCamera.RotateAround(cameraRig.position, cameraRig.up, rotation);        
     }
 }
