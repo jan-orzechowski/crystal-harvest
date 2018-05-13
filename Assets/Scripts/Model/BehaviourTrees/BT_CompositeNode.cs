@@ -5,7 +5,7 @@ using System;
 
 public class BT_CompositeNode : BT_Node
 {
-    public override bool IsAction { get { return false; } }
+    public override bool Activates { get { return false; } }
 
     public List<BT_Node> Children { get; protected set; }
     

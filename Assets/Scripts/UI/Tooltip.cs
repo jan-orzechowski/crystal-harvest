@@ -65,7 +65,7 @@ public class Tooltip : MonoBehaviour
     {
         if (textToSet == newText) return;
         
-        timeToShow = Timer;
+        this.timeToShow = Timer;
         textToSet = newText;
     }
 

@@ -122,32 +122,40 @@ public class BuildingModulePanel : MonoBehaviour
     }
 
     public void SetModule(IBuildingModule module)
-    {
+    {        
         Module = module;
 
         canBeHalted = false;
         canBeDeconstructed = false;
 
-        if (Module is ConstructionSite)
+        if (Module != null)
         {
-            canBeHalted = true;
-            if (((ConstructionSite)Module).ConstructionMode)
+            if (Module is ConstructionSite)
+            {
+                canBeHalted = true;
+                if (((ConstructionSite)Module).ConstructionMode)
+                {
+                    canBeDeconstructed = true;
+                }
+            }
+            else if (Module is Storage)
             {
                 canBeDeconstructed = true;
             }
-        }
-        else if (Module is Storage)
-        {
-            canBeDeconstructed = true;
-        }
-        else if (Module is Factory)
-        {
-            canBeHalted = true;
-            canBeDeconstructed = true;
-        }
-        else if (Module is Service)
-        {
-            canBeDeconstructed = true;
+            else if (Module is Factory)
+            {
+                canBeHalted = true;
+                canBeDeconstructed = true;
+            }
+            else if (Module is Service)
+            {
+                canBeDeconstructed = true;
+            }
+
+            if (module.Building.Prototype.CanBeDeconstructed == false)
+            {
+                canBeDeconstructed = false;
+            }
         }
 
         changed = true;

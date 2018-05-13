@@ -27,6 +27,10 @@ public class World
     public List<Building> Stairs { get; protected set; }
     public Dictionary<Tile, Building> Platforms { get; protected set; }
 
+    HashSet<Tile> tilesWithPlatformConstructionSites;
+    HashSet<Tile> tilesWithSlabConstructionSites;
+    HashSet<Tile> tilesWithSlabs;
+
     List<Building> buildingsMarkedForDeconstruction;
     List<Character> charactersMarkedForDeletion;
 
@@ -110,6 +114,10 @@ public class World
         charactersMarkedForDeletion = new List<Character>();
 
         ConstructionSites = new List<ConstructionSite>();
+
+        tilesWithPlatformConstructionSites = new HashSet<Tile>();
+        tilesWithSlabConstructionSites = new HashSet<Tile>();
+        tilesWithSlabs = new HashSet<Tile>();
 
         mapChangedThisFrame = true;
     }
@@ -290,6 +298,26 @@ public class World
             return false;
         }
 
+        if (prototype.Type == "Platform")
+        {
+            Tile platformTile = tilesToCheck[0];
+            if (Platforms.ContainsKey(platformTile) 
+                || tilesWithPlatformConstructionSites.Contains(platformTile))
+            {
+                return false;
+            }
+        }
+        else if (prototype.Type == "Slab")
+        {
+            Tile slabTile = tilesToCheck[0];
+            Tile platformTile = tilesToCheck[0];
+            if (tilesWithSlabs.Contains(slabTile)
+                || tilesWithSlabConstructionSites.Contains(slabTile))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -401,6 +429,15 @@ public class World
                 ApplyNewMovementCostsToTiles(newBuilding);
             }
 
+            if (prototype.Type == "Platform")
+            {
+                tilesWithPlatformConstructionSites.Add(newBuilding.Tiles[0]);
+            }
+            else if (prototype.Type == "Slab")
+            {
+                tilesWithSlabs.Add(newBuilding.Tiles[0]);
+            }
+
             ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype, false);
             ConstructionSites.Add(newConstructionSite);
 
@@ -486,6 +523,8 @@ public class World
     {
         if (building == null) return;
 
+        if (building.Prototype.CanBeDeconstructed == false) return;
+
         if (buildingsMarkedForDeconstruction.Contains(building) == false)
         {
             buildingsMarkedForDeconstruction.Add(building);
@@ -516,15 +555,41 @@ public class World
 
     void StartBuildingDeconstruction(Building building)
     {
-        ConstructionSite deconstructionSite = new ConstructionSite(building, building.Prototype, true);
-        ConstructionSites.Add(deconstructionSite);
+        ConstructionSite deconstructionSite = null;
+
+        // Na wypadek, gdybyśmy zlecali rozbiórkę na nieukończonej budowie
+        foreach (ConstructionSite site in ConstructionSites)
+        {
+            if (site.Building == building)
+            {
+                site.CancelConstruction();
+                deconstructionSite = site;                       
+            }
+        }
+
+        if (deconstructionSite == null)
+        {
+            deconstructionSite = new ConstructionSite(building, building.Prototype, true);
+            ConstructionSites.Add(deconstructionSite);
+        }
     
         if (building.Prototype.ConstructionWithoutScaffolding)
         {
             RemoveMovementCostsModificationByBuilding(building);
         }
 
+        Tile tileToUpdatePlatformDisplay = null;
+        if (Platforms.Keys.Contains(building.Tiles[0]))
+        {
+            tileToUpdatePlatformDisplay = building.Tiles[0];
+        }
+
         UnregisterBuildingInDeconstruction(building);
+
+        if (tileToUpdatePlatformDisplay != null)
+        {
+            GameManager.Instance.UpdatePlatformDisplay(tileToUpdatePlatformDisplay);
+        }
 
         Buildings.Remove(building);
         building.RemoveModule();
@@ -533,7 +598,7 @@ public class World
         mapChangedThisFrame = true;
 
         Debug.Log("Usunięto budynek: " + building.Tiles[0].Position.ToString());
-        
+
         GameManager.Instance.RemoveDisplayForBuilding(building);
         GameManager.Instance.ShowConstructionSite(deconstructionSite);
     }
@@ -643,7 +708,13 @@ public class World
         }
         else if (building.Type == "Platform")
         {
+            tilesWithPlatformConstructionSites.Remove(building.Tiles[0]);
             Platforms.Add(building.Tiles[0], building);
+        }
+        else if (building.Type == "Slab")
+        {
+            tilesWithSlabConstructionSites.Remove(building.Tiles[0]);
+            tilesWithSlabs.Add(building.Tiles[0]);
         }
 
         IBuildingModule module = building.Module;
@@ -679,6 +750,10 @@ public class World
         {
             if (Platforms.ContainsKey(building.Tiles[0]))
                 Platforms.Remove(building.Tiles[0]);
+        }
+        else if (building.Type == "Slab")
+        {
+            tilesWithSlabs.Remove(building.Tiles[0]);
         }
 
         IBuildingModule module = building.Module;
@@ -1035,8 +1110,6 @@ public class World
 
     public IWorkplace GetAvailableWorkplace(Character character)
     {
-        List<IWorkplace> availableWorkplaces = new List<IWorkplace>();
-
         if (ConstructionSites.Count > 0)
         {
             for (int attempt = 0; attempt < 5; attempt++)
@@ -1064,8 +1137,8 @@ public class World
 
                 if (character.AreBothAccessTilesMarkedAsInaccessbile(Factories[index]))
                 {
-                    if (Factories[index].GetAccessTile() != null)
-                        Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
+                    //if (Factories[index].GetAccessTile() != null)
+                    //    Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
                     continue;
                 }
 

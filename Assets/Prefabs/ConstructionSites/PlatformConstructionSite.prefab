@@ -550,4 +550,6 @@ MonoBehaviour:
   ClippableScaffolding: {fileID: 1836928892459486}
   Building: {fileID: 1279391466343862}
   ClippableBuilding: {fileID: 1185605548735014}
+  TwoLevelBuilding: 0
   HeightOffset: 0
+  OverrideUpperPlanePosition: 1.05

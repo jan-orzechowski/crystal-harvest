@@ -5,7 +5,7 @@ using System;
 
 public class BT_DecoratorNode : BT_Node
 {
-    public override bool IsAction { get { return false; } }
+    public override bool Activates { get { return false; } }
 
     public BT_Node Child { get; protected set; }
 

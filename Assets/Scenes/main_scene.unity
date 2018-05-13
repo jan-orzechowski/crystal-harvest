@@ -10296,7 +10296,6 @@ MonoBehaviour:
   DialogBox: {fileID: 1389756040}
   AccessArrowPrefab: {fileID: 1448314325074952, guid: 3bcb6664f12c80044ac3c6d5ab565df2,
     type: 2}
-  CameraManager: {fileID: 855187726}
   DebugBuildingPreviewPrefab: {fileID: 1459769429501506, guid: fd74e2ff043880245852887e2584f489,
     type: 2}
   LevelHeightOffset: 1
@@ -21941,6 +21940,11 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114726922322236730, guid: 262ce76ce82a4bc43aba734a7f10b048,
+        type: 2}
+      propertyPath: Timer
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 262ce76ce82a4bc43aba734a7f10b048, type: 2}

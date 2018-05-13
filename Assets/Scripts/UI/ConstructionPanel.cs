@@ -23,7 +23,7 @@ public class ConstructionPanel : MonoBehaviour
     public Text Text;
     public Text SubText;
 
-    void Start ()
+    void Awake ()
     {
         ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
         if (slotsArray == null || slotsArray.Length == 0)

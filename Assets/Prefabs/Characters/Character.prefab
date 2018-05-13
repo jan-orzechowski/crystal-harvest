@@ -672,3 +672,4 @@ MonoBehaviour:
   Collider: {fileID: 65749301096038156}
   CharacterModel: {fileID: 1979318801662022}
   CharacterHoldingModel: {fileID: 1643405066895322}
+  ClippableMaterial: {fileID: 2100000, guid: a7b35ddb2e17b8d458cbe1db3a411ab4, type: 2}

@@ -36,8 +36,7 @@ public class OtherBuildingPanel : MonoBehaviour
     {
         if (building == null) return;
         
-            GameManager.Instance.World.MarkBuildingForDenconstruction(building);
-            building = null;
-                
+        GameManager.Instance.World.MarkBuildingForDenconstruction(building);
+        building = null;                
     }
 }

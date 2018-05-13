@@ -21,7 +21,7 @@ public class ServicePanel : MonoBehaviour
 
     public Text TextSubpanel;
 
-    void Start()
+    void Awake()
     {
         icons = new List<GameObject>();
         tempRequiredResources = new List<int>();

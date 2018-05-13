@@ -48,9 +48,10 @@ public class InputManager : MonoBehaviour
 
         raycastResults = new RaycastHit[maxRaycastResultsNumber];
 
-        selectionBox = GameObject.Instantiate(SelectionBoxPrefab);
+        selectionBox = Instantiate(SelectionBoxPrefab);
         selectionBoxMeshRenderer = selectionBox.transform.GetComponentInChildren<MeshRenderer>();
-        debugPreview = GameObject.Instantiate(debugPreviewPrefab);
+        debugPreview = Instantiate(debugPreviewPrefab);
+        debugPreview.SetActive(false);
 
         world = GameManager.Instance.World;
         
@@ -65,7 +66,7 @@ public class InputManager : MonoBehaviour
 
         UpdateBuildingPreviews();
         UpdateSelection();
-        UpdateCurrentTileHighlight();
+        // UpdateCurrentTileHighlight();
     }
 
     void GetTileUnderMouse()

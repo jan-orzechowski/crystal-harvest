@@ -5,7 +5,7 @@ using System;
 
 public class BT_IsNeedHigherThan : BT_Node 
 {
-    public override bool IsAction { get { return false; } }
+    public override bool Activates { get { return false; } }
 
     string need;
     float threshold;

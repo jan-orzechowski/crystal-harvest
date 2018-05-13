@@ -55,6 +55,8 @@ public class BuildingPrototype
     public bool ConstructionWithoutScaffolding = false;
     public float ConstructionSiteModelHeightOffset = 0f;
 
+    public bool CanBeDeconstructed = true;
+
     public Dictionary<int, int> ResourcesForScaffoldingConstruction = new Dictionary<int, int>() { { 1, 1 } };
 
     public string NeedFulfilled = null;

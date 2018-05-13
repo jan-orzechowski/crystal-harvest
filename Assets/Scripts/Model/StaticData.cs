@@ -181,6 +181,8 @@ public static class StaticData
                                                          { 4, 10 }, { 5, 10 }, { 6, 10 },
                                                          { 7, 10 }, { 8, 10 }, { 0, 10 } };
 
+        bp.CanBeDeconstructed = false;
+
         prototypes.Add(bp);
 
 

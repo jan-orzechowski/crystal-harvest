@@ -9,6 +9,7 @@ public class CharacterDisplayObject : SelectableDisplayObject
 
     public GameObject CharacterModel;
     public GameObject CharacterHoldingModel;
+    public Material ClippableMaterial;
     GameObject heldResource;
 
     public bool Hidden { get; private set; }
@@ -72,6 +73,8 @@ public class CharacterDisplayObject : SelectableDisplayObject
                                  currentModel.transform.localRotation.eulerAngles.y,
                                  currentModel.transform.localRotation.eulerAngles.z);
 
+            currentModel.GetComponent<Renderer>().material = ClippableMaterial;
+
             return;
         }
 
@@ -113,7 +116,7 @@ public class CharacterDisplayObject : SelectableDisplayObject
                     info.HeldModel, 
                     this.transform.position, 
                     this.transform.rotation);
-                heldResource.transform.SetParent(this.transform);
+                heldResource.transform.SetParent(CharacterHoldingModel.transform);
             }
         }
         else

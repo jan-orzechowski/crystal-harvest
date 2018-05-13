@@ -211,9 +211,15 @@ public class MapGenerator
             int randomY = prng.Next(minRandomY, maxRandomY);
 
             int rockTilesNumber = 0;
-            for (int x = randomX; x <= randomX + startingAreaXSize; x++)
+
+            int firstCheckedX = Math.Max(randomX - checkedAreaOffset, 0);
+            int lastCheckedX = Math.Min(randomX + startingAreaXSize + checkedAreaOffset, xSize);
+            int firstCheckedY = Math.Max(randomY - checkedAreaOffset, 0);
+            int lastCheckedY = Math.Min(randomY + startingAreaYSize + checkedAreaOffset, ySize);
+
+            for (int x = firstCheckedX; x <= lastCheckedX; x++)
             {
-                for (int y = randomY; y <= randomY + startingAreaYSize; y++)
+                for (int y = firstCheckedY; y <= lastCheckedY; y++)
                 {
                     if (tiles[x, y] == rock) rockTilesNumber++;
                 }

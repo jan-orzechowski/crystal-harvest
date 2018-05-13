@@ -36,6 +36,8 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     float startingBuildingYPosition;
     float finalBuildingYPosition;
 
+    public float OverrideUpperPlanePosition = 0f;
+
     void Awake()
     {
         if (ClippableBuilding == null || Building == null)
@@ -52,7 +54,7 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
     void Update()
     {
         if (ConstructionSite == null) return;
-
+        
         if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
         {
             float y = Mathf.Lerp(startingScaffoldingUpperPlanePosition,
@@ -76,7 +78,13 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
             float y = Mathf.Lerp(startingBuildingYPosition,
                                  finalBuildingYPosition,
                                  ConstructionSite.GetStageCompletionPercentage() * 1.42f);
+
             SetBuilidingYPosition(y);
+
+            if (constructionWithoutScaffolding)
+            {
+                SetColliderUpperPlanePosition(OverrideUpperPlanePosition + y);
+            }
         }
         else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
         {
@@ -90,7 +98,10 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
                 SetScaffoldingUpperPlanePosition(finalScaffoldingUpperPlanePosition);
                 SetColliderUpperPlanePosition(finalScaffoldingUpperPlanePosition - scaffoldingColliderHeightDifference);
             }
-               
+            else
+            {
+                SetColliderUpperPlanePosition(OverrideUpperPlanePosition + y);
+            }               
         }      
     }
 
@@ -167,6 +178,11 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
             startingBuildingYPosition -= 1.3f;
             startingScaffoldingUpperPlanePosition -= 1.3f;
             finalScaffoldingUpperPlanePosition += scaffoldingHeight;
+        }
+
+        if (OverrideUpperPlanePosition > 0.05f)
+        {
+            finalScaffoldingUpperPlanePosition = OverrideUpperPlanePosition;
         }
 
         SetScaffoldingUpperPlanePosition(startingScaffoldingUpperPlanePosition);

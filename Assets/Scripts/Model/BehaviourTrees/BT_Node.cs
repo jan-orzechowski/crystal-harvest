@@ -7,7 +7,7 @@ public abstract class BT_Node
 {
     public int ID { get; protected set; }
     public int ParentID { get; protected set; }
-    public virtual bool IsAction { get { return true; } }
+    public virtual bool Activates { get { return true; } }
 
     public virtual bool CheckPrecondition(BT_AgentMemory am)
     {
@@ -42,12 +42,10 @@ public abstract class BT_Node
     {
         if (child.CheckPrecondition(am) == false) return BT_Result.FAILURE;
 
-        if (child.IsAction == false)
+        if (child.Activates == false)
         {
-            child.Activate(am);
             // Debug.Log(child.ID + " - " + child.GetType().ToString() + " - decider tick");
             BT_Result result = child.Tick(am);
-            child.Deactivate(am);
             return result;
         }
         else

@@ -17,8 +17,6 @@ public class BT_Tree
 
     Dictionary<int, BT_Node> nodes = new Dictionary<int, BT_Node>();
 
-    int lastNodeID = 0;
-
     public BT_Result Tick(BT_AgentMemory am)
     {
         am.ResetActiveNodesList();
@@ -40,7 +38,6 @@ public class BT_Tree
     {
         int idCounter = 1;
         Root.AssignID(0, ref idCounter, nodes);
-        lastNodeID = idCounter;
     }
 
     BT_CompositeNode Subtree(BT_CompositeNode parent, params BT_Node[] nodes)

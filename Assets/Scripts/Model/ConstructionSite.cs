@@ -93,7 +93,7 @@ public class ConstructionSite : IWorkplace
         {
             if (ConstructionStorage.IsWaitingForResources() == false)
             {
-                DeconstructionStorage = new Storage(Building, ConstructionStorage.Resources, true);
+                DeconstructionStorage = new Storage(Building, null, true);
                 ConstructionStorage = new StorageWithRequirements(Building, null);
 
                 if (Stage == ConstructionStage.Construction)
