@@ -712,22 +712,34 @@ public class World
     {
         ResourceReservation result = null;
 
-        foreach (Factory factory in Factories)
+        if (ConstructionSites.Count > 0)
         {
-            if (factory.Halted || character.AreBothAccessTilesMarkedAsInaccessbile(factory))
-                continue;
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                int index = UnityEngine.Random.Range(0, ConstructionSites.Count);
+                ConstructionSite site = ConstructionSites[index];
 
-            result = GetReservationForFillingInput(character, factory.InputStorage);
-            if (result != null) return result;
+                if (site.Halted || character.AreBothAccessTilesMarkedAsInaccessbile(site))
+                    continue;
+
+                result = GetReservationForFillingInput(character, site.InputStorage);
+                if (result != null) return result;
+            }
         }
 
-        foreach (ConstructionSite site in ConstructionSites)
+        if (Factories.Count > 0)
         {
-            if (site.Halted || character.AreBothAccessTilesMarkedAsInaccessbile(site))
-                continue;
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                int index = UnityEngine.Random.Range(0, Factories.Count);
+                Factory factory = Factories[index];
 
-            result = GetReservationForFillingInput(character, site.InputStorage);
-            if (result != null) return result;
+                if (factory.Halted || character.AreBothAccessTilesMarkedAsInaccessbile(factory))
+                    continue;
+
+                result = GetReservationForFillingInput(character, factory.InputStorage);
+                if (result != null) return result;
+            }
         }
 
         return result;
@@ -903,8 +915,6 @@ public class World
 
         foreach (int resourceID in storageToEmpty.Resources.Keys)
         {
-
-
             // Czy jakaś fabryka nie potrzebuje tego zasobu?
             foreach (Factory factoryToCheck in Factories)
             {
@@ -970,7 +980,10 @@ public class World
             }
 
             // Czy w jakimś magazynie jest wolne miejsce?
-            foreach (Storage storageToCheck in Storages)
+            List<Storage> sortedStorageList = new List<Storage>(Storages);
+            sortedStorageList.OrderBy(s => character.CurrentTile.DistanceTo(s.GetAccessTile()));
+
+            foreach (Storage storageToCheck in sortedStorageList)
             {
                 if (storageToCheck.RequiresEmptying
                     || character.AreBothAccessTilesMarkedAsInaccessbile(storageToCheck))
@@ -1024,43 +1037,42 @@ public class World
     {
         List<IWorkplace> availableWorkplaces = new List<IWorkplace>();
 
-        for (int attempt = 0; attempt < 5; attempt++)
+        if (ConstructionSites.Count > 0)
         {
-            if (ConstructionSites.Count == 0) break;
-
-            int index = UnityEngine.Random.Range(0, ConstructionSites.Count);
-
-            if (character.IsTileMarkedAsInaccessible(ConstructionSites[index].GetAccessTile(false))
-                && (ConstructionSites[index].GetAccessTile(true) != null 
-                    && character.IsTileMarkedAsInaccessible(ConstructionSites[index].GetAccessTile(true))))
+            for (int attempt = 0; attempt < 5; attempt++)
             {
-                Debug.Log("inaccessible: " + ConstructionSites[index].GetAccessTile().ToString());
-                continue;
-            }
+                int index = UnityEngine.Random.Range(0, ConstructionSites.Count);
 
-            if (ConstructionSites[index].CanReserveJob(character))
-            {
-                return ConstructionSites[index];
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(ConstructionSites[index]))
+                {
+                    Debug.Log("inaccessible: " + ConstructionSites[index].GetAccessTile().ToString());
+                    continue;
+                }
+
+                if (ConstructionSites[index].CanReserveJob(character))
+                {
+                    return ConstructionSites[index];
+                }
             }
         }
 
-        for (int attempt = 0; attempt < 5; attempt++)
+        if (Factories.Count > 0)
         {
-            if (Factories.Count == 0) break;
-
-            int index = UnityEngine.Random.Range(0, Factories.Count);
-
-            if (character.IsTileMarkedAsInaccessible(Factories[index].GetAccessTile(false))
-                && (Factories[index].GetAccessTile(true) != null
-                    && character.IsTileMarkedAsInaccessible(Factories[index].GetAccessTile(true))))
+            for (int attempt = 0; attempt < 5; attempt++)
             {
-                Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
-                continue;
-            }
+                int index = UnityEngine.Random.Range(0, Factories.Count);
 
-            if (Factories[index].CanReserveJob(character))
-            {
-                return Factories[index];                
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(Factories[index]))
+                {
+                    if (Factories[index].GetAccessTile() != null)
+                        Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
+                    continue;
+                }
+
+                if (Factories[index].CanReserveJob(character))
+                {
+                    return Factories[index];
+                }
             }
         }
 

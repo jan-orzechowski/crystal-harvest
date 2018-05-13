@@ -20,7 +20,7 @@ namespace Pathfinding
         public Tile Start { get; protected set; }
         public Tile Goal { get; protected set; }
 
-        int nodesPerCall = 200;
+        int nodesPerCall = 300;
         int nodesThisCall;
 
         Node startNode;
@@ -247,7 +247,7 @@ namespace Pathfinding
 
         public Tile Dequeue()
         {
-            if (path == null) return null;
+            if (path == null || path.Count == 0) return null;
             else { return path.Dequeue(); }
         }
 

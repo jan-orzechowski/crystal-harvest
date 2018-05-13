@@ -9,14 +9,14 @@ public class BT_AreReservedStoragesAccessible : BT_Node
 
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        ResourceReservation reservation = am.Character.Reservation;
+        ResourceReservation reservationToCheck = am.Character.Reservation;
 
-        if (reservation == null) return BT_Result.SUCCESS;
+        if (reservationToCheck == null) return BT_Result.SUCCESS;
 
-        if ((reservation.SourceStorage != null && am.Character.IsTileMarkedAsInaccessible(
-                reservation.SourceStorage.GetAccessTile(reservation.UseSourceStorageSecondAccessTile)))
+        if ((reservationToCheck.SourceStorage != null && am.Character.IsTileMarkedAsInaccessible(
+                reservationToCheck.SourceStorage.GetAccessTile(reservationToCheck.UseSourceStorageSecondAccessTile)))
             || (am.Character.IsTileMarkedAsInaccessible(
-                reservation.TargetStorage.GetAccessTile(reservation.UseTargetStorageSecondAccessTile))))
+                reservationToCheck.TargetStorage.GetAccessTile(reservationToCheck.UseTargetStorageSecondAccessTile))))
         {
             return BT_Result.FAILURE;            
         }

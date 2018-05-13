@@ -108,9 +108,9 @@ public static class StaticData
     public static Dictionary<TileType, float> LoadTilesMovementCosts()
     {
         return new Dictionary<TileType, float>(){ {TileType.Empty, 0f},
-                                                  {TileType.WalkableEmpty, 2f},
-                                                  {TileType.Sand, 1f},
-                                                  {TileType.Rock, 2f} };
+                                                  {TileType.WalkableEmpty, 1f},
+                                                  {TileType.Sand, 3f},
+                                                  {TileType.Rock, 1f} };
     }
 
     public static Dictionary<int, ResourceInfo> LoadResources()
@@ -144,7 +144,7 @@ public static class StaticData
             character.Needs = new Dictionary<string, float>()
             { {"Health", 0f}, {"Hunger", 0f} };
             character.NeedGrowthPerSecond = new Dictionary<string, float>()
-            { {"Health", 0.02f}, {"Hunger", 0.02f} };
+            { {"Health", 0.001f}, {"Hunger", 0.003f} };
         }
     }
 

@@ -15,20 +15,20 @@ public abstract class BT_Find : BT_Node
 
     public override bool CheckPrecondition(BT_AgentMemory am)
     {
-        Debug.Log("Find Precondition: " + (am.HasTimerElapsed(ID)));
+        //Debug.Log("Find Precondition: " + (am.HasTimerElapsed(ID)));
         return (am.HasTimerElapsed(ID)
                 && IsSearchNeededCondition(am));
     }
 
     public override void Activate(BT_AgentMemory am)
     {
-        Debug.Log("Find " + ID + " - activate");
+        //Debug.Log("Find " + ID + " - activate");
         am.SetObject(ID, new BT_FindNodeData());
     }
 
     public override void Deactivate(BT_AgentMemory am)
     {
-        Debug.Log("Find " + ID + " - deactivate");
+        //Debug.Log("Find " + ID + " - deactivate");
         am.SetObject(ID, null);
     }
 
@@ -39,11 +39,8 @@ public abstract class BT_Find : BT_Node
 
         if (data.PotentialDestination == null)
         {
-            Debug.Log("Szukanie - nowy kandydat");
-            
             data.UseSecondAccessTile = false;
 
-            // drugi parametr nieużywany na razie
             data.PotentialDestination = GetPotentialDestination(am, data.UseSecondAccessTile);
 
             if (data.PotentialDestination == null)
@@ -66,19 +63,19 @@ public abstract class BT_Find : BT_Node
 
             if (am.Character.IsTileMarkedAsInaccessible(accessTile))
             {
-                Debug.Log("pole niedostępne");
+                // Debug.Log("pole niedostępne");
                 data.PotentialDestination = null;
                 return BT_Result.RUNNING;
             }
 
             if (am.Character.DestinationTile != accessTile)
             {
-                Debug.Log("Szukanie - błędne pole");
+                // Debug.Log("Szukanie - błędne pole");
                 data.PotentialDestination = null;
                 return BT_Result.RUNNING;
             }
 
-            Debug.Log("szukanie trwa");
+            // Debug.Log("szukanie trwa");
 
             if (am.Character.CurrentTile == accessTile)
             {
@@ -92,7 +89,7 @@ public abstract class BT_Find : BT_Node
                 if (am.Character.Path.IsImpossible)
                 {
                     // Ścieżka niemożliwa
-                    Debug.Log("Szukanie - ścieżka niemożliwa");
+                    // Debug.Log("Szukanie - ścieżka niemożliwa");
                     data.PotentialDestination = null;
                     return BT_Result.RUNNING;
                 }

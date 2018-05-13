@@ -26,7 +26,7 @@ public class BT_Tree
         am.CurrentTree = this;
 
         BT_Result result = BT_Node.TickChild(Root, am);
-        Debug.Log(am.PrintNodesActiveThisTick());
+        // Debug.Log(am.PrintNodesActiveThisTick());
         return result;
     }
      
@@ -124,9 +124,11 @@ public class BT_Tree
                         new BT_GetTransportJobForWorkplace()
                         ),
                     Subtree(new BT_MemSequence(),
+                        new BT_Inverter(new BT_HasWorkplace()),
                         new BT_FindTransportJob()
                         ),
                     Subtree(new BT_MemSequence(),
+                        new BT_Inverter(new BT_HasReservation()),
                         new BT_FindWorkplace()
                         ),
                         new BT_Wait(10f)                       

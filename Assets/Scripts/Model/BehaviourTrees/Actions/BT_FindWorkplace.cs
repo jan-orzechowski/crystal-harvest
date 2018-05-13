@@ -7,9 +7,9 @@ public class BT_FindWorkplace : BT_Find
 {
     public override bool IsSearchNeededCondition(BT_AgentMemory am)
     {
-        return (am.Workplace == null
+        return (am.Workplace == null                                                        
                 || am.Character.IsTileMarkedAsInaccessible(
-                   am.Workplace.GetAccessTile(am.UseWorkplaceSecondAccessTile)));
+                    am.Workplace.GetAccessTile(am.UseWorkplaceSecondAccessTile)));
     }
 
     public override IAccessible GetPotentialDestination(BT_AgentMemory am, bool secondAccessTile)

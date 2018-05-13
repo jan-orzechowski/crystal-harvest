@@ -14,7 +14,7 @@ public class BT_Wait : BT_Node
 
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        Debug.Log("BT_WAIT" + waitingTime);
+        // Debug.Log("BT_WAIT" + waitingTime);
 
         if (am.IsRunning(ID) == false)
         {

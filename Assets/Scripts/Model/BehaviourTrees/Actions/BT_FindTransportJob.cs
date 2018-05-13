@@ -5,7 +5,7 @@ using System;
 
 public class BT_FindTransportJob : BT_Node 
 {
-    static float timeoutAfterNullResults = 2f;
+    static float timeoutAfterFailure = 5f;
 
     BT_FindTargetStorage findTargetStorageNode;
     BT_FindSourceStorage findSourceStorageNode;
@@ -13,8 +13,6 @@ public class BT_FindTransportJob : BT_Node
     class BT_FindTransportJobNodeData
     {
         public ResourceReservation PotentialReservation;
-        public Tile TargetStorageTile;
-        public Tile SourceStorageTile;
         public bool TargetStorageChecked;
         public bool SourceStorageChecked;
     }
@@ -60,7 +58,7 @@ public class BT_FindTransportJob : BT_Node
         BT_FindTransportJobNodeData data = am.GetObject(ID) as BT_FindTransportJobNodeData;
         if (data == null) return BT_Result.FAILURE;
 
-        Debug.Log("BT_FindTransportJob");
+        // Debug.Log("BT_FindTransportJob");
 
         World world = GameManager.Instance.World;
 
@@ -70,20 +68,17 @@ public class BT_FindTransportJob : BT_Node
 
             newReservation = world.GetReservationForFillingInput(am.Character);
 
-            if (newReservation == null) world.GetReservationForEmptying(am.Character);
+            if (newReservation == null) newReservation = world.GetReservationForEmptying(am.Character);
 
             if (newReservation != null)
             {
                 data.PotentialReservation = newReservation;
-
-                data.SourceStorageTile = data.PotentialReservation.SourceStorage.GetAccessTile(
-                    data.PotentialReservation.UseSourceStorageSecondAccessTile);
-                data.TargetStorageTile = data.PotentialReservation.TargetStorage.GetAccessTile(
-                    data.PotentialReservation.UseTargetStorageSecondAccessTile);
+                data.TargetStorageChecked = false;
+                data.SourceStorageChecked = false;
             }
             else
             {
-                am.SetTimer(ID, timeoutAfterNullResults);
+                am.SetTimer(ID, timeoutAfterFailure);
                 return BT_Result.FAILURE;
             }
 
@@ -99,8 +94,15 @@ public class BT_FindTransportJob : BT_Node
                 data.TargetStorageChecked = true;
                 return BT_Result.RUNNING;
             }
-            else if (result == BT_Result.RUNNING) return BT_Result.RUNNING;
-            else return BT_Result.FAILURE;
+            else if (result == BT_Result.RUNNING)
+            {
+                return BT_Result.RUNNING;
+            }
+            else
+            {
+                am.SetTimer(ID, timeoutAfterFailure);
+                return BT_Result.FAILURE;
+            }
         }
         else
         {
@@ -119,11 +121,20 @@ public class BT_FindTransportJob : BT_Node
                 {
                     data.PotentialReservation.SourceStorage.RemoveResourceReservation(am.Character);
                     data.PotentialReservation.TargetStorage.RemoveFreeSpaceReservation(am.Character);
+
+                    am.SetTimer(ID, timeoutAfterFailure);
                     return BT_Result.FAILURE;
-                }                
+                }
             }
-            else if (result == BT_Result.RUNNING) return BT_Result.RUNNING;
-            else return BT_Result.FAILURE;
+            else if (result == BT_Result.RUNNING)
+            {
+                return BT_Result.RUNNING;
+            }
+            else
+            {
+                am.SetTimer(ID, timeoutAfterFailure);
+                return BT_Result.FAILURE;
+            }
         }
          
     }
@@ -133,11 +144,15 @@ public class BT_FindTransportJob : BT_Node
         public override bool IsSearchNeededCondition(BT_AgentMemory am)
         {
             return true;
-
         }
+
         public override IAccessible GetPotentialDestination(BT_AgentMemory am, bool secondAccessTile)
         {
             BT_FindTransportJobNodeData data = am.GetObject(ParentID) as BT_FindTransportJobNodeData;
+            if (am.Character.AreBothAccessTilesMarkedAsInaccessbile(data.PotentialReservation.SourceStorage))
+            {
+                return null;
+            }
             return data.PotentialReservation.SourceStorage;
         }
 
@@ -158,6 +173,10 @@ public class BT_FindTransportJob : BT_Node
         public override IAccessible GetPotentialDestination(BT_AgentMemory am, bool secondAccessTile)
         {
             BT_FindTransportJobNodeData data = am.GetObject(ParentID) as BT_FindTransportJobNodeData;
+            if (am.Character.AreBothAccessTilesMarkedAsInaccessbile(data.PotentialReservation.TargetStorage))
+            {
+                return null;
+            }
             return data.PotentialReservation.TargetStorage;
         }
 

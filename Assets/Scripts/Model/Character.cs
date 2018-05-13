@@ -57,7 +57,7 @@ public class Character : ISelectable
 
     public bool IsRobot { get; protected set; }
 
-    static float inaccessibleTileDefaultTimer = 10f;
+    static float inaccessibleTileDefaultTimer = 20f;
     Dictionary<Tile, float> inaccessibleTilesTimers;
 
     public Character(string name, Tile currentTile, BT_Tree behaviourTree, bool isRobot)
@@ -182,7 +182,12 @@ public class Character : ISelectable
             }
             
             NextTile = Path.Dequeue();
-            targetRotation = GetRotationForNextTile(NextTile);        
+            if (NextTile == null)
+            {
+                Path = null;
+                return;
+            }         
+            targetRotation = GetRotationForNextTile(NextTile);              
         }
 
         if (NextTile.MovementCost == 0)
@@ -356,7 +361,7 @@ public class Character : ISelectable
         {
             inaccessibleTilesTimers.Add(tile, inaccessibleTileDefaultTimer);
         }
-        Debug.Log(tile.ToString() + " - oznaczone jako niedostępne");
+        // Debug.Log(tile.ToString() + " - oznaczone jako niedostępne");
     }
 
     public void SetLastTileRotation(Rotation rotation)
@@ -503,7 +508,11 @@ public class Character : ISelectable
         s += Name + "\n";
 
         s += "State: " + State.ToString() + "\n";
-        s += "Workplace: " + (agentMemory.Workplace == null ? "" : agentMemory.Workplace.Building.Name) + "\n";
+
+        s += "Reservation: " + ((Reservation != null) ? Reservation.ToString() : "") + "\n";
+
+        s += "Workplace: " + ((agentMemory.Workplace != null && agentMemory.Workplace.Building != null) 
+                                ? agentMemory.Workplace.Building.Name : "") + "\n";
 
         foreach (string need in Needs.Keys)
         {
