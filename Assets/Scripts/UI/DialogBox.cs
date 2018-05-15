@@ -17,6 +17,8 @@ public class DialogBox : MonoBehaviour
     public GameObject OneOptionObject;
     public DialogBoxButton OneOptionButton;
 
+    public GameObject Blocker;
+
     void Start () 
     {
         HideDialogBox();
@@ -44,6 +46,7 @@ public class DialogBox : MonoBehaviour
         SetDialogText(GameManager.Instance.GetText(descriptionTextKey));
 
         Window.SetActive(true);
+        Blocker.SetActive(true);
 
         OneOptionObject.SetActive(false);
         TwoOptionsObject.SetActive(true);
@@ -61,6 +64,7 @@ public class DialogBox : MonoBehaviour
         SetDialogText(GameManager.Instance.GetText(descriptionTextKey));
 
         Window.SetActive(true);
+        Blocker.SetActive(true);
 
         TwoOptionsObject.SetActive(false);
         OneOptionObject.SetActive(true);
@@ -74,6 +78,7 @@ public class DialogBox : MonoBehaviour
         Window.SetActive(false);
         TwoOptionsObject.SetActive(false);
         OneOptionObject.SetActive(false);
+        Blocker.SetActive(false);
     }
 
     public void ButtonClicked()

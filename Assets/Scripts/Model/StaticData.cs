@@ -5,6 +5,8 @@ using System;
 
 public static class StaticData
 {
+    public const float TimeLimit = (60f * 20f);
+
     public const int WorldWidth = 50;
     public const int WorldLenght = 50;
 
@@ -26,7 +28,15 @@ public static class StaticData
     {
         return new Dictionary<string, string>()
         {
-             // Zasoby
+            // Wiadomości
+            {"s_start_text", "Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy" },
+            {"s_victory_text", "Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo " },
+            {"s_defeat_text", "Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka " },
+            {"s_start_confirmation", "Początek" },
+            {"s_victory_confirmation", "Zwycięstwo" },
+            {"s_defeat_confirmation", "Porażka" },
+
+            // Zasoby
             {"s_crystals", "Kryształy" },
             {"s_metal", "Metal" },
             {"s_gas", "Gaz" },
@@ -94,6 +104,7 @@ public static class StaticData
             {"s_start_button", "Wznów działanie" },
             {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
 
+            // Inne
             {"s_stats_button", "Statystki" },
             {"s_build_button", "Konstrukcja" },
             {"s_timer_hover", "Czas pozostały do zakończenia misji" },
@@ -138,13 +149,15 @@ public static class StaticData
             { {"Condition", 0f} };
             character.NeedGrowthPerSecond = new Dictionary<string, float>()
             { {"Condition", 0.02f} };
+            // { { "Condition", 0.002f} };
         }
         else
         {
             character.Needs = new Dictionary<string, float>()
             { {"Health", 0f}, {"Hunger", 0f} };
             character.NeedGrowthPerSecond = new Dictionary<string, float>()
-            { {"Health", 0.001f}, {"Hunger", 0.003f} };
+            { {"Health", 0.002f}, {"Hunger", 0.005f} };
+            // { { "Health", 0.001f}, { "Hunger", 0.003f} };
         }
     }
 

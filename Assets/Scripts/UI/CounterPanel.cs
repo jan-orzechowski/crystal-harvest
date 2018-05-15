@@ -13,8 +13,16 @@ public class CounterPanel : MonoBehaviour
     {
         World world = GameManager.Instance.World;
 
-        string newTimer = "10:00";
-        TimerText.text = newTimer;
+        float timeLeft = GameManager.Instance.World.TimeLeft;
+        if (timeLeft <= 0f)
+        {
+            TimerText.text = "0 : 0";
+        }
+        else
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(GameManager.Instance.World.TimeLeft);
+            TimerText.text = (timeSpan.Minutes + " : " + timeSpan.Seconds);
+        }
 
         int currentAmount = world.AllResources[world.ResourceToGather];
         int goalAmount = world.AmountToGather;

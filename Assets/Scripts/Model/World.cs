@@ -68,6 +68,13 @@ public class World
     int totalSpaceForCrystals;
     int totalSpaceForOre;
 
+    public bool Paused;
+    public bool CannotUnpause { get; protected set; }
+
+    public bool initialTextShown;
+
+    public float TimeLeft { get; protected set; }
+
     public World(int width, int length, int startingAreaXSize, int startingAreaYSize)
     {
         XSize = width;
@@ -134,10 +141,22 @@ public class World
         oreDepositsReservations = new Dictionary<Character, float>();
 
         mapChangedThisFrame = true;
+
+        TimeLeft = StaticData.TimeLimit;
     }
 
     public void UpdateModel(float deltaTime)
     {        
+        if (initialTextShown == false)
+        {
+            Paused = true;
+            CannotUnpause = true;
+
+            initialTextShown = true;
+
+            InitialAction();
+        }
+
         if (mapChangedThisFrame)
         {
             Pathfinder.InvalidateGraph(modifiedTiles);
@@ -147,41 +166,50 @@ public class World
 
         Pathfinder.Process();
 
-        for (int i = 0; i < Characters.Count; i++)
+        if (Paused == false)
         {
-            Characters[i].UpdateCharacter(deltaTime);
-        }
-        for (int i = 0; i < Factories.Count; i++)
-        {
-            Factories[i].UpdateFactory(deltaTime);
-        }
-        for (int i = 0; i < ConstructionSites.Count; i++)
-        {
-            ConstructionSites[i].UpdateConstructionSite(deltaTime);
-        }
-        foreach (string need in Services.Keys)
-        {
-            for (int i = 0; i < Services[need].Count; i++)
-            {
-                Services[need][i].UpdateService(deltaTime);
-            }
-        }
+            TimeLeft -= deltaTime;
 
-        foreach (Character c in crystalsDepositsReservations.Keys.ToList())
-        {
-            crystalsDepositsReservations[c] -= deltaTime;
-            if (crystalsDepositsReservations[c] < 0f)
+            for (int i = 0; i < Characters.Count; i++)
             {
-                crystalsDepositsReservations.Remove(c);
+                Characters[i].UpdateCharacter(deltaTime);
             }
-        }
-        foreach (Character c in oreDepositsReservations.Keys.ToList())
-        {
-            oreDepositsReservations[c] -= deltaTime;
-            if (oreDepositsReservations[c] < 0f)
+
+            for (int i = 0; i < Factories.Count; i++)
             {
-                oreDepositsReservations.Remove(c);
+                Factories[i].UpdateFactory(deltaTime);
             }
+
+            for (int i = 0; i < ConstructionSites.Count; i++)
+            {
+                ConstructionSites[i].UpdateConstructionSite(deltaTime);
+            }
+
+            foreach (string need in Services.Keys)
+            {
+                for (int i = 0; i < Services[need].Count; i++)
+                {
+                    Services[need][i].UpdateService(deltaTime);
+                }
+            }
+
+            foreach (Character c in crystalsDepositsReservations.Keys.ToList())
+            {
+                crystalsDepositsReservations[c] -= deltaTime;
+                if (crystalsDepositsReservations[c] < 0f)
+                {
+                    crystalsDepositsReservations.Remove(c);
+                }
+            }
+
+            foreach (Character c in oreDepositsReservations.Keys.ToList())
+            {
+                oreDepositsReservations[c] -= deltaTime;
+                if (oreDepositsReservations[c] < 0f)
+                {
+                    oreDepositsReservations.Remove(c);
+                }
+            }            
         }
 
         for (int i = buildingsMarkedForDeconstruction.Count - 1;
@@ -207,9 +235,75 @@ public class World
                 charactersMarkedForDeletion.RemoveAt(i);
             }
         }
+
+        if (CheckVictoryConditions())
+        {
+            Paused = true;
+            CannotUnpause = true;
+
+            VictoryAction();
+        }
+
+        if (CheckDefeatConditions())
+        {
+            Paused = true;
+            CannotUnpause = true;
+
+            DefeatAction();
+        }
     }
 
-    #region CharactersManagement
+    bool CheckVictoryConditions()
+    {
+        return (AllResources[ResourceToGather] >= AmountToGather);
+    }
+
+    bool CheckDefeatConditions()
+    {
+        return (HumanNumber <= 0
+                || TimeLeft <= 0f);
+    }
+  
+    void VictoryAction()
+    {
+        Action action = () =>
+        {
+            Debug.Log("VICTORY - QUIT");
+            Application.Quit();
+        };
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_victory_text",
+            "s_victory_confirmation", action);
+    }
+
+    void DefeatAction()
+    {
+        Action action = () =>
+        {
+            Debug.Log("DEFEAT - QUIT");
+            Application.Quit();
+        };
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_defeat_text",
+            "s_defeat_confirmation", action);
+    }
+
+    void InitialAction()
+    {
+        Action action = () =>
+        {
+            Paused = false;
+            CannotUnpause = false;
+        };
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_start_text",
+            "s_start_confirmation", action);
+    }
+
+#region CharactersManagement
 
     public bool CreateNewCharacter(TilePosition tilePosition, bool isRobot)
     {
@@ -290,9 +384,9 @@ public class World
         return false;
     }
 
-    #endregion
+#endregion
 
-    #region ConstructionManagement
+#region ConstructionManagement
 
     public bool IsValidBuildingPosition(TilePosition origin, Rotation rotation, BuildingPrototype prototype)
     {
@@ -848,9 +942,9 @@ public class World
         }
     }
 
-    #endregion
+#endregion
 
-    #region ResourcesManagement
+#region ResourcesManagement
 
     public ResourceReservation GetReservationForFillingInput(Character character)
     {
@@ -1403,9 +1497,9 @@ public class World
         if (crystalsDepositsReservations.Keys.Contains(c)) crystalsDepositsReservations.Remove(c);
     }
 
-    #endregion
+#endregion
 
-    #region TileUtilities
+#region TileUtilities
 
     public Tile GetTileFromPosition(int x, int y, int height)
     {
@@ -1440,6 +1534,6 @@ public class World
         }
     }
 
-    #endregion
+#endregion
 
 }

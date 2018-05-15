@@ -120,7 +120,17 @@ public class InputManager : MonoBehaviour
     }
 
     void HandleUserInput()
-    {        
+    {
+        World world = GameManager.Instance.World;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (world.CannotUnpause == false)
+            {
+                world.Paused = !world.Paused;
+            }
+        }
+
         if (Input.GetMouseButtonDown(0)) // LPM
         {            
             if (EventSystem.current.IsPointerOverGameObject())

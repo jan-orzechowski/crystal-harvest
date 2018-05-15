@@ -24,8 +24,8 @@ public class CharacterPanel : MonoBehaviour
             return;
         }
 
-        HealthBar.SetFillPercentage(Character.Needs["Health"]);
-        HungerBar.SetFillPercentage(Character.Needs["Hunger"]);
+        HealthBar.SetFillPercentage(1f - Character.Needs["Health"]);
+        HungerBar.SetFillPercentage(1f - Character.Needs["Hunger"]);
     }
 
     public void SetCharacter(Character c)

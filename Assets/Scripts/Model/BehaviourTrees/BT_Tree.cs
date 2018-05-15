@@ -97,11 +97,15 @@ public class BT_Tree
                         new BT_StartUsingService()
                         ),
                     Subtree(new BT_Sequence(),
+                        new BT_IsNeedHigherThan("Health", 0.9f),
+                        new BT_Die()
+                        ),
+                    Subtree(new BT_Sequence(),
                         new BT_IsNeedHigherThan("Health", 0.2f),
                         new BT_FindService("Health")
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Health", 0.9f),
+                        new BT_IsNeedHigherThan("Hunger", 0.9f),
                         new BT_Die()
                         ),
                     Subtree(new BT_Sequence(),
