@@ -59,6 +59,7 @@ public class BT_Tree
                     new BT_IsUsingService(),
                     // Rezerwacje
                     new BT_RemoveWorkplaceIfCannotReserve(),
+                    new BT_GoToRandomTile(),
                     Subtree(new BT_Sequence(),
                         new BT_HasReservation(),
                         new BT_Inverter(new BT_AreReservedStoragesAccessible()),
@@ -127,7 +128,8 @@ public class BT_Tree
                     Subtree(new BT_Sequence(),
                         new BT_Inverter(new BT_HasReservation()),
                         new BT_FindWorkplace()
-                        )                    
+                        ),                    
+                    new BT_SetRandomTile()
         );
 
         AssignIDs();

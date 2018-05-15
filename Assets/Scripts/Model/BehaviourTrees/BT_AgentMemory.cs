@@ -26,6 +26,9 @@ public class BT_AgentMemory
     List<int> nodesActivePreviousTick = new List<int>();
     List<int> nodesActiveThisTick = new List<int>();
 
+    public Tile RandomTile;
+    public Rotation RandomTileRotation;
+
     public Character Character { get; protected set; }
 
     public float DeltaTime;

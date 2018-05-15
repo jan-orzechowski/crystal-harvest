@@ -184,8 +184,6 @@ public class World
             }
         }
 
-        Debug.Log("oreDepositsReservations.Count: " + oreDepositsReservations.Count);
-
         for (int i = buildingsMarkedForDeconstruction.Count - 1;
              i >= 0;
              i--)
@@ -1189,7 +1187,7 @@ public class World
 
                 if (character.AreBothAccessTilesMarkedAsInaccessbile(ConstructionSites[index]))
                 {
-                    Debug.Log("inaccessible: " + ConstructionSites[index].GetAccessTile().ToString());
+                    // Debug.Log("inaccessible: " + ConstructionSites[index].GetAccessTile().ToString());
                     continue;
                 }
 

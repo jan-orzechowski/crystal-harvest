@@ -11,6 +11,16 @@ public class BT_GoToTargetStorage : BT_GoTo
                 && am.Character.HasResource);
     }
 
+    public override void Activate(BT_AgentMemory am)
+    {
+        return;
+    }
+
+    public override void Deactivate(BT_AgentMemory am)
+    {
+        return;
+    }
+
     public override void WhileRunning(BT_AgentMemory am)
     {
         return;
