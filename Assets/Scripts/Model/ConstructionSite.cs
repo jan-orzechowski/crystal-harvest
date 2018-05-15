@@ -236,7 +236,7 @@ public class ConstructionSite : IWorkplace
     {
         return (Halted == false
                 && TransitionToDeconstructionStage == false
-                && WorkingCharacter == null
+                && (WorkingCharacter == null || WorkingCharacter == character)
                 && (jobReservation == null || jobReservation == character)
                 && ((ConstructionMode && ConstructionStorage.AreRequirementsMet)
                     || DeconstructionMode && DeconstructionStorage.IsEmpty));
@@ -253,14 +253,6 @@ public class ConstructionSite : IWorkplace
         else
         {
             return false;
-        }
-    }
-
-    public void RenewJobReservation(Character character)
-    {
-        if (jobReservation == character)
-        {
-            jobReservationTimer = 5f;
         }
     }
 

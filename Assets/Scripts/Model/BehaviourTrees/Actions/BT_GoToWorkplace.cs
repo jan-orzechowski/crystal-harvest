@@ -12,11 +12,29 @@ public class BT_GoToWorkplace : BT_GoTo
 
     public override void WhileRunning(BT_AgentMemory am)
     {
-        if (am.Character.Reservation != null
-            && am.Character.Reservation.TargetStorage == am.Workplace.InputStorage)
+        if (am.Workplace.Building.Prototype.IsNaturalDeposit)
         {
-            am.Workplace.RenewJobReservation(am.Character);
+            if (GameManager.Instance.World.ReserveNaturalDeposit(am.Character, am.Workplace))
+            {
+                return;
+            }
+            else
+            {
+                am.Character.WorkFinished();
+            }
         }
+        else
+        {
+            if (am.Workplace.ReserveJob(am.Character) == false)
+            {
+                am.Character.WorkFinished();
+            }
+        }        
+    }
+
+    public override IAccessible GetDestinationTileOwner(BT_AgentMemory am)
+    {
+        return am.Workplace;
     }
 
     public override Tile GetDestinationTile(BT_AgentMemory am)

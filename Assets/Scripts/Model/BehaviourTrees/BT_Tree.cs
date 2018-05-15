@@ -24,7 +24,7 @@ public class BT_Tree
         am.CurrentTree = this;
 
         BT_Result result = BT_Node.TickChild(Root, am);
-        // Debug.Log(am.PrintNodesActiveThisTick());
+        // Debug.Log(am.Character.Name + " - " + am.FinalNodeLastCall + " - " + GetNodeByID(am.FinalNodeLastCall).GetType());
         return result;
     }
      
@@ -58,7 +58,8 @@ public class BT_Tree
         Subtree(new BT_Priority(),
                     new BT_IsUsingService(),
                     // Rezerwacje
-                    Subtree(new BT_MemSequence(),
+                    new BT_RemoveWorkplaceIfCannotReserve(),
+                    Subtree(new BT_Sequence(),
                         new BT_HasReservation(),
                         new BT_Inverter(new BT_AreReservedStoragesAccessible()),
                         new BT_RemoveReservation()
@@ -76,13 +77,13 @@ public class BT_Tree
                         new BT_Wait(waitBeforeEntering),
                         new BT_TakeResource()
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_HasResource(),
                         new BT_Inverter(new BT_HasReservation()),
                         new BT_FindNewStorageForResource()
                         ),
                     // Potrzeby
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_HasService(),
                         new BT_Inverter(new BT_IsServiceReady()),
                         new BT_GetTransportJobForService()
@@ -94,15 +95,15 @@ public class BT_Tree
                         new BT_Wait(waitBeforeEntering),
                         new BT_StartUsingService()
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_IsNeedHigherThan("Health", 0.2f),
                         new BT_FindService("Health")
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_IsNeedHigherThan("Health", 0.9f),
                         new BT_Die()
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_IsNeedHigherThan("Hunger", 0.5f),
                         new BT_FindService("Hunger")
                         ),
@@ -110,25 +111,23 @@ public class BT_Tree
                     Subtree(new BT_MemSequence(),
                         new BT_HasWorkplace(),
                         new BT_IsWorkplaceReadyForProduction(),
-                        new BT_ReserveJob(),
                         new BT_GoToWorkplace(),
                         new BT_Wait(waitBeforeEntering),
                         new BT_Work()
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_HasWorkplace(),
                         new BT_Inverter(new BT_IsWorkplaceReadyForProduction()),
                         new BT_GetTransportJobForWorkplace()
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_Inverter(new BT_HasWorkplace()),
                         new BT_FindTransportJob()
                         ),
-                    Subtree(new BT_MemSequence(),
+                    Subtree(new BT_Sequence(),
                         new BT_Inverter(new BT_HasReservation()),
                         new BT_FindWorkplace()
-                        ),
-                        new BT_Wait(10f)                       
+                        )                    
         );
 
         AssignIDs();

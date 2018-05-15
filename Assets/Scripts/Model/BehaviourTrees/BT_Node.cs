@@ -39,8 +39,10 @@ public abstract class BT_Node
     }
 
     public static BT_Result TickChild(BT_Node child, BT_AgentMemory am)
-    {
+    {        
         if (child.CheckPrecondition(am) == false) return BT_Result.FAILURE;
+
+        am.FinalNodeLastCall = child.ID;
 
         if (child.Activates == false)
         {

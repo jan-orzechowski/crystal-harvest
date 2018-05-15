@@ -21,6 +21,8 @@ public class BT_AgentMemory
 
     public BT_Tree CurrentTree;
 
+    public int FinalNodeLastCall;
+
     List<int> nodesActivePreviousTick = new List<int>();
     List<int> nodesActiveThisTick = new List<int>();
 

@@ -44,7 +44,7 @@ public class Character : ISelectable
     BT_AgentMemory agentMemory;
 
     public int Resource { get; protected set; }
-    public bool HasResource { get { return (Resource != 0); } }
+    public bool HasResource { get { return (Resource != -1); } }
 
     public ResourceReservation Reservation { get; protected set; }
 
@@ -60,6 +60,25 @@ public class Character : ISelectable
     static float inaccessibleTileDefaultTimer = 20f;
     Dictionary<Tile, float> inaccessibleTilesTimers;
 
+#if UNITY_EDITOR
+    class CharacterLogEntry
+    {
+        public float Time;
+        public Tile GoalTile;
+        public IAccessible TileOwner;
+        public BT_Node CallingNode;
+
+        public CharacterLogEntry(float time, Tile goalTile, 
+                                IAccessible tileOwner, BT_Node callingNode)
+        {
+            Time = time; GoalTile = goalTile;
+            TileOwner = tileOwner; CallingNode = callingNode;
+        }
+    }
+
+    List<CharacterLogEntry> log = new List<CharacterLogEntry>(1024);
+#endif
+
     public Character(string name, Tile currentTile, BT_Tree behaviourTree, bool isRobot)
     {
         Name = name;
@@ -69,6 +88,8 @@ public class Character : ISelectable
 
         CurrentTile = currentTile;
         IsRobot = isRobot;
+
+        Resource = -1;
 
         pathfinder = world.Pathfinder;
         MovementPercentage = 0f;
@@ -301,8 +322,10 @@ public class Character : ISelectable
         }
     }
     
-    public bool SetNewDestination(Tile tile, bool startMovement)
+    public bool SetNewDestination(Tile tile, bool startMovement, IAccessible tileOwner, BT_Node callingNode)
     {
+        CharacterLogEntry newLog = new CharacterLogEntry(Time.time, tile, tileOwner, callingNode);
+
         if (State == CharacterState.PreparingForDeletion
             || State == CharacterState.UsingService)
         {
@@ -318,8 +341,21 @@ public class Character : ISelectable
         if (tile == DestinationTile)
         {
             if (startMovement) State = CharacterState.Movement;
+
+#if UNITY_EDITOR 
+            log.Add(newLog);
+#endif
+
             return true;
         }
+
+        // Dodane
+        //if (tile == CurrentTile)
+        //{
+        //    DestinationTile = CurrentTile;
+        //    State = CharacterState.IdleAtDestination;
+        //    return true;
+        //}
 
         DestinationTile = tile;
 
@@ -331,6 +367,10 @@ public class Character : ISelectable
         }
      
         State = startMovement ? CharacterState.Movement : CharacterState.PreparingForCheckingPath;
+
+#if UNITY_EDITOR 
+        log.Add(newLog);
+#endif
 
         return true;                
     }
@@ -344,7 +384,7 @@ public class Character : ISelectable
             return inaccessibleTilesTimers.ContainsKey(tile);
         }
     }
-
+    
     public bool AreBothAccessTilesMarkedAsInaccessbile(IAccessible building)
     {
         return (IsTileMarkedAsInaccessible(building.GetAccessTile(false))
@@ -396,7 +436,7 @@ public class Character : ISelectable
 
     public bool AddResource(int id)
     {
-        if (Resource == 0)
+        if (Resource == -1)
         {
             Resource = id;
             return true;
@@ -409,7 +449,7 @@ public class Character : ISelectable
 
     public void RemoveResource()
     {
-        Resource = 0;
+        Resource = -1;
     }
 
     public bool SetNewReservation(ResourceReservation reservation)
@@ -435,12 +475,14 @@ public class Character : ISelectable
         State = CharacterState.IdleAtDestination;
         agentMemory.Service = null;
         agentMemory.UseServiceSecondAccessTile = false;
+        DisplayObject.CharacterUsesModule(null);
     }
     
     public void WorkFinished()
     {
         agentMemory.Workplace = null;
         agentMemory.UseWorkplaceSecondAccessTile = false;
+        DisplayObject.CharacterUsesModule(null);
     }
 
     public void InterruptActivity()
@@ -449,6 +491,7 @@ public class Character : ISelectable
         agentMemory.UseWorkplaceSecondAccessTile = false;
         agentMemory.Service = null;
         agentMemory.UseServiceSecondAccessTile = false;
+        DisplayObject.CharacterUsesModule(null);
 
         if (State == CharacterState.UsingService) State = CharacterState.IdleAtDestination;
     }

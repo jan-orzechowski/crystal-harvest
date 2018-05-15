@@ -5,6 +5,19 @@ using System;
 
 public abstract class BT_GoTo : BT_Node
 {
+    public override void Activate(BT_AgentMemory am)
+    {
+        if (am.Character.DestinationTile != GetDestinationTile(am))
+        {
+            am.Character.SetNewDestination(am.Character.CurrentTile, true, null, this);
+        }
+    }
+
+    public override void Deactivate(BT_AgentMemory am)
+    {
+        am.Character.SetNewDestination(am.Character.CurrentTile, true, null, this);
+    }
+
     public override BT_Result Tick(BT_AgentMemory am)
     {
         Tile goal = GetDestinationTile(am);
@@ -13,7 +26,7 @@ public abstract class BT_GoTo : BT_Node
 
         if (am.IsRunning(ID) == false)
         {
-            if (am.Character.SetNewDestination(goal, true))
+            if (am.Character.SetNewDestination(goal, true, GetDestinationTileOwner(am), this))
             {
                 am.Character.SetLastTileRotation(GetDestinationTileRotation(am));
 
@@ -28,10 +41,12 @@ public abstract class BT_GoTo : BT_Node
         {
             WhileRunning(am);
 
-            if (am.Character.DestinationTile == goal
-                && am.Character.State == CharacterState.IdleWithPath)
+            if (am.Character.DestinationTile == goal)
             {
-                am.Character.SetNewDestination(goal, true);
+                if (am.Character.SetNewDestination(goal, true, GetDestinationTileOwner(am), this) == false)
+                {
+                    return BT_Result.FAILURE;
+                }
             }
 
             // Debug.Log("GoTo: " + goal.ToString());
@@ -56,5 +71,6 @@ public abstract class BT_GoTo : BT_Node
 
     public abstract void WhileRunning(BT_AgentMemory am);
     public abstract Tile GetDestinationTile(BT_AgentMemory am);
+    public abstract IAccessible GetDestinationTileOwner(BT_AgentMemory am);
     public abstract Rotation GetDestinationTileRotation(BT_AgentMemory am);
 }

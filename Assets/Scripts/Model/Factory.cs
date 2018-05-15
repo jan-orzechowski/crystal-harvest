@@ -95,6 +95,8 @@ public class Factory : IWorkplace, IBuildingModule
         {
             if (RemainingProductionCycles == 0)
             {
+                WorkingCharacter.WorkFinished();
+                WorkingCharacter = null;
                 return false;
             }
 
@@ -124,6 +126,12 @@ public class Factory : IWorkplace, IBuildingModule
                     ProductionStarted = false;
                     RemainingProductionCycles -= 1;
                     workingCharacter.WorkFinished();
+
+                    if (IsNaturalDeposit)
+                    {
+                        GameManager.Instance.World.RemoveNaturalDepositReservations(workingCharacter);
+                    }
+
                     return true;
                 }
                 else
@@ -143,7 +151,6 @@ public class Factory : IWorkplace, IBuildingModule
         if (OutputStorage.IsEmpty)
         {
             OutputStorage = new Storage(Building, Prototype.ProducedResources, requiresEmptying: true);
-            GameManager.Instance.World.RegisterResources(Prototype.ProducedResources);
 
             if (ProducesRobot)
             {
@@ -176,7 +183,7 @@ public class Factory : IWorkplace, IBuildingModule
 
     public bool CanReserveJob(Character character)
     {
-        return (WorkingCharacter == null
+        return ((WorkingCharacter == null || WorkingCharacter == character)
                 && Halted == false
                 && (jobReservation == null || jobReservation == character)
                 && RemainingProductionCycles != 0
@@ -194,14 +201,6 @@ public class Factory : IWorkplace, IBuildingModule
         else
         {
             return false;
-        }
-    }
-
-    public void RenewJobReservation(Character character)
-    {
-        if (jobReservation == character)
-        {
-            jobReservationTimer = 5f;
         }
     }
 

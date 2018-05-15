@@ -31,7 +31,7 @@ public class BT_FindTransportJob : BT_Node
 
     public override void Activate(BT_AgentMemory am)
     {
-        am.SetObject(ID, new BT_FindTransportJobNodeData());           
+        am.SetObject(ID, new BT_FindTransportJobNodeData());     
     }
 
     public override void Deactivate(BT_AgentMemory am)
@@ -112,7 +112,7 @@ public class BT_FindTransportJob : BT_Node
             {
                 data.SourceStorageChecked = true;
 
-                if (am.Character.SetNewReservation(data.PotentialReservation))
+                if (am.Character.SetNewReservation(data.PotentialReservation))                                         
                 {
                     am.SetObject(ID, null);
                     return BT_Result.SUCCESS;
@@ -135,8 +135,7 @@ public class BT_FindTransportJob : BT_Node
                 am.SetTimer(ID, timeoutAfterFailure);
                 return BT_Result.FAILURE;
             }
-        }
-         
+        }         
     }
 
     class BT_FindSourceStorage : BT_Find

@@ -25,6 +25,7 @@ public class BT_GetTransportJobForWorkplace : BT_Node
         }
         else
         {
+            am.Character.WorkFinished();
             return BT_Result.FAILURE;
         }      
     }

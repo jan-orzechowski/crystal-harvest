@@ -16,6 +16,11 @@ public class BT_GoToTargetStorage : BT_GoTo
         return;
     }
 
+    public override IAccessible GetDestinationTileOwner(BT_AgentMemory am)
+    {
+        return am.Character.Reservation.TargetStorage;
+    }
+
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
         bool useSecondAccessTile = am.Character.Reservation.UseTargetStorageSecondAccessTile;

@@ -177,9 +177,8 @@ public static class StaticData
         bp.NormalizedAccessTileRotation = Rotation.N;
 
         bp.MaxStorage = 90;
-        bp.InitialStorage = new Dictionary<int, int>() { { 1, 10 }, { 2, 10 }, { 3, 10 },
-                                                         { 4, 10 }, { 5, 10 }, { 6, 10 },
-                                                         { 7, 10 }, { 8, 10 }, { 0, 10 } };
+        bp.InitialStorage = new Dictionary<int, int>() { { 1, 10 }, { 2, 10 }, { 4, 10 },
+                                                         { 5, 10 }, { 6, 10 }, { 7, 10 } };
 
         bp.CanBeDeconstructed = false;
 

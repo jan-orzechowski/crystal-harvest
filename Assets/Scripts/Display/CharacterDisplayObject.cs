@@ -168,6 +168,9 @@ public class CharacterDisplayObject : SelectableDisplayObject
         if (module == null)
         {
             Hidden = false;
+            gameObjectsDeactivated = false;
+            Collider.gameObject.SetActive(true);
+
             return;
         }
 

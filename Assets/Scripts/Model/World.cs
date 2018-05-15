@@ -22,6 +22,8 @@ public class World
     public Dictionary<int, ResourceInfo> ResourcesInfo { get; protected set; }
     public List<Storage> Storages { get; protected set; }
     public List<Factory> Factories { get; protected set; }
+    public List<Factory> NonDepositFactories { get; protected set; }
+    public List<Factory> NaturalDeposits { get; protected set; }
     public List<ConstructionSite> ConstructionSites { get; protected set; }
     public Dictionary<string, List<Service>> Services { get; protected set; }
     public List<Building> Stairs { get; protected set; }
@@ -58,6 +60,13 @@ public class World
 
     Dictionary<TilePosition, int> oreDeposits;
     Dictionary<TilePosition, int> crystalsDeposits;
+
+    Dictionary<Character, float> crystalsDepositsReservations;
+    Dictionary<Character, float> oreDepositsReservations;
+    float naturalDepositsReservationTimer = 15f;
+
+    int totalSpaceForCrystals;
+    int totalSpaceForOre;
 
     public World(int width, int length, int startingAreaXSize, int startingAreaYSize)
     {
@@ -106,6 +115,8 @@ public class World
 
         Storages = new List<Storage>();
         Factories = new List<Factory>();
+        NonDepositFactories = new List<Factory>();
+        NaturalDeposits = new List<Factory>();
         Services = new Dictionary<string, List<Service>>();
         Stairs = new List<Building>();
         Platforms = new Dictionary<Tile, Building>();
@@ -119,11 +130,14 @@ public class World
         tilesWithSlabConstructionSites = new HashSet<Tile>();
         tilesWithSlabs = new HashSet<Tile>();
 
+        crystalsDepositsReservations = new Dictionary<Character, float>();
+        oreDepositsReservations = new Dictionary<Character, float>();
+
         mapChangedThisFrame = true;
     }
 
     public void UpdateModel(float deltaTime)
-    {
+    {        
         if (mapChangedThisFrame)
         {
             Pathfinder.InvalidateGraph(modifiedTiles);
@@ -152,6 +166,25 @@ public class World
                 Services[need][i].UpdateService(deltaTime);
             }
         }
+
+        foreach (Character c in crystalsDepositsReservations.Keys.ToList())
+        {
+            crystalsDepositsReservations[c] -= deltaTime;
+            if (crystalsDepositsReservations[c] < 0f)
+            {
+                crystalsDepositsReservations.Remove(c);
+            }
+        }
+        foreach (Character c in oreDepositsReservations.Keys.ToList())
+        {
+            oreDepositsReservations[c] -= deltaTime;
+            if (oreDepositsReservations[c] < 0f)
+            {
+                oreDepositsReservations.Remove(c);
+            }
+        }
+
+        Debug.Log("oreDepositsReservations.Count: " + oreDepositsReservations.Count);
 
         for (int i = buildingsMarkedForDeconstruction.Count - 1;
              i >= 0;
@@ -227,6 +260,8 @@ public class World
             UnregisterResources(new Dictionary<int, int>(){ { c.Resource, 1 } });
             c.RemoveResource();
         }
+
+        RemoveNaturalDepositReservations(c);
 
         if (c.Reservation != null)
         {
@@ -701,8 +736,17 @@ public class World
     }
 
     void RegisterConstructedBuilding(Building building)
-    {
-        if (building.Type == "Stairs")
+    {        
+        if (building.Prototype.RestrictedResources.Contains(0) == false)
+        {
+            totalSpaceForCrystals += building.Prototype.MaxStorage;
+        }
+        else if (building.Prototype.ConsumedResources != null
+                 && building.Prototype.ConsumedResources.ContainsKey(3))
+        {            
+            totalSpaceForOre += building.Prototype.ConsumedResources[3];
+        }
+        else if (building.Type == "Stairs")
         {
             Stairs.Add(building);
         }
@@ -722,6 +766,15 @@ public class World
         {
             if (module is Factory)
             {
+                if (((Factory)module).Prototype.IsNaturalDeposit)
+                {
+                    NaturalDeposits.Add((Factory)module);
+                }
+                else
+                {
+                    NonDepositFactories.Add((Factory)module);
+                }
+
                 Factories.Add((Factory)module);
             }
             if (module is Storage)
@@ -742,7 +795,16 @@ public class World
 
     void UnregisterBuildingInDeconstruction(Building building)
     {
-        if (building.Type == "Stairs")
+        if (building.Prototype.RestrictedResources.Contains(0) == false)
+        {
+            totalSpaceForCrystals -= building.Prototype.MaxStorage;
+        }
+        else if (building.Prototype.ConsumedResources != null
+                 && building.Prototype.ConsumedResources.ContainsKey(3))
+        {
+            totalSpaceForOre -= building.Prototype.ConsumedResources[3];
+        }
+        else if (building.Type == "Stairs")
         {
             Stairs.Remove(building);
         }
@@ -754,13 +816,22 @@ public class World
         else if (building.Type == "Slab")
         {
             tilesWithSlabs.Remove(building.Tiles[0]);
-        }
+        }        
 
         IBuildingModule module = building.Module;
         if (module != null)
         {
             if (module is Factory)
             {
+                if (((Factory)module).Prototype.IsNaturalDeposit)
+                {
+                    NaturalDeposits.Remove((Factory)module);
+                }
+                else
+                {
+                    NonDepositFactories.Remove((Factory)module);
+                }
+
                 Factories.Remove((Factory)module);
             }
             if (module is Storage)
@@ -960,7 +1031,7 @@ public class World
                 if (result != null) return result;
             }
         }
-
+        
         foreach (Storage storage in Storages)
         {
             if (character.AreBothAccessTilesMarkedAsInaccessbile(storage))
@@ -1112,7 +1183,7 @@ public class World
     {
         if (ConstructionSites.Count > 0)
         {
-            for (int attempt = 0; attempt < 5; attempt++)
+            for (int attempt = 0; attempt < 20; attempt++)
             {
                 int index = UnityEngine.Random.Range(0, ConstructionSites.Count);
 
@@ -1129,23 +1200,45 @@ public class World
             }
         }
 
-        if (Factories.Count > 0)
+        if (NonDepositFactories.Count > 0)
         {
-            for (int attempt = 0; attempt < 5; attempt++)
+            for (int attempt = 0; attempt < 10; attempt++)
             {
-                int index = UnityEngine.Random.Range(0, Factories.Count);
+                int index = UnityEngine.Random.Range(0, NonDepositFactories.Count);
 
-                if (character.AreBothAccessTilesMarkedAsInaccessbile(Factories[index]))
+                Factory f = NonDepositFactories[index];
+
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(f))
                 {
-                    //if (Factories[index].GetAccessTile() != null)
-                    //    Debug.Log("inaccessible: " + Factories[index].GetAccessTile().ToString());
                     continue;
                 }
 
-                if (Factories[index].CanReserveJob(character))
+                if (f.CanReserveJob(character))
                 {
-                    return Factories[index];
+                    return f;
                 }
+            }
+        }
+
+        if (NaturalDeposits.Count > 0)
+        {
+            for (int attempt = 0; attempt < 30; attempt++)
+            {
+                int index = UnityEngine.Random.Range(0, NaturalDeposits.Count);
+
+                Factory f = NaturalDeposits[index];
+
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(f))
+                {
+                    continue;
+                }
+
+                bool crystals = f.Prototype.ProducedResources.ContainsKey(0);
+
+                if (CanReserveNaturalDeposit(character, crystals))
+                {
+                    return f;
+                }          
             }
         }
 
@@ -1253,6 +1346,63 @@ public class World
                 }
             }
         }        
+    }
+
+    bool CanReserveNaturalDeposit(Character c, bool crystals)
+    {
+        if (crystals)
+        {
+            if (crystalsDepositsReservations.ContainsKey(c)) return true;
+
+            return (totalSpaceForCrystals - AllResources[0] > crystalsDepositsReservations.Count);
+        }
+        else
+        {
+            if (oreDepositsReservations.ContainsKey(c)) return true;
+
+            return (totalSpaceForOre - AllResources[3] > oreDepositsReservations.Count);
+        }
+    }
+
+    public bool ReserveNaturalDeposit(Character c, IWorkplace deposit)
+    {
+        bool crystals = deposit.Building.Prototype.ProducedResources.ContainsKey(0);
+        return ReserveNaturalDeposit(c, crystals);
+    }
+
+    public bool ReserveNaturalDeposit(Character c, bool crystals)
+    {
+        if (CanReserveNaturalDeposit(c, crystals) == false) return false;
+
+        if (crystals)
+        {
+            if (crystalsDepositsReservations.ContainsKey(c))
+            {
+                crystalsDepositsReservations[c] = naturalDepositsReservationTimer;
+            }
+            else
+            {
+                crystalsDepositsReservations.Add(c, naturalDepositsReservationTimer);
+            }           
+        }
+        else
+        {
+            if (oreDepositsReservations.ContainsKey(c))
+            {
+                oreDepositsReservations[c] = naturalDepositsReservationTimer;
+            }
+            else
+            {
+                oreDepositsReservations.Add(c, naturalDepositsReservationTimer);
+            }
+        }
+        return true;        
+    }
+
+    public void RemoveNaturalDepositReservations(Character c)
+    {
+        if (oreDepositsReservations.Keys.Contains(c)) oreDepositsReservations.Remove(c);
+        if (crystalsDepositsReservations.Keys.Contains(c)) crystalsDepositsReservations.Remove(c);
     }
 
     #endregion

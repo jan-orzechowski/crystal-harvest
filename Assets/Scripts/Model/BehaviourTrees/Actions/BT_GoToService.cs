@@ -19,6 +19,11 @@ public class BT_GoToService : BT_GoTo
         }
     }
 
+    public override IAccessible GetDestinationTileOwner(BT_AgentMemory am)
+    {
+        return am.Service;
+    }
+
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
         return am.Service.GetAccessTile(am.UseServiceSecondAccessTile);

@@ -14,12 +14,13 @@ public class BT_FindWorkplace : BT_Find
 
     public override IAccessible GetPotentialDestination(BT_AgentMemory am, bool secondAccessTile)
     {
-        return GameManager.Instance.World.GetAvailableWorkplace(am.Character);
+        IAccessible result = GameManager.Instance.World.GetAvailableWorkplace(am.Character);
+        return result;
     }
 
     public override void Found(BT_AgentMemory am, IAccessible matchingCandidate, bool secondAccessTileUsed)
     {
         am.Workplace = matchingCandidate as IWorkplace;
-        am.UseWorkplaceSecondAccessTile = secondAccessTileUsed;
+        am.UseWorkplaceSecondAccessTile = secondAccessTileUsed;        
     }
 }

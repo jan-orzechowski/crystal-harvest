@@ -5,7 +5,7 @@ using System;
 
 public abstract class BT_Find : BT_Node 
 {
-    static float timeoutAfterNullResults = 5f;
+    static float timeoutAfterNullResults = 3f;
 
     class BT_FindNodeData
     {
@@ -15,7 +15,7 @@ public abstract class BT_Find : BT_Node
 
     public override bool CheckPrecondition(BT_AgentMemory am)
     {
-        //Debug.Log("Find Precondition: " + (am.HasTimerElapsed(ID)));
+        // Debug.Log("Find Precondition: " + this.GetType() + ": " + (am.HasTimerElapsed(ID)));
         return (am.HasTimerElapsed(ID)
                 && IsSearchNeededCondition(am));
     }
@@ -53,7 +53,8 @@ public abstract class BT_Find : BT_Node
                 && am.Character.IsTileMarkedAsInaccessible(data.PotentialDestination.GetAccessTile(true)) == false)
                 data.UseSecondAccessTile = true;
 
-            am.Character.SetNewDestination(data.PotentialDestination.GetAccessTile(data.UseSecondAccessTile), false);
+            am.Character.SetNewDestination(data.PotentialDestination.GetAccessTile(data.UseSecondAccessTile), false,
+                                           data.PotentialDestination, this);
 
             return BT_Result.RUNNING;
         }

@@ -17,6 +17,11 @@ public class BT_TakeResource : BT_Node
             {
                 return BT_Result.SUCCESS;
             }
+            else
+            {
+                // Nie mieliśmy rezerwacji - coś jest bardzo nie tak
+
+            }
         }
         return BT_Result.FAILURE;
     }

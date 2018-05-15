@@ -16,11 +16,16 @@ public class BT_GoToSourceStorage : BT_GoTo
     {
         return;
     }
-
+    
     public override Tile GetDestinationTile(BT_AgentMemory am)
     {
         bool useSecondAccessTile = am.Character.Reservation.UseSourceStorageSecondAccessTile;
         return am.Character.Reservation.SourceStorage.GetAccessTile(useSecondAccessTile);
+    }
+
+    public override IAccessible GetDestinationTileOwner(BT_AgentMemory am)
+    {
+        return am.Character.Reservation.SourceStorage;
     }
 
     public override Rotation GetDestinationTileRotation(BT_AgentMemory am)
