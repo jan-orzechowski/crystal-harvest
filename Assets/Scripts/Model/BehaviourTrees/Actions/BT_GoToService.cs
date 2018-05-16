@@ -12,11 +12,12 @@ public class BT_GoToService : BT_GoTo
 
     public override void WhileRunning(BT_AgentMemory am)
     {
-        if (am.Character.Reservation != null 
-            && am.Character.Reservation.TargetStorage == am.Service.InputStorage)
+        if (am.Service.ReserveService(am.Character) == false)
         {
-            am.Service.RenewServiceReservation(am.Character);
+            am.Character.ServiceEnded();
         }
+      
+        // am.Character.WorkFinished();
     }
 
     public override IAccessible GetDestinationTileOwner(BT_AgentMemory am)

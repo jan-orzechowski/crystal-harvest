@@ -7,7 +7,7 @@ public class BT_StartUsingService : BT_Node
 {
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        if (am.Service == null || am.Service.GetAccessTile() != am.Character.CurrentTile)
+        if (am.Service == null || am.Service.GetAccessTile(am.UseServiceSecondAccessTile) != am.Character.CurrentTile)
         {
             return BT_Result.ERROR;
         }

@@ -7,16 +7,15 @@ public class BT_FindService : BT_Find
 {
     string need;
 
-    public BT_FindService(string need) : base()
+    public BT_FindService(string need)
     {
         this.need = need;
     }
 
     public override bool IsSearchNeededCondition(BT_AgentMemory am)
     {
-        return (am.Service == null
-                || am.Character.IsTileMarkedAsInaccessible(
-                   am.Service.GetAccessTile(am.UseServiceSecondAccessTile)));
+        return ((am.Service == null || am.Character.IsTileMarkedAsInaccessible(am.Service.GetAccessTile(am.UseServiceSecondAccessTile)))
+                && GameManager.Instance.World.GetAnyAvailableService(need, am.Character) != null);
     }
 
     public override IAccessible GetPotentialDestination(BT_AgentMemory am, bool secondAccessTile)
@@ -28,5 +27,7 @@ public class BT_FindService : BT_Find
     {
         am.Service = matchingCandidate as Service;
         am.UseServiceSecondAccessTile = secondAccessTileUsed;
+
+        am.Character.WorkFinished();
     }    
 }

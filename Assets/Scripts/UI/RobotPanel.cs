@@ -16,7 +16,7 @@ public class RobotPanel : MonoBehaviour
     {
         if (Character == null) return;
 
-        ConditionBar.SetFillPercentage(Character.Needs["Condition"]);
+        ConditionBar.SetFillPercentage(1f - Character.Needs["Condition"]);
     }
 
     public void SetRobot(Character c)

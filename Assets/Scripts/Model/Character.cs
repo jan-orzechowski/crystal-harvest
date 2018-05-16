@@ -349,14 +349,6 @@ public class Character : ISelectable
             return true;
         }
 
-        // Dodane
-        //if (tile == CurrentTile)
-        //{
-        //    DestinationTile = CurrentTile;
-        //    State = CharacterState.IdleAtDestination;
-        //    return true;
-        //}
-
         DestinationTile = tile;
 
         if (Path != null && Path.Goal != tile)
@@ -554,8 +546,15 @@ public class Character : ISelectable
 
         s += "Reservation: " + ((Reservation != null) ? Reservation.ToString() : "") + "\n";
 
-        s += "Workplace: " + ((agentMemory.Workplace != null && agentMemory.Workplace.Building != null) 
-                                ? agentMemory.Workplace.Building.Name : "") + "\n";
+        if (agentMemory.Workplace != null && agentMemory.Workplace.Building != null)
+        {
+            s += "Workplace: " + agentMemory.Workplace.Building.Name 
+                + agentMemory.Workplace.Building.GetAccessTile().ToString() + "\n";
+        }
+        else
+        {
+            s += "Workplace: null \n";
+        }
 
         foreach (string need in Needs.Keys)
         {

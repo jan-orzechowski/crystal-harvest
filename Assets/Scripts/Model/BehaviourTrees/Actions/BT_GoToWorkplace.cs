@@ -14,7 +14,8 @@ public class BT_GoToWorkplace : BT_GoTo
     {
         if (am.Workplace.Building.Prototype.IsNaturalDeposit)
         {
-            if (GameManager.Instance.World.ReserveNaturalDeposit(am.Character, am.Workplace))
+            if (GameManager.Instance.World.ReserveNaturalDeposit(am.Character, am.Workplace)
+                && am.Workplace.ReserveJob(am.Character))
             {
                 return;
             }

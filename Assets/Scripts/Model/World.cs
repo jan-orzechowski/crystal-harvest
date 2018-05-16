@@ -950,6 +950,26 @@ public class World
     {
         ResourceReservation result = null;
 
+        foreach (string need in Services.Keys)
+        {
+            List<Service> services = Services[need];
+
+            if (services.Count > 0)
+            {
+                for (int attempt = 0; attempt < 5; attempt++)
+                {
+                    int index = UnityEngine.Random.Range(0, services.Count);
+                    Service service = services[index];
+
+                    if (character.AreBothAccessTilesMarkedAsInaccessbile(service))
+                        continue;
+
+                    result = GetReservationForFillingInput(character, service.InputStorage);
+                    if (result != null) return result;
+                }
+            }
+        }
+
         if (ConstructionSites.Count > 0)
         {
             for (int attempt = 0; attempt < 5; attempt++)
@@ -1136,6 +1156,23 @@ public class World
             }
         }
 
+        foreach (string need in Services.Keys)
+        {
+            List<Service> services = Services[need];
+
+            foreach (Service serivce in services)
+            {
+                if (character.AreBothAccessTilesMarkedAsInaccessbile(serivce))
+                    continue;
+
+                if (serivce.InputStorage.RequiresEmptying)
+                {
+                    result = GetReservationForEmptying(character, serivce.InputStorage);
+                    if (result != null) return result;
+                }
+            }
+        }
+
         return result;
     }
 
@@ -1153,6 +1190,42 @@ public class World
 
         foreach (int resourceID in storageToEmpty.Resources.Keys)
         {
+            // Czy jakaś usługa nie potrzebuje tego zasobu?
+            foreach (string need in Services.Keys)
+            {
+                List<Service> services = Services[need];
+
+                foreach(Service serviceToCheck in services)
+                {
+                    if (character.AreBothAccessTilesMarkedAsInaccessbile(serviceToCheck)
+                        || serviceToCheck.InputStorage.RequiresEmptying) continue;
+
+                    bool serviceToCheckSecondAccessTile = (character.IsTileMarkedAsInaccessible(
+                                                            serviceToCheck.GetAccessTile(false)));
+
+                    if (serviceToCheck.InputStorage.AreRequirementsMet == false
+                        && serviceToCheck.InputStorage.MissingResources.ContainsKey(resourceID))
+                    {
+                        if (storageToEmpty.CanReserveResource(resourceID, character)
+                            && serviceToCheck.InputStorage.CanReserveFreeSpace(resourceID, character))
+                        {
+                            newReservation = new ResourceReservation(
+                                storageToEmpty,
+                                storageToEmptySecondAccessTile,
+                                serviceToCheck.InputStorage,
+                                serviceToCheckSecondAccessTile,
+                                resourceID);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (newReservation != null)
+            {
+                break;
+            }
+
             // Czy jakaś fabryka nie potrzebuje tego zasobu?
             foreach (Factory factoryToCheck in Factories)
             {
@@ -1327,7 +1400,7 @@ public class World
 
                 bool crystals = f.Prototype.ProducedResources.ContainsKey(0);
 
-                if (CanReserveNaturalDeposit(character, crystals))
+                if (CanReserveNaturalDeposit(character, crystals) && f.CanReserveJob(character))
                 {
                     return f;
                 }          
@@ -1351,6 +1424,20 @@ public class World
             }
         }
         return result;
+    }
+
+    public Service GetAnyAvailableService(string need, Character character)
+    {
+        if (Services.ContainsKey(need) == false || Services[need].Count == 0) return null;
+        foreach (Service s in Services[need])
+        {
+            if (s.CanReserveService(character)
+                && character.IsTileMarkedAsInaccessible(s.GetAccessTile()) == false)
+            {
+                return s;
+            }
+        }
+        return null;
     }
 
     public Service GetClosestAvailableService(string need, Character character)

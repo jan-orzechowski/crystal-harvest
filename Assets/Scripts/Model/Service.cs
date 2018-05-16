@@ -60,7 +60,11 @@ public class Service : IBuildingModule
             reservationTimer -= deltaTime;
             if (reservationTimer <= 0f)
             {
-                reservation = null;
+                if (reservation != null)
+                {
+                    reservation.ServiceEnded();
+                    reservation = null;
+                }                
             }
         }
     }
@@ -98,7 +102,8 @@ public class Service : IBuildingModule
     {
         return (haltedForDeconstruction == false
                 && (reservation == character || reservation == null) 
-                && ServicedCharacter == null);
+                && ServicedCharacter == null
+                && InputStorage.AreRequirementsMet);
     }
 
     public bool ReserveService(Character character)
@@ -114,15 +119,7 @@ public class Service : IBuildingModule
             return false;
         }
     }
-
-    public void RenewServiceReservation(Character character)
-    {
-        if (reservation == character)
-        {
-            reservationTimer = 5f;
-        }
-    }
-
+   
     public void StartDeconstructionPreparation()
     {
         if (ServicedCharacter != null)

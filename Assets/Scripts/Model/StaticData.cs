@@ -189,9 +189,10 @@ public static class StaticData
         bp.NormalizedAccessTilePosition = new TilePosition(1, 0, 0);
         bp.NormalizedAccessTileRotation = Rotation.N;
 
-        bp.MaxStorage = 90;
-        bp.InitialStorage = new Dictionary<int, int>() { { 1, 10 }, { 2, 10 }, { 4, 10 },
-                                                         { 5, 10 }, { 6, 10 }, { 7, 10 } };
+        bp.MaxStorage = 24;
+        bp.InitialStorage = new Dictionary<int, int>() { { 1, 12 },
+                                                         { 5, 6 },
+                                                         { 7, 6 } };
 
         bp.CanBeDeconstructed = false;
 
@@ -478,10 +479,10 @@ public static class StaticData
         bp.StartingRotation = Rotation.N;
 
         bp.ConstructionTime = 5f;
-        bp.ConstructionResources = new Dictionary<int, int>() { { 1, 3 } };
-        bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 1, 2 } };
+        bp.ConstructionResources = new Dictionary<int, int>() { { 1, 2 } };
+        bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 1, 1 } };
 
-        bp.ProductionTime = 5f;
+        bp.ProductionTime = 10f;
         bp.ConsumedResources = new Dictionary<int, int>() { { 3, 1 } };
         bp.ProducedResources = new Dictionary<int, int>() { { 1, 2 } };
 
