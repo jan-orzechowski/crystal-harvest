@@ -17,7 +17,11 @@ public class CameraManager : MonoBehaviour
     float moveMultiplier = 0.25f;
     float zoomMultiplier = 1f;
     float rotationSpeed = 1f;
-   
+
+    float maxDistanceFromMap = -2f;
+
+    World world;
+
     void Start()
     {
         mainCamera = Camera.main.transform;        
@@ -36,6 +40,8 @@ public class CameraManager : MonoBehaviour
             Quaternion.identity);
 
         mainCamera.RotateAround(cameraRig.position, cameraRig.up, 45f);
+
+        world = GameManager.Instance.World;
     }
 
     void Update()
@@ -52,7 +58,17 @@ public class CameraManager : MonoBehaviour
         Vector3 translation = input * moveMultiplier;
         translation = Quaternion.Euler(0, mainCamera.rotation.eulerAngles.y, 0) * translation;
 
-        cameraRig.position = cameraRig.position + translation;
+        Vector3 potentialNewPosition = cameraRig.position + translation;
+
+        potentialNewPosition.x = Mathf.Clamp(potentialNewPosition.x,
+                                             min: -maxDistanceFromMap,
+                                             max: world.XSize + maxDistanceFromMap);
+
+        potentialNewPosition.z = Mathf.Clamp(potentialNewPosition.z,
+                                             min: -maxDistanceFromMap,
+                                             max: world.YSize + maxDistanceFromMap);
+
+        cameraRig.position = potentialNewPosition;
     }
 
     void ZoomCamera()

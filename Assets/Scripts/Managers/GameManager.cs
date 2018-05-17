@@ -8,16 +8,31 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; protected set; }
     public World World;
 
-    public GameObject DebugGroundTilePrefab;
-    public GameObject DebugRockTilePrefab;
+    public GameObject RockTileCubePrefab;
+    public GameObject RockTilePlanePrefab;
+
+    [Space(10)]
+
+    public GameObject MapBorderPrefab;
+    public float MapBorderWidth;
+
+    public GameObject GroundPlane;
+    public float GroundPlaneWidthOutsideBorders;
+
+    [Space(10)]
+
     public GameObject CharacterPrefab;
     public GameObject RobotPrefab;
+
+    [Space(10)]
 
     public GameObject TilesParent;
     public GameObject BuildingsParent;
     public GameObject CharactersParent;
     public GameObject PreviewsParent;
     public GameObject ConstructionSitesParent;
+
+    [Space(10)]
 
     public Tooltip Tooltip;
     public DialogBox DialogBox;
@@ -67,18 +82,76 @@ public class GameManager : MonoBehaviour
                 World.CreateNewCharacter(new TilePosition(x, y, 1), false);
             }
         }
-        //World.CreateNewCharacter(new TilePosition(World.StartingAreaX + 1, World.StartingAreaY, 1), false);
-        //World.CreateNewCharacter(new TilePosition(World.StartingAreaX + 2, World.StartingAreaY, 1), false);
 
         World.InstantBuild(new TilePosition(World.StartingAreaX + 1 , World.StartingAreaY + 2, 1), 
                           Rotation.N, World.GetBuildingPrototype("Spaceship"));
 
         World.PlaceNaturalResources();
+
+        ShowMapBorders();
+
+        ResizeGroundPlane();
     }
 
     void Update ()
     {
         World.UpdateModel(Time.deltaTime);
+    }
+
+    void ShowMapBorders()
+    {
+        // W
+        ShowBorder(xPos: -MapBorderWidth,
+                   yPos: -MapBorderWidth,
+                   xSize: MapBorderWidth,
+                   ySize: (World.YSize + (2 * MapBorderWidth))
+                   );
+
+        // S
+        ShowBorder(xPos: 0f,
+                   yPos: -MapBorderWidth,
+                   xSize: World.XSize,
+                   ySize: MapBorderWidth
+                   );
+
+        // N
+        ShowBorder(xPos: 0f,
+                   yPos: World.YSize,
+                   xSize: World.XSize,
+                   ySize: MapBorderWidth
+                   );
+
+        // E
+        ShowBorder(xPos: World.XSize,
+                   yPos: -MapBorderWidth,
+                   xSize: MapBorderWidth,
+                   ySize: (World.YSize + (2 * MapBorderWidth))
+                   );
+    }
+
+    void ShowBorder(float xPos, float yPos, float xSize, float ySize)
+    {
+        GameObject border = Instantiate(MapBorderPrefab);
+
+        Vector3 borderPosition = new Vector3(xPos, 0f, yPos);
+        border.transform.SetPositionAndRotation(borderPosition, Quaternion.identity);
+
+        border.transform.localScale = new Vector3(xSize, 1f, ySize);
+
+        border.transform.SetParent(TilesParent.transform);
+    }
+
+    void ResizeGroundPlane()
+    {
+        float xSize = World.XSize + (2f * GroundPlaneWidthOutsideBorders);
+        float ySize = World.YSize + (2f * GroundPlaneWidthOutsideBorders);
+       
+        float xPos = (World.XSize / 2f);
+        float yPos = (World.YSize / 2f);
+
+        GroundPlane.transform.SetPositionAndRotation(new Vector3(xPos, 0f, yPos), Quaternion.identity);
+
+        GroundPlane.transform.localScale = new Vector3(xSize, 1f, ySize);
     }
 
     public CharacterDisplayObject GenerateDisplayForCharacter(Character c, bool isRobot)
@@ -308,21 +381,33 @@ public class GameManager : MonoBehaviour
             {
                 for (int y = 0; y < World.YSize; y++)
                 {
-                    if (World.Tiles[x, y, height].Type == TileType.Sand)
+                    Tile tile = World.Tiles[x, y, height];
+
+                    if (tile.Type == TileType.Sand)
                     {
-                        GameObject.Instantiate(
-                            DebugGroundTilePrefab,
-                            new Vector3(x, height * LevelHeightOffset, y),
-                            Quaternion.identity,
-                            TilesParent.transform);
+                        continue;
                     }
-                    else if (World.Tiles[x, y, height].Type == TileType.Rock)
+                    else if (tile.Type == TileType.Rock)
                     {
-                        GameObject.Instantiate(
-                            DebugRockTilePrefab,
-                            new Vector3(x, height * LevelHeightOffset, y),
-                            Quaternion.identity,
-                            TilesParent.transform);
+                        if ((tile.GetNorthNeighbour() != null && tile.GetNorthNeighbour().Type == TileType.Rock)
+                             && (tile.GetEastNeighbour() != null && tile.GetEastNeighbour().Type == TileType.Rock)
+                             && (tile.GetSouthNeighbour() != null && tile.GetSouthNeighbour().Type == TileType.Rock)
+                             && (tile.GetWestNeighbour() != null && tile.GetWestNeighbour().Type == TileType.Rock))
+                        {
+                            GameObject.Instantiate(
+                                RockTilePlanePrefab,
+                                new Vector3(x, height * LevelHeightOffset, y),
+                                Quaternion.identity,
+                                TilesParent.transform);
+                        }
+                        else
+                        {
+                            GameObject.Instantiate(
+                                RockTileCubePrefab,
+                                new Vector3(x, height * LevelHeightOffset, y),
+                                Quaternion.identity,
+                                TilesParent.transform);
+                        }                        
                     }
                 }   
             }
