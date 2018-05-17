@@ -77,13 +77,19 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
         {
             float y = Mathf.Lerp(startingBuildingYPosition,
                                  finalBuildingYPosition,
-                                 ConstructionSite.GetStageCompletionPercentage() * 1.42f);
+                                 ConstructionSite.GetStageCompletionPercentage());
 
             SetBuilidingYPosition(y);
 
             if (constructionWithoutScaffolding)
             {
                 SetColliderUpperPlanePosition(OverrideUpperPlanePosition + y);
+            }
+            else
+            if (ConstructionSite.TransitionToDeconstructionStage)
+            {
+                SetScaffoldingUpperPlanePosition(finalScaffoldingUpperPlanePosition);
+                SetColliderUpperPlanePosition(finalScaffoldingUpperPlanePosition - scaffoldingColliderHeightDifference);
             }
         }
         else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)

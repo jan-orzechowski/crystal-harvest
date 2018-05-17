@@ -25,6 +25,8 @@ public class FactoryPanel : MonoBehaviour
 
     public GameObject RobotIconPrefab;
 
+    bool firstShow;
+
     void Awake()
     {
         ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
@@ -76,38 +78,45 @@ public class FactoryPanel : MonoBehaviour
             ProgressBar.SetFillPercentage(Factory.GetCompletionPercentage());
         }
        
-        SelectionPanel.HideResourceIcons(icons);
-
-        if (Factory.Prototype.ConsumedResources != null)
+        if (firstShow || Factory.InputStorage.Changed || Factory.OutputStorage.Changed)
         {
-            tempRequiredResources = SelectionPanel.GetResourcesList(Factory.Prototype.ConsumedResources);
-            tempRequiredResources.Sort();
-            tempResources = SelectionPanel.GetResourcesList(Factory.InputStorage.Resources);
-            SelectionPanel.ShowIconsWithRequirements(inputSlots, tempRequiredResources, tempResources, icons);
-        }
+            if (firstShow) firstShow = false;
+            if (Factory.InputStorage.Changed) Factory.InputStorage.Changed = false;
+            if (Factory.OutputStorage.Changed) Factory.OutputStorage.Changed = false;
 
-        if (Factory.Prototype.ProducedResources != null)
-        {
-            tempRequiredResources = SelectionPanel.GetResourcesList(Factory.Prototype.ProducedResources);    
-            tempRequiredResources.Sort();
+            SelectionPanel.HideResourceIcons(icons, this.transform);
 
-            tempResources = SelectionPanel.GetResourcesList(Factory.OutputStorage.Resources);           
-            foreach (Character c in Factory.OutputStorage.ReservedResources.Keys)
+            if (Factory.Prototype.ConsumedResources != null)
             {
-                tempResources.Add(Factory.OutputStorage.ReservedResources[c]);
+                tempRequiredResources = SelectionPanel.GetResourcesList(Factory.Prototype.ConsumedResources);
+                tempRequiredResources.Sort();
+                tempResources = SelectionPanel.GetResourcesList(Factory.InputStorage.Resources);
+                SelectionPanel.ShowIconsWithRequirements(inputSlots, tempRequiredResources, tempResources, icons);
             }
 
-            SelectionPanel.ShowIconsWithRequirements(outputSlots, tempRequiredResources, tempResources, icons);
-        }
+            if (Factory.Prototype.ProducedResources != null)
+            {
+                tempRequiredResources = SelectionPanel.GetResourcesList(Factory.Prototype.ProducedResources);
+                tempRequiredResources.Sort();
 
-        if (Factory.ProducesRobot)
-        {
-            GameObject icon = SimplePool.Spawn(RobotIconPrefab,
-                                           outputSlots[0].transform.position,
-                                           Quaternion.identity);
-            icon.transform.SetParent(outputSlots[0].transform);
-            icons.Add(icon);
-        }
+                tempResources = SelectionPanel.GetResourcesList(Factory.OutputStorage.Resources);
+                foreach (Character c in Factory.OutputStorage.ReservedResources.Keys)
+                {
+                    tempResources.Add(Factory.OutputStorage.ReservedResources[c]);
+                }
+
+                SelectionPanel.ShowIconsWithRequirements(outputSlots, tempRequiredResources, tempResources, icons);
+            }
+
+            if (Factory.ProducesRobot)
+            {
+                GameObject icon = SimplePool.Spawn(RobotIconPrefab,
+                                               outputSlots[0].transform.position,
+                                               Quaternion.identity);
+                icon.transform.SetParent(outputSlots[0].transform);
+                icons.Add(icon);
+            }
+        }        
     }
 
     public void SetFactory(Factory f)
@@ -116,6 +125,7 @@ public class FactoryPanel : MonoBehaviour
         if (f != null && f.Building != null)
         {
             TextSubpanel.text = f.Building.Name;
+            firstShow = true;
             Update();
         }        
     }    

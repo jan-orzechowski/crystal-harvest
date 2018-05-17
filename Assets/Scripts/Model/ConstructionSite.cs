@@ -46,6 +46,7 @@ public class ConstructionSite : IWorkplace
     public bool Halted { get; protected set; }
     public bool CanAbort { get; protected set; }
     public bool TransitionToDeconstructionStage { get; protected set; }
+    bool doNotLoadDeconstructionResources;
 
     public ConstructionSite(Building building, BuildingPrototype buildingPrototype, bool deconstruction)
     {
@@ -93,13 +94,30 @@ public class ConstructionSite : IWorkplace
         {
             if (ConstructionStorage.IsWaitingForResources() == false)
             {
-                DeconstructionStorage = new Storage(Building, null, true);
+                DeconstructionStorage = new Storage(Building, ConstructionStorage.Resources, true);
                 ConstructionStorage = new StorageWithRequirements(Building, null);
+                doNotLoadDeconstructionResources = true;
 
                 if (Stage == ConstructionStage.Construction)
                 {
-                    Stage = ConstructionStage.Deconstruction;
-                    stageTimeLeft = scaffoldingStageTime - stageTimeLeft;
+                    if (Prototype.ConstructionWithoutScaffolding)
+                    {
+                        Stage = ConstructionStage.Deconstruction;
+                        stageTimeLeft = constructionTime - stageTimeLeft;
+                    }
+                    else
+                    {
+                        if (GetStageCompletionPercentage() < 0.05f)
+                        {
+                            Stage = ConstructionStage.ScaffoldingDeconstruction;
+                            stageTimeLeft = scaffoldingStageTime;
+                        }
+                        else
+                        {
+                            Stage = ConstructionStage.Deconstruction;
+                            stageTimeLeft = scaffoldingStageTime - stageTimeLeft;
+                        }
+                    }                    
                 }
                 else if (Stage == ConstructionStage.ScaffoldingConstruction)
                 {
@@ -180,7 +198,7 @@ public class ConstructionSite : IWorkplace
                 else
                 {
                     Stage = ConstructionStage.ScaffoldingDeconstruction;
-                    LoadResourcesFromDeconstruction();
+                    if (doNotLoadDeconstructionResources == false) LoadResourcesFromDeconstruction();
                     stageTimeLeft = scaffoldingStageTime;
                 }                
             }

@@ -23,6 +23,10 @@ public class ConstructionPanel : MonoBehaviour
     public Text Text;
     public Text SubText;
 
+    bool firstShow;
+    ConstructionStage lastStage;
+    bool lastTransitionState;
+
     void Awake ()
     {
         ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
@@ -55,21 +59,41 @@ public class ConstructionPanel : MonoBehaviour
 
         if (ConstructionSite.Building != null)
         {            
-            if (ConstructionSite.Stage == ConstructionStage.Construction)
-                Text.text = GameManager.Instance.GetText("s_construction_site");
-            else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
-                Text.text = GameManager.Instance.GetText("s_scaffolding_construction");
-            else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
-                Text.text = GameManager.Instance.GetText("s_deconstruction_site");
-            else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
-                Text.text = GameManager.Instance.GetText("s_scaffolding_deconstruction");
+            if (firstShow 
+                || lastStage != ConstructionSite.Stage 
+                || lastTransitionState != ConstructionSite.TransitionToDeconstructionStage)
+            {
+                if (ConstructionSite.TransitionToDeconstructionStage)
+                {
+                    if (ConstructionSite.Stage == ConstructionStage.Construction)
+                        Text.text = GameManager.Instance.GetText("s_deconstruction_site");
+                    else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
+                        Text.text = GameManager.Instance.GetText("s_scaffolding_deconstruction");
+                }
+                else
+                {
+                    if (ConstructionSite.Stage == ConstructionStage.Construction)
+                        Text.text = GameManager.Instance.GetText("s_construction_site");
+                    else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction)
+                        Text.text = GameManager.Instance.GetText("s_scaffolding_construction");
+                    else if (ConstructionSite.Stage == ConstructionStage.Deconstruction)
+                        Text.text = GameManager.Instance.GetText("s_deconstruction_site");
+                    else if (ConstructionSite.Stage == ConstructionStage.ScaffoldingDeconstruction)
+                        Text.text = GameManager.Instance.GetText("s_scaffolding_deconstruction");
+                }
+            }           
 
             SubText.text = ConstructionSite.Building.Name;
         }
 
         float percentage = ConstructionSite.GetStageCompletionPercentage();
 
-        if (ConstructionSite.DeconstructionMode) percentage = 1f - percentage;
+        if (ConstructionSite.DeconstructionMode
+            || (ConstructionSite.ConstructionMode 
+                && ConstructionSite.TransitionToDeconstructionStage))
+        {
+            percentage = 1f - percentage;
+        }
 
         if (ConstructionSite.Halted)
         {
@@ -81,43 +105,62 @@ public class ConstructionPanel : MonoBehaviour
             ProgressBar.SetFillPercentage(percentage);
         }
 
-        SelectionPanel.HideResourceIcons(icons);
-
-        if (ConstructionSite.ConstructionMode)
+        if (firstShow 
+            || ConstructionSite.InputStorage.Changed
+            || ConstructionSite.OutputStorage.Changed
+            || lastStage != ConstructionSite.Stage
+            || lastTransitionState != ConstructionSite.TransitionToDeconstructionStage)
         {
-            if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction
-                && ConstructionSite.Prototype.ResourcesForScaffoldingConstruction != null)
-            {
-                tempRequiredResources = SelectionPanel.GetResourcesList(ConstructionSite.Prototype.ResourcesForScaffoldingConstruction);
-                tempRequiredResources.Sort();
-                tempResources = SelectionPanel.GetResourcesList(ConstructionSite.InputStorage.Resources);
-                SelectionPanel.ShowIconsWithRequirements(slots, tempRequiredResources, tempResources, icons);
-            }
-            else if (ConstructionSite.Prototype.ConstructionResources != null)
-            {
-                tempRequiredResources = SelectionPanel.GetResourcesList(ConstructionSite.Prototype.ConstructionResources);
-                tempRequiredResources.Sort();
-                tempResources = SelectionPanel.GetResourcesList(ConstructionSite.InputStorage.Resources);
-                SelectionPanel.ShowIconsWithRequirements(slots, tempRequiredResources, tempResources, icons);
-            }           
-        }
-        else 
-        if (ConstructionSite.DeconstructionMode)
-        {            
-            tempResources = SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.Resources);
-            tempResources.AddRange(SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.ReservedResources));
-            tempResources.Sort();
+            if (firstShow) firstShow = false;
+            if (ConstructionSite.InputStorage.Changed) ConstructionSite.InputStorage.Changed = false;
+            if (ConstructionSite.OutputStorage.Changed) ConstructionSite.OutputStorage.Changed = false;
 
-            for (int index = 0; index < tempResources.Count; index++)
+            lastStage = ConstructionSite.Stage;
+            lastTransitionState = ConstructionSite.TransitionToDeconstructionStage;
+
+            SelectionPanel.HideResourceIcons(icons, this.transform);
+
+            if (ConstructionSite.ConstructionMode)
             {
-                SelectionPanel.ShowResourceIcon(tempResources[index], slots[index], false, icons);
-            }           
+                if (ConstructionSite.Stage == ConstructionStage.ScaffoldingConstruction
+                    && ConstructionSite.Prototype.ResourcesForScaffoldingConstruction != null)
+                {
+                    tempRequiredResources = SelectionPanel.GetResourcesList(ConstructionSite.Prototype.ResourcesForScaffoldingConstruction);
+                    tempRequiredResources.Sort();
+                    tempResources = SelectionPanel.GetResourcesList(ConstructionSite.InputStorage.Resources);
+                    SelectionPanel.ShowIconsWithRequirements(slots, tempRequiredResources, tempResources, icons);
+                }
+                else if (ConstructionSite.Prototype.ConstructionResources != null)
+                {
+                    tempRequiredResources = SelectionPanel.GetResourcesList(ConstructionSite.Prototype.ConstructionResources);
+                    tempRequiredResources.Sort();
+                    tempResources = SelectionPanel.GetResourcesList(ConstructionSite.InputStorage.Resources);
+                    SelectionPanel.ShowIconsWithRequirements(slots, tempRequiredResources, tempResources, icons);
+                }
+            }
+            else
+            if (ConstructionSite.DeconstructionMode)
+            {
+                tempResources = SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.Resources);
+                tempResources.AddRange(SelectionPanel.GetResourcesList(ConstructionSite.OutputStorage.ReservedResources));
+                tempResources.Sort();
+
+                for (int index = 0; index < tempResources.Count; index++)
+                {
+                    SelectionPanel.ShowResourceIcon(tempResources[index], slots[index], false, icons);
+                }
+            }
         }
     }
 
     public void SetConstructionSite(ConstructionSite cs)
     {
         ConstructionSite = cs;
-        if (cs != null) Update();
+        if (cs != null)
+        {
+            lastTransitionState = cs.TransitionToDeconstructionStage;
+            firstShow = true;
+            Update();
+        }
     }
 }

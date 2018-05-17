@@ -27,11 +27,11 @@ public class Character : ISelectable
     public CharacterState State { get; protected set; }
 
     public float MovementPercentage { get; protected set; }
-    float movementSpeed = 9f; // 3f
+    float movementSpeed = 9f;
 
     public Quaternion CurrentRotation { get; protected set; }
     Quaternion targetRotation;
-    float degreesPerSecond = 450f; // 270
+    float degreesPerSecond = 350f;
 
     bool isLastTileRotationSet;
     Quaternion lastTileRotation;
@@ -372,7 +372,6 @@ public class Character : ISelectable
         if (tile == null) return true;
         else
         {
-            // Debug.Log(tile.ToString() + " inaccessible: " + inaccessibleTilesTimers.ContainsKey(tile));
             return inaccessibleTilesTimers.ContainsKey(tile);
         }
     }
@@ -393,7 +392,6 @@ public class Character : ISelectable
         {
             inaccessibleTilesTimers.Add(tile, inaccessibleTileDefaultTimer);
         }
-        // Debug.Log(tile.ToString() + " - oznaczone jako niedostępne");
     }
 
     public void SetLastTileRotation(Rotation rotation)

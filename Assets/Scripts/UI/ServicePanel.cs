@@ -21,6 +21,8 @@ public class ServicePanel : MonoBehaviour
 
     public Text TextSubpanel;
 
+    bool firstShow;
+
     void Awake()
     {
         icons = new List<GameObject>();
@@ -39,14 +41,25 @@ public class ServicePanel : MonoBehaviour
 
         ProgressBar.SetFillPercentage(Service.GetServicePercentage());
 
-        SelectionPanel.HideResourceIcons(icons);
-
-        if (Service.Prototype.ConsumedResources != null)
+        if (firstShow || Service.InputStorage.Changed)
         {
-            tempRequiredResources = SelectionPanel.GetResourcesList(Service.Prototype.ConsumedResources);
-            tempResources = SelectionPanel.GetResourcesList(Service.InputStorage.Resources);
-            SelectionPanel.ShowIconsWithRequirements(new List<ResourceIconSlot>() { InputSlot }, 
-                                                     tempRequiredResources, tempResources, icons);
+            if (firstShow) firstShow = false;
+            if (Service.InputStorage.Changed) Service.InputStorage.Changed = false;
+
+            SelectionPanel.HideResourceIcons(icons, this.transform);
+
+            if (Service.Prototype.ConsumedResources != null)
+            {
+                tempRequiredResources = SelectionPanel.GetResourcesList(Service.Prototype.ConsumedResources);
+                tempResources = SelectionPanel.GetResourcesList(Service.InputStorage.Resources);
+                foreach (Character c in Service.InputStorage.ReservedResources.Keys)
+                {
+                    tempResources.Add(Service.InputStorage.ReservedResources[c]);
+                }
+
+                SelectionPanel.ShowIconsWithRequirements(new List<ResourceIconSlot>() { InputSlot },
+                                                         tempRequiredResources, tempResources, icons);
+            }
         }
     }
 
@@ -55,6 +68,7 @@ public class ServicePanel : MonoBehaviour
         Service = s;
         if (s != null)
         {
+            firstShow = true;
             if (s.Building != null) TextSubpanel.text = s.Building.Name;
             Update();
         }

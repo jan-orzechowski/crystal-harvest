@@ -28,6 +28,12 @@ public class BuildingModulePanel : MonoBehaviour
     {
         if (changed == false) return;
 
+        if (Module is ConstructionSite)
+        {
+            ConstructionSite site = (ConstructionSite)Module;
+            canBeDeconstructed = (site.ConstructionMode && site.TransitionToDeconstructionStage == false);
+        }
+
         if (canBeHalted && canBeDeconstructed)
         {
             deconstructButtonOffset = FirstButtonOffset;
@@ -132,8 +138,10 @@ public class BuildingModulePanel : MonoBehaviour
         {
             if (Module is ConstructionSite)
             {
+                ConstructionSite site = (ConstructionSite)Module;
+
                 canBeHalted = true;
-                if (((ConstructionSite)Module).ConstructionMode)
+                if (site.ConstructionMode && site.TransitionToDeconstructionStage == false)
                 {
                     canBeDeconstructed = true;
                 }

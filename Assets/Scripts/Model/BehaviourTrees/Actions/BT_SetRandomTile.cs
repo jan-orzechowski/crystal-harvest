@@ -44,7 +44,7 @@ public class BT_SetRandomTile : BT_Node
 
             newTile = world.GetTileFromPosition(new TilePosition(x, y, 1));
 
-            if (Tile.CheckPassability(newTile) == false)
+            if (CheckTile(newTile, world) == false)
             {
                 continue;
             }
@@ -54,7 +54,7 @@ public class BT_SetRandomTile : BT_Node
             }
         }
         
-        if (newTile != null && Tile.CheckPassability(newTile))
+        if (newTile != null && CheckTile(newTile, world))
         {
             am.RandomTile = newTile;
 
@@ -75,4 +75,11 @@ public class BT_SetRandomTile : BT_Node
             return BT_Result.FAILURE;
         }      
     }    
+
+    bool CheckTile(Tile tile, World world)
+    {
+        return (Tile.CheckPassability(tile)
+                && world.IsCharacterOnTile(tile) == false
+                && tile.ReservedForAccess == false);
+    }
 }

@@ -684,14 +684,17 @@ public class World
     {
         ConstructionSite deconstructionSite = null;
 
+        bool existingSite = false;
+
         // Na wypadek, gdybyśmy zlecali rozbiórkę na nieukończonej budowie
         foreach (ConstructionSite site in ConstructionSites)
         {
             if (site.Building == building)
             {
+                existingSite = true;
                 site.CancelConstruction();
-                deconstructionSite = site;                       
-            }
+                deconstructionSite = site;                                       
+            }            
         }
 
         if (deconstructionSite == null)
@@ -728,6 +731,16 @@ public class World
 
         GameManager.Instance.RemoveDisplayForBuilding(building);
         GameManager.Instance.ShowConstructionSite(deconstructionSite);
+
+        if (existingSite && deconstructionSite.GetCompletionPercentage() < 0.01f)
+        {
+            foreach (Character c in deconstructionSite.InputStorage.PendingResources.Keys)
+            {
+                c.ReservationUsed();
+            }
+
+            FinishDeconstruction(deconstructionSite);
+        }
     }
 
     public void FinishDeconstruction(ConstructionSite site)
@@ -1003,7 +1016,7 @@ public class World
         return result;
     }
 
-    public ResourceReservation GetReservationForFillingInput(Character character, StorageWithRequirements storageToFill)
+    ResourceReservation GetReservationForFillingInput(Character character, StorageWithRequirements storageToFill)
     {
         if (character.Reservation != null
             || storageToFill.AreRequirementsMet
@@ -1176,7 +1189,7 @@ public class World
         return result;
     }
 
-    public ResourceReservation GetReservationForEmptying(Character character, Storage storageToEmpty)
+    ResourceReservation GetReservationForEmptying(Character character, Storage storageToEmpty)
     {
         if (character.Reservation != null || storageToEmpty.IsEmpty)
         {

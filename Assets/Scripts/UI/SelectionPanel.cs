@@ -117,7 +117,7 @@ public class SelectionPanel : MonoBehaviour
     public void HidePanels()
     {
         if (PanelVisible == false) return;
-
+        
         ServicePanel.gameObject.SetActive(false);
         ServicePanel.SetService(null);
 
@@ -253,14 +253,13 @@ public class SelectionPanel : MonoBehaviour
         icons.Add(icon);
     }
 
-    public static void HideResourceIcons(List<GameObject> icons)
+    public static void HideResourceIcons(List<GameObject> icons, Transform hiddenIconsParent)
     {
         foreach (GameObject icon in icons)
         {
-            icon.transform.SetParent(null);
+            icon.transform.SetParent(hiddenIconsParent);
             SimplePool.Despawn(icon);
         }
         icons.Clear();
     }
-
 }

@@ -12,14 +12,13 @@ public class StorageSubpanel : MonoBehaviour
     List<GameObject> icons;
 
     public Text TextSubpanel;
-    
-    void Awake () 
+
+    public Transform IconsParent;
+        
+    void Awake() 
     {
         ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
-        if (slotsArray == null || slotsArray.Length == 0)
-        {
-            Debug.Log("Panel nie ma żadnych slotów na zasoby!");
-        }
+
         slots = new List<ResourceIconSlot>(slotsArray);
         slots.OrderBy(slot => slot.Order);
         
@@ -30,7 +29,6 @@ public class StorageSubpanel : MonoBehaviour
     {
         if (slotNumber >= slots.Count)
         {
-            //Debug.Log("Chcemy pokazać więcej zasobów niż panel na to pozwala!");
             return;
         }
 
@@ -42,13 +40,15 @@ public class StorageSubpanel : MonoBehaviour
         GameObject icon = SimplePool.Spawn(iconPrefab, 
                                            slot.transform.position, 
                                            Quaternion.identity);
-        icon.transform.SetParent(slot.transform);
+
+        if (icon.transform.parent != IconsParent) icon.transform.SetParent(IconsParent);
+
         icons.Add(icon);
     }
 
     public void HideResourceIcons()
     {
-        foreach(GameObject icon in icons)
+        foreach (GameObject icon in icons)
         {
             SimplePool.Despawn(icon);
         }

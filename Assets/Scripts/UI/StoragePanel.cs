@@ -62,9 +62,9 @@ public class StoragePanel : MonoBehaviour
     {
         Storage = s;
 
-        TwoRowsSubpanel.gameObject.SetActive(false);
-        ThreeRowsSubpanel.gameObject.SetActive(false);
-        FourRowsSubpanel.gameObject.SetActive(false);
+        if (TwoRowsSubpanel.gameObject.activeSelf) TwoRowsSubpanel.gameObject.SetActive(false);
+        if (ThreeRowsSubpanel.gameObject.activeSelf) ThreeRowsSubpanel.gameObject.SetActive(false);
+        if (FourRowsSubpanel.gameObject.activeSelf) FourRowsSubpanel.gameObject.SetActive(false);
 
         if (Storage != null)
         {
@@ -72,10 +72,10 @@ public class StoragePanel : MonoBehaviour
             else if (Storage.MaxCapacity <= 18) activePanel = ThreeRowsSubpanel;
             else activePanel = FourRowsSubpanel;
 
-            activePanel.gameObject.SetActive(true);
-
             activePanel.TextSubpanel.text = Storage.Building.Name;
            
+            activePanel.gameObject.SetActive(true);
+
             ShowResourcesInStorage();
         }
     }

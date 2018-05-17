@@ -28,13 +28,23 @@ public class OtherBuildingPanel : MonoBehaviour
         if (building != null)
         {
             Text.text = building.Name;
+
+            if (building.Prototype.CanBeDeconstructed)
+            {
+                DeconstructButton.SetActive(true);
+            }
+            else
+            {
+                DeconstructButton.SetActive(false);
+            }
+
             Update();
         }        
     }
 
     public void DeconstructButtonAction()
     {
-        if (building == null) return;
+        if (building == null || building.Prototype.CanBeDeconstructed == false) return;
         
         GameManager.Instance.World.MarkBuildingForDenconstruction(building);
         building = null;                

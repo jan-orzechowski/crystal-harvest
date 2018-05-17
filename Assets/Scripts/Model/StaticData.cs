@@ -304,6 +304,8 @@ public static class StaticData
         bp.ConstructionResources = new Dictionary<int, int>() { { 1, 1 } };
         bp.ConstructionWithoutScaffolding = true;
 
+        bp.CanBeDeconstructed = false;
+
         prototypes.Add(bp);
 
 
