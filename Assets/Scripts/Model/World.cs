@@ -75,6 +75,10 @@ public class World
 
     public float TimeLeft { get; protected set; }
 
+    List<string> unusedCharacterNames;
+    string[] letters;
+    string[] digits;
+
     public World(int width, int length, int startingAreaXSize, int startingAreaYSize)
     {
         XSize = width;
@@ -143,6 +147,10 @@ public class World
         mapChangedThisFrame = true;
 
         TimeLeft = StaticData.TimeLimit;
+
+        unusedCharacterNames = StaticData.LoadNames();
+        letters = StaticData.LoadLetters();
+        digits = StaticData.LoadDigits();
     }
 
     public void UpdateModel(float deltaTime)
@@ -303,6 +311,15 @@ public class World
             "s_start_confirmation", action);
     }
 
+    void CharacterDeathAction(string characterName)
+    {
+        Action action = () => {};
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_character_death" + characterName,
+            "s_start_confirmation", action);
+    }
+
 #region CharactersManagement
 
     public bool CreateNewCharacter(TilePosition tilePosition, bool isRobot)
@@ -314,13 +331,13 @@ public class World
             Character c;
             if (isRobot)
             {
-                c = new Character(("Robot #" + robotCounter), t, robotBehaviourTree, isRobot);
+                c = new Character(GetRobotName(), t, robotBehaviourTree, isRobot);
                 robotCounter++;
                 RobotNumber++;
             }
             else
             {
-                c = new Character(("Human #" + humanCounter), t, humanBehaviourTree, isRobot);
+                c = new Character(GetCharacterName(), t, humanBehaviourTree, isRobot);
                 humanCounter++;
                 HumanNumber++;
             }
@@ -331,6 +348,31 @@ public class World
             return true;
         }
         return false;
+    }
+
+    string GetCharacterName()
+    {
+        int randomIndex = UnityEngine.Random.Range(0, unusedCharacterNames.Count);
+        string result = unusedCharacterNames[randomIndex];
+        unusedCharacterNames.RemoveAt(randomIndex);
+        return result;
+    }
+
+    string GetRobotName()
+    {
+        string result =   GetRandomStringFromArray(letters)
+                        + GetRandomStringFromArray(letters)
+                        + "-"
+                        + GetRandomStringFromArray(digits)
+                        + GetRandomStringFromArray(digits);
+
+        return result;
+    }
+
+    string GetRandomStringFromArray(string[] array)
+    {
+        int randomIndex = UnityEngine.Random.Range(0, array.Length);
+        return array[randomIndex];
     }
 
     public void MarkCharacterForDeletion(Character c)

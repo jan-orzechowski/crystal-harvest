@@ -699,4 +699,52 @@ public static class StaticData
 
         return prototypes;
     }
+
+    public static List<string> LoadNames()
+    {
+        return new List<string>()
+        {
+            "Agata",
+            "Aleksandra",
+            "Alicja",
+            "Anna",
+            "Antonina",
+            "Bartosz",
+            "Daniel",
+            "Filip",
+            "Jakub",
+            "Joanna",
+            "Karolina",
+            "Katarzyna",
+            "Konrad",
+            "Konstanty",
+            "Maciej",
+            "Magdalena",
+            "Marcin",
+            "Marta",
+            "Michał",
+            "Monika",
+            "Natalia",
+            "Paweł",
+            "Piotr",
+            "Roman",
+            "Ryszard",
+            "Szymon",
+            "Urszula"
+        };
+    }
+
+    public static string[] LoadLetters()
+    {
+        return new string[]{ "A", "B", "C", "D", "E", "F",
+                             "G", "H", "I", "J", "K", "L",
+                             "M", "N", "O", "P", "R", "S",
+                             "T", "U", "W", "Y", "Z" };
+    }
+
+    public static string[] LoadDigits()
+    {
+        return new string[]{ "0", "1", "2", "3", "4",
+                             "5", "6", "7", "8", "9" };
+    }
 }
