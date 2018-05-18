@@ -6,6 +6,9 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; protected set; }
+
+    public SoundManager SoundManager;
+
     public World World;
 
     public GameObject RockTileCubePrefab;
@@ -65,6 +68,8 @@ public class GameManager : MonoBehaviour
         if (Instance != null) { Debug.LogError("Dwie instancje klasy GameManager!"); }
         Instance = this;
 
+        SoundManager.Muted = true;
+
         strings = StaticData.LoadStrings();
 
         int startingAreaXSize = 5;
@@ -91,6 +96,8 @@ public class GameManager : MonoBehaviour
         ShowMapBorders();
 
         ResizeGroundPlane();
+
+        SoundManager.Muted = false;
     }
 
     void Update ()

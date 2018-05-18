@@ -132,7 +132,7 @@ public class InputManager : MonoBehaviour
         }
 
         if (Input.GetMouseButtonDown(0)) // LPM
-        {            
+        {
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 // Kursor jest nad elementem UI
@@ -389,6 +389,8 @@ public class InputManager : MonoBehaviour
             SelectedObject = selectedObject;
             SelectionPanel.gameObject.SetActive(true);
             SelectionPanel.AssignSelectedObject(selectedObject);
+
+            GameManager.Instance.SoundManager.PlaySelectSound();
         }
         else
         {

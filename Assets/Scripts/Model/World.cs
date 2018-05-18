@@ -75,6 +75,8 @@ public class World
 
     public float TimeLeft { get; protected set; }
 
+    bool gameEnded;
+
     List<string> unusedCharacterNames;
     string[] letters;
     string[] digits;
@@ -244,21 +246,26 @@ public class World
             }
         }
 
-        if (CheckVictoryConditions())
+        if (gameEnded == false)
         {
-            Paused = true;
-            CannotUnpause = true;
+            if (CheckVictoryConditions())
+            {
+                Paused = true;
+                CannotUnpause = true;
+                gameEnded = true;
 
-            VictoryAction();
-        }
+                VictoryAction();
+            }
 
-        if (CheckDefeatConditions())
-        {
-            Paused = true;
-            CannotUnpause = true;
+            if (CheckDefeatConditions())
+            {
+                Paused = true;
+                CannotUnpause = true;
+                gameEnded = true;
 
-            DefeatAction();
-        }
+                DefeatAction();
+            }
+        }       
     }
 
     bool CheckVictoryConditions()
@@ -274,9 +281,11 @@ public class World
   
     void VictoryAction()
     {
+        GameManager.Instance.SoundManager.PlayVictorySound();
+
         Action action = () =>
         {
-            Debug.Log("VICTORY - QUIT");
+            Debug.Log("VICTORY - QUIT");            
             Application.Quit();
         };
 
@@ -287,6 +296,8 @@ public class World
 
     void DefeatAction()
     {
+        GameManager.Instance.SoundManager.PlayDefeatSound();
+
         Action action = () =>
         {
             Debug.Log("DEFEAT - QUIT");
@@ -610,6 +621,8 @@ public class World
             ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype, false);
             ConstructionSites.Add(newConstructionSite);
 
+            GameManager.Instance.SoundManager.PlayStartConstructionSound();
+
             GameManager.Instance.ShowConstructionSite(newConstructionSite);
 
             // Debug.Log("Nowy plac budowy: " + newBuilding.Tiles[0].Position.ToString());
@@ -771,6 +784,11 @@ public class World
 
         Debug.Log("Usunięto budynek: " + building.Tiles[0].Position.ToString());
 
+        if (existingSite == false)
+        {
+            GameManager.Instance.SoundManager.PlayStartDeconstructionSound();
+        }
+
         GameManager.Instance.RemoveDisplayForBuilding(building);
         GameManager.Instance.ShowConstructionSite(deconstructionSite);
 
@@ -852,7 +870,9 @@ public class World
         site.Building = null;
         ConstructionSites.Remove(site);
 
-        GameManager.Instance.ShowBuilding(buildingToConstruct, positionForBuildingDisplay);
+        GameManager.Instance.SoundManager.PlayFinishConstructionSound();
+
+        GameManager.Instance.ShowBuilding(buildingToConstruct, positionForBuildingDisplay);        
 
         return buildingToConstruct;
     }

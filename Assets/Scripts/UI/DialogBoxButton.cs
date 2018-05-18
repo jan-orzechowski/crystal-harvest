@@ -18,6 +18,8 @@ public class DialogBoxButton : MonoBehaviour
             Button.onClick.AddListener(() => { action(); });
         }
         Button.onClick.AddListener(() => { DialogBox.ButtonClicked(); });
+
+        Button.onClick.AddListener(() => { GameManager.Instance.SoundManager.PlayButtonSound(); });
     }
 
     public void SetText(string stringKey)
