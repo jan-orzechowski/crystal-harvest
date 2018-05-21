@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.792}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Display: {fileID: 224519648288895246}
   Text: {fileID: 114697539974286962}
-  Timer: 1
+  Timer: 0.3
 --- !u!114 &114935611307392152
 MonoBehaviour:
   m_ObjectHideFlags: 1

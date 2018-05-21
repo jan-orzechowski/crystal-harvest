@@ -100,8 +100,8 @@ public static class StaticData
 
             {"s_cancel_deconstruction_button", "Przywróć budynek" },
             {"s_deconstruction_button", "Dekonstrukcja" },
-            {"s_halt_button", "Wstrzymaj działanie" },
-            {"s_start_button", "Wznów działanie" },
+            {"s_halt_button", "Wstrzymaj" },
+            {"s_start_button", "Wznów" },
             {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
 
             // Inne
