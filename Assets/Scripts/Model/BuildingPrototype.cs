@@ -59,6 +59,8 @@ public class BuildingPrototype
 
     public Dictionary<int, int> ResourcesForScaffoldingConstruction = new Dictionary<int, int>() { { 1, 1 } };
 
+    public Dictionary<string, float> NeedGrowthPerSecond = null;
+
     public string NeedFulfilled = null;
     public float NeedFulfillmentPerSecond;
     public float ServiceDuration;

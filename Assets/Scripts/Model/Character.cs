@@ -510,12 +510,40 @@ public class Character : ISelectable
 
     void UpdateNeeds(float deltaTime)
     {
-        foreach (string need in Needs.Keys.ToList())
+        foreach (string need in NeedGrowthPerSecond.Keys)
         {
-            if (NeedGrowthPerSecond.ContainsKey(need))
+            if (Needs.ContainsKey(need))
+            {
                 Needs[need] = Needs[need] + (NeedGrowthPerSecond[need] * deltaTime);
-            if (Needs[need] > 1f)
-                Needs[need] = 1f;
+
+                if (Needs[need] > 1f)
+                    Needs[need] = 1f;
+
+                if (Needs[need] < 0f)
+                    Needs[need] = 0f;
+            }            
+        }
+       
+        if (agentMemory.Workplace != null
+            && agentMemory.Workplace.WorkingCharacter == this
+            && (agentMemory.Workplace is ConstructionSite) == false
+            && agentMemory.Workplace.Building.Prototype.NeedGrowthPerSecond != null)
+        {
+            Dictionary<string, float> workplaceNeedsGrowth = agentMemory.Workplace.Building.Prototype.NeedGrowthPerSecond;
+
+            foreach (string need in workplaceNeedsGrowth.Keys)
+            {
+                if (Needs.ContainsKey(need))
+                {
+                    Needs[need] = Needs[need] + (workplaceNeedsGrowth[need] * deltaTime);
+
+                    if (Needs[need] > 1f)
+                        Needs[need] = 1f;
+
+                    if (Needs[need] < 0f)
+                        Needs[need] = 0f;
+                }
+            }
         }
     }
 

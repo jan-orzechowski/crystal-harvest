@@ -6,6 +6,7 @@ using System;
 public interface IWorkplace : IBuildingModule, IAccessible
 {
     bool Work(float deltaTime, Character character);
+    Character WorkingCharacter { get; }
     bool CanReserveJob(Character character);
     bool ReserveJob(Character character);
     StorageWithRequirements InputStorage { get; }

@@ -24,7 +24,6 @@ public class ConstructionSite : IWorkplace
     float constructionTime;
     
     float stageTimeLeft;
-    static float scaffoldingStageTime = 5f;
 
     public ConstructionStage Stage { get; protected set; }
 
@@ -78,7 +77,7 @@ public class ConstructionSite : IWorkplace
             {
                 Stage = ConstructionStage.ScaffoldingConstruction;
                 LoadRequiredResourcesForScaffoldingConstruction();
-                stageTimeLeft = scaffoldingStageTime;
+                stageTimeLeft = StaticData.ScaffoldingConstructionTime;
             }
         }
 
@@ -110,12 +109,12 @@ public class ConstructionSite : IWorkplace
                         if (GetStageCompletionPercentage() < 0.05f)
                         {
                             Stage = ConstructionStage.ScaffoldingDeconstruction;
-                            stageTimeLeft = scaffoldingStageTime;
+                            stageTimeLeft = StaticData.ScaffoldingConstructionTime;
                         }
                         else
                         {
                             Stage = ConstructionStage.Deconstruction;
-                            stageTimeLeft = scaffoldingStageTime - stageTimeLeft;
+                            stageTimeLeft = StaticData.ScaffoldingConstructionTime - stageTimeLeft;
                         }
                     }                    
                 }
@@ -199,7 +198,7 @@ public class ConstructionSite : IWorkplace
                 {
                     Stage = ConstructionStage.ScaffoldingDeconstruction;
                     if (doNotLoadDeconstructionResources == false) LoadResourcesFromDeconstruction();
-                    stageTimeLeft = scaffoldingStageTime;
+                    stageTimeLeft = StaticData.ScaffoldingConstructionTime;
                 }                
             }
             else if (Stage == ConstructionStage.ScaffoldingDeconstruction)
@@ -303,7 +302,7 @@ public class ConstructionSite : IWorkplace
             return result;
         }
 
-        float totalTime = constructionTime + scaffoldingStageTime;
+        float totalTime = constructionTime + StaticData.ScaffoldingConstructionTime;
         if (ConstructionMode)
         {
             if (Stage == ConstructionStage.ScaffoldingConstruction)
@@ -324,7 +323,7 @@ public class ConstructionSite : IWorkplace
             }
             else
             {
-                result = (totalTime - stageTimeLeft - scaffoldingStageTime) / totalTime;
+                result = (totalTime - stageTimeLeft - StaticData.ScaffoldingConstructionTime) / totalTime;
             }
         }
         return result;
@@ -336,7 +335,7 @@ public class ConstructionSite : IWorkplace
         if (Stage == ConstructionStage.ScaffoldingConstruction 
             || Stage == ConstructionStage.ScaffoldingDeconstruction)        
         {
-            result = (scaffoldingStageTime - stageTimeLeft) / scaffoldingStageTime;
+            result = (StaticData.ScaffoldingConstructionTime - stageTimeLeft) / StaticData.ScaffoldingConstructionTime;
         }
         else
         {
