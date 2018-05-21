@@ -9620,51 +9620,13 @@ MonoBehaviour:
     - {fileID: 1472038265881708, guid: b8d871d054ee9544aa5056dd12dc2e27, type: 2}
     - {fileID: 1623521728760584, guid: 95c624fd1da116046b49a65fd7a7e9eb, type: 2}
   buildingDisplay:
-  - Type: Debug1
-    Model: {fileID: 1490998683373778, guid: 3c4e5da4c08d4734c99dc5825c187bd0, type: 2}
-    PreviewModel: {fileID: 1604322685696820, guid: e96ac9d83dd77a4458b68b1835432496,
-      type: 2}
-    InvalidPreviewModel: {fileID: 1604322685696820, guid: 92d467907f7f0a44b9277c59c9b81bd3,
-      type: 2}
-    ConstructionSiteObject: {fileID: 1226485674601198, guid: 735c7af4d120d8a40b985a104772b323,
-      type: 2}
-  - Type: Debug2
-    Model: {fileID: 1916034819458400, guid: 0ba8989ff92a62b4d9947109bc8091a6, type: 2}
-    PreviewModel: {fileID: 1734733986697778, guid: 64fb881f94b1fc64db2d990bb74317c2,
-      type: 2}
-    InvalidPreviewModel: {fileID: 1734733986697778, guid: 3e53791b2ce2e26498bf4c4a4b8d651b,
-      type: 2}
-    ConstructionSiteObject: {fileID: 1226485674601198, guid: 735c7af4d120d8a40b985a104772b323,
-      type: 2}
-  - Type: Debug3
-    Model: {fileID: 1459769429501506, guid: 1be4d57ee9f48a34b8e44d3393ed69b2, type: 2}
-    PreviewModel: {fileID: 1604322685696820, guid: e96ac9d83dd77a4458b68b1835432496,
-      type: 2}
-    InvalidPreviewModel: {fileID: 1734733986697778, guid: 3e53791b2ce2e26498bf4c4a4b8d651b,
-      type: 2}
-    ConstructionSiteObject: {fileID: 0}
-  - Type: Debug4a
-    Model: {fileID: 1185680338318534, guid: c8c3712b326dae641a86d8e80ecdee64, type: 2}
-    PreviewModel: {fileID: 1604322685696820, guid: e96ac9d83dd77a4458b68b1835432496,
-      type: 2}
-    InvalidPreviewModel: {fileID: 1604322685696820, guid: 92d467907f7f0a44b9277c59c9b81bd3,
-      type: 2}
-    ConstructionSiteObject: {fileID: 0}
-  - Type: Debug4
-    Model: {fileID: 1916614293267664, guid: 413d3f24650a9ee49834ff5a1489b5dd, type: 2}
-    PreviewModel: {fileID: 1888558582551836, guid: 1bf5efd5dea54aa4cbb53bd03bde1272,
-      type: 2}
-    InvalidPreviewModel: {fileID: 1888558582551836, guid: 0231bc164cd94c247aba9bee2c795c11,
-      type: 2}
-    ConstructionSiteObject: {fileID: 1144676222160638, guid: ebca9ec68a0331640bb6767aa2aa3a9c,
-      type: 2}
   - Type: Spaceship
     Model: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62, type: 2}
     PreviewModel: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62,
       type: 2}
     InvalidPreviewModel: {fileID: 1122472251191492, guid: a043f3c11bd35fa4ba3b17df3c2a9a62,
       type: 2}
-    ConstructionSiteObject: {fileID: 1226485674601198, guid: 735c7af4d120d8a40b985a104772b323,
+    ConstructionSiteObject: {fileID: 1870656732697960, guid: 45c8457462b95e9499b1cc4c6a86d9e8,
       type: 2}
   - Type: Stairs
     Model: {fileID: 1818891217503810, guid: 65b4431958a6d6f44bb127c1f61b3c9c, type: 2}
@@ -9688,7 +9650,7 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1031653621254846, guid: 2f694046e8e1fd84e9372a53dc15097c,
       type: 2}
-    ConstructionSiteObject: {fileID: 1894504185982576, guid: d95090b5781c99944a715ca5fefd382a,
+    ConstructionSiteObject: {fileID: 1870656732697960, guid: 45c8457462b95e9499b1cc4c6a86d9e8,
       type: 2}
   - Type: CrystalStorage
     Model: {fileID: 1276329934884626, guid: 7e33992e193facb4a9e462c56171d0b3, type: 2}
@@ -9800,14 +9762,15 @@ MonoBehaviour:
       type: 2}
     InvalidPreviewModel: {fileID: 1868306155113864, guid: 5711f9d54c8fbca4f9640f241b2dcc6f,
       type: 2}
-    ConstructionSiteObject: {fileID: 0}
+    ConstructionSiteObject: {fileID: 1870656732697960, guid: 45c8457462b95e9499b1cc4c6a86d9e8,
+      type: 2}
   - Type: CrystalsDeposit
     Model: {fileID: 1997610235815650, guid: bda5acece89547c418385dc676bdeab7, type: 2}
     PreviewModel: {fileID: 1695652693116728, guid: bca330d17b42ee846bf73528db6e4996,
       type: 2}
     InvalidPreviewModel: {fileID: 1031653621254846, guid: 2f694046e8e1fd84e9372a53dc15097c,
       type: 2}
-    ConstructionSiteObject: {fileID: 1894504185982576, guid: d95090b5781c99944a715ca5fefd382a,
+    ConstructionSiteObject: {fileID: 1870656732697960, guid: 45c8457462b95e9499b1cc4c6a86d9e8,
       type: 2}
   PlatformTopsPrefabs:
     Top_0Sides: {fileID: 1911229798160760, guid: 1bfcea99c2a75ca429f605dcd997a65c,
