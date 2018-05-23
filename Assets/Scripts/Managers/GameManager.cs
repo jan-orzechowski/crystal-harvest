@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; protected set; }
 
     public SoundManager SoundManager;
+    public TextManager TextManager;
 
     public World World;
 
@@ -61,16 +62,14 @@ public class GameManager : MonoBehaviour
     GameObject accessArrow;
     GameObject secondAccessArrow;
 
-    Dictionary<string, string> strings;
-
     void OnEnable()
     {
         if (Instance != null) { Debug.LogError("Dwie instancje klasy GameManager!"); }
         Instance = this;
 
-        SoundManager.Muted = true;
+        TextManager = new TextManager();
 
-        strings = StaticData.LoadStrings();
+        SoundManager.Muted = true;
 
         int startingAreaXSize = 5;
         int startingAreaYSize = 8;
@@ -461,14 +460,14 @@ public class GameManager : MonoBehaviour
 
     public string GetText(string key)
     {
-        if (strings.ContainsKey(key)) return strings[key];
-        else return (key + " - NO TEXT FOUND");
+        return TextManager.GetText(key);
     }
 
     public string GetResourceName(int resourceID)
     {
         if (World.ResourcesInfo.ContainsKey(resourceID))
-            return GetText(World.ResourcesInfo[resourceID].Name);
+            return TextManager.GetText(World.ResourcesInfo[resourceID].Name);
         else return (resourceID + " - NO RESOURCE INFO");
     }
+
 }

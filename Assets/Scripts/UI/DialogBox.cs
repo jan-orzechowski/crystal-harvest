@@ -6,9 +6,13 @@ using System;
 
 public class DialogBox : MonoBehaviour 
 {
-    public GameObject Window;
+    public SoundManager SoundManager;
+
+    public GameObject Window;    
 
     public Text DialogText;
+
+    TextManager textManager;
 
     public GameObject TwoOptionsObject;
     public DialogBoxButton TwoOptionsButtonA;
@@ -21,6 +25,9 @@ public class DialogBox : MonoBehaviour
 
     void Start () 
     {
+        if (GameManager.Instance != null) textManager = GameManager.Instance.TextManager;
+        else if (TitleSceneManager.Instance != null) textManager = TitleSceneManager.Instance.TextManager;
+
         HideDialogBox();
     }
    
@@ -43,7 +50,7 @@ public class DialogBox : MonoBehaviour
                               string optionATextKey, Action optionAAction, 
                               string optionBTextKey, Action optionBAction)
     {
-        SetDialogText(GameManager.Instance.GetText(descriptionTextKey));
+        SetDialogText(textManager.GetText(descriptionTextKey));
 
         Window.SetActive(true);
         Blocker.SetActive(true);
@@ -51,10 +58,10 @@ public class DialogBox : MonoBehaviour
         OneOptionObject.SetActive(false);
         TwoOptionsObject.SetActive(true);
 
-        TwoOptionsButtonA.SetText(optionATextKey);
+        TwoOptionsButtonA.SetText(textManager.GetText(optionATextKey));
         TwoOptionsButtonA.SetAction(optionAAction);
 
-        TwoOptionsButtonB.SetText(optionBTextKey);
+        TwoOptionsButtonB.SetText(textManager.GetText(optionBTextKey));
         TwoOptionsButtonB.SetAction(optionBAction);
     }
 
@@ -69,7 +76,7 @@ public class DialogBox : MonoBehaviour
         TwoOptionsObject.SetActive(false);
         OneOptionObject.SetActive(true);
 
-        OneOptionButton.SetText(optionTextKey);
+        OneOptionButton.SetText(textManager.GetText(optionTextKey));
         OneOptionButton.SetAction(optionAction);
     }
 

@@ -5,6 +5,8 @@ using System;
 
 public static class StaticData
 {
+    public const string Version = "0.1";
+
     public const float TimeLimit = (60f * 15f);
 
     public const int WorldWidth = 50;
@@ -35,6 +37,23 @@ public static class StaticData
     {
         return new Dictionary<string, string>()
         {
+            // Menu
+            {"s_new_game_button", "Nowa gra" },
+            {"s_credits_button", "O grze" },
+            {"s_quit_button", "Wyjście" },
+            {"s_quit_prompt", "Czy na pewno chcesz opuścić grę?" },
+            {"s_retreat_prompt", "Czy na pewno chcesz przerwać misję?" },
+
+            // O grze
+            { "s_credits_programming", "Projekt i programowanie" },
+            { "s_credits_icons", "Ikony" },
+            { "s_credits_music", "Muzyka" },
+            { "s_credits_sound", "Efekty dźwiękowe" },
+            { "s_credits_fonts", "Fonty" },
+            { "s_credits_gfx", "Grafika" },
+            { "s_credits_scripts", "Dodatkowe skrypty" },
+            { "s_credits_palette", "Paleta" },
+
             // Wiadomości
             {"s_start_text", "Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy" },
             {"s_victory_text", "Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo " },

@@ -193,9 +193,20 @@ public class InputManager : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (SidePanel.PanelVisible == false
+                && SelectionPanel.PanelVisible == false
+                && buildMode == false
+                && SelectedObject == null)
+            {
+                GameManager.Instance.World.QuitAction();
+            }
+        }
+
         if (Input.GetMouseButtonDown(1) // PPM
         || Input.GetKeyDown(KeyCode.Escape))
-        {
+        {            
             if (SidePanel.PanelVisible) SidePanel.HidePanels();
             if (SelectionPanel.PanelVisible) SelectionPanel.HidePanels();
 
@@ -209,11 +220,6 @@ public class InputManager : MonoBehaviour
             {
                 buildModeManager.Rotate();
             }
-        }
-
-        if (Input.GetMouseButton(2)) // ŚPM
-        {
-            
         }
     }
 

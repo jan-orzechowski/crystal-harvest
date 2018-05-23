@@ -280,15 +280,14 @@ public class World
         return (HumanNumber <= 0
                 || TimeLeft <= 0f);
     }
-  
+
     void VictoryAction()
     {
         GameManager.Instance.SoundManager.PlayVictorySound();
 
         Action action = () =>
         {
-            Debug.Log("VICTORY - QUIT");            
-            Application.Quit();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("title_scene");
         };
 
         GameManager.Instance.DialogBox.ShowDialogBox(
@@ -302,8 +301,7 @@ public class World
 
         Action action = () =>
         {
-            Debug.Log("DEFEAT - QUIT");
-            Application.Quit();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("title_scene");
         };
 
         GameManager.Instance.DialogBox.ShowDialogBox(
@@ -326,14 +324,34 @@ public class World
 
     void CharacterDeathAction(string characterName)
     {
-        Action action = () => {};
-
         GameManager.Instance.DialogBox.ShowDialogBox(
             "s_character_death" + characterName,
-            "s_start_confirmation", action);
+            "s_start_confirmation", null);
     }
 
-#region CharactersManagement
+    public void QuitAction()
+    {
+        if (gameEnded) return;
+
+        Action quitAction = () =>
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("title_scene");
+        };
+
+        Action unpauseAction = () =>
+        {
+            if (gameEnded) return;
+            Paused = false;
+            CannotUnpause = false;
+        };
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_retreat_prompt",
+            "s_yes", quitAction,
+            "s_no", unpauseAction);
+    }
+
+    #region CharactersManagement
 
     public bool CreateNewCharacter(TilePosition tilePosition, bool isRobot)
     {

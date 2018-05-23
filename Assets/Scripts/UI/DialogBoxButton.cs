@@ -19,11 +19,11 @@ public class DialogBoxButton : MonoBehaviour
         }
         Button.onClick.AddListener(() => { DialogBox.ButtonClicked(); });
 
-        Button.onClick.AddListener(() => { GameManager.Instance.SoundManager.PlayButtonSound(); });
+        Button.onClick.AddListener(() => { DialogBox.SoundManager.PlayButtonSound(); });
     }
 
-    public void SetText(string stringKey)
+    public void SetText(string text)
     {
-        Text.text = GameManager.Instance.GetText(stringKey);
+        Text.text = text;
     }
 }
