@@ -216,10 +216,10 @@ namespace Pathfinding
                     Tile highTile = stairs.GetAccessTile();
                     Tile lowTile = stairs.GetAccessTile(getSecond: true);
 
-                    Edge egdeUp = new Edge(tileNodeMap[highTile], 6f);
+                    Edge egdeUp = new Edge(tileNodeMap[highTile], StaticData.StairsMovementCost);
                     tileNodeMap[lowTile].Edges.Add(egdeUp);
 
-                    Edge edgeDown = new Edge(tileNodeMap[lowTile], 6f);
+                    Edge edgeDown = new Edge(tileNodeMap[lowTile], StaticData.StairsMovementCost);
                     tileNodeMap[highTile].Edges.Add(edgeDown);
                 }          
 

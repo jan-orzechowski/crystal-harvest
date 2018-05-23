@@ -6,8 +6,8 @@ using System;
 public class MapGenerator
 {    
     int rockPercentage = 45;
-    float minFinalRockPercentage = 0.10f;
-    float maxFinalRockPercentage = 0.15f;
+    float minFinalRockPercentage = 0.08f;
+    float maxFinalRockPercentage = 0.12f;
     
     int smoothingIterations = 4;
 
@@ -47,7 +47,7 @@ public class MapGenerator
         this.startingAreaXSize = startingAreaXSize;
         this.startingAreaYSize = startingAreaYSize;
 
-        int attempts = 20;        
+        int attempts = 50;        
         for (int a = 0; a < attempts; a++)
         {
             int seed = (System.DateTime.Now.GetHashCode() + attempts).GetHashCode();

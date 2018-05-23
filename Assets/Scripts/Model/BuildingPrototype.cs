@@ -7,7 +7,7 @@ public class BuildingPrototype
 {
     public string Type;
 
-    public bool CanBeBuiltOnSand = true;
+    public bool CanBeBuiltOnSand = false;
     public bool CanBeBuiltOnRock = false;
     public bool CanBeBuiltOnPlatform = false;
 

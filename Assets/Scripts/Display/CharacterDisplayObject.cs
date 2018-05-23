@@ -89,8 +89,10 @@ public class CharacterDisplayObject : SelectableDisplayObject
                 gameObjectsDeactivated = true;
             }
             
-            
-            hideTimer -= Time.deltaTime;
+            if (GameManager.Instance.World.Paused == false)
+            {
+                hideTimer -= Time.deltaTime;
+            }
 
             if (hideTimer > 0f)
             {

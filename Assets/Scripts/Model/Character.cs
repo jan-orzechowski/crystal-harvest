@@ -232,15 +232,22 @@ public class Character : ISelectable
         // Ruch po linii prostej
         if (MovementPercentage < 1.0f)
         {
-            float meanMovementCost = (CurrentTile.MovementCost + NextTile.MovementCost) / 2;
-
-            if (NextTile.X != CurrentTile.X || NextTile.Y != CurrentTile.Y)
+            if (CurrentTile.Height != NextTile.Height)
             {
-                MovementPercentage += ((deltaTime * movementSpeed) / meanMovementCost) / 1.414213562373f;
+                MovementPercentage += ((deltaTime * movementSpeed) / StaticData.StairsMovementCost);
             }
             else
             {
-                MovementPercentage += ((deltaTime * movementSpeed) / meanMovementCost); // / 1
+                float meanMovementCost = (CurrentTile.MovementCost + NextTile.MovementCost) / 2;
+
+                if (NextTile.X != CurrentTile.X || NextTile.Y != CurrentTile.Y)
+                {
+                    MovementPercentage += ((deltaTime * movementSpeed) / meanMovementCost) / 1.414213562373f;
+                }
+                else
+                {
+                    MovementPercentage += ((deltaTime * movementSpeed) / meanMovementCost); // / 1
+                }
             }
         }
         else
@@ -309,6 +316,7 @@ public class Character : ISelectable
                 {
                     Path.Dequeue();
                 }
+
                 if (Path.Peek() == NextTile)
                 {
                     Path.Dequeue();
@@ -324,8 +332,9 @@ public class Character : ISelectable
     
     public bool SetNewDestination(Tile tile, bool startMovement, IAccessible tileOwner, BT_Node callingNode)
     {
+#if UNITY_EDITOR
         CharacterLogEntry newLog = new CharacterLogEntry(Time.time, tile, tileOwner, callingNode);
-
+#endif
         if (State == CharacterState.PreparingForDeletion
             || State == CharacterState.UsingService)
         {
@@ -345,7 +354,6 @@ public class Character : ISelectable
 #if UNITY_EDITOR 
             log.Add(newLog);
 #endif
-
             return true;
         }
 
@@ -363,7 +371,6 @@ public class Character : ISelectable
 #if UNITY_EDITOR 
         log.Add(newLog);
 #endif
-
         return true;                
     }
         

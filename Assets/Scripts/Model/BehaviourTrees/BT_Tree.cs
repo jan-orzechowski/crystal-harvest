@@ -89,19 +89,19 @@ public class BT_Tree
                         new BT_StartUsingService()
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Health", 0.99f),
+                        new BT_IsNeedHigherThan("Health", StaticData.NeedLevelToDie),
                         new BT_Die()
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Health", 0.4f),
+                        new BT_IsNeedHigherThan("Health", StaticData.NeedLevelToSeekService),
                         new BT_FindService("Health")
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Hunger", 0.99f),
+                        new BT_IsNeedHigherThan("Hunger", StaticData.NeedLevelToDie),
                         new BT_Die()
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Hunger", 0.4f),
+                        new BT_IsNeedHigherThan("Hunger", StaticData.NeedLevelToSeekService),
                         new BT_FindService("Hunger")
                         ),
                     Subtree(new BT_MemSequence(),
@@ -163,11 +163,11 @@ public class BT_Tree
                         new BT_StartUsingService()
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Condition", 0.99f),
+                        new BT_IsNeedHigherThan("Condition", StaticData.NeedLevelToDie),
                         new BT_Die()
                         ),
                     Subtree(new BT_Sequence(),
-                        new BT_IsNeedHigherThan("Condition", 0.5f),
+                        new BT_IsNeedHigherThan("Condition", StaticData.NeedLevelToSeekService),
                         new BT_FindService("Condition")
                         ),                 
                     Subtree(new BT_MemSequence(),

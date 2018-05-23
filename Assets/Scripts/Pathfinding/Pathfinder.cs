@@ -92,7 +92,7 @@ namespace Pathfinding
         public AStar GetPath(Character character, Tile start, Tile goal)
         {
             // Jeśli nie było wcześniej tej postaci, to dodajemy ją
-            if (newPaths.ContainsKey(character) == false || currentPaths.ContainsKey(character) == false)
+             if (newPaths.ContainsKey(character) == false || currentPaths.ContainsKey(character) == false)
             {
                 newPaths[character] = new AStar(world);
                 currentPaths[character] = new AStar(world);
@@ -100,8 +100,9 @@ namespace Pathfinding
 
             // Jeśli stara ścieżka jest właściwa
             if (currentPaths[character].Start == start && currentPaths[character].Goal == goal
+                && (currentPaths[character].GetLength() > 0 && currentPaths[character].Peek() == character.CurrentTile)
                 && currentPaths[character].IsInitialized == true && currentPaths[character].IsReady)
-            {
+            {               
                 return currentPaths[character];
             }
 
@@ -128,8 +129,19 @@ namespace Pathfinding
             // Jeśli nowa ścieżka jest właściwa i gotowa
             if (newPaths[character].IsReady)
             {
-                SwitchAndResetOldPath(character);
-                return currentPaths[character];
+                if (newPaths[character].Peek() != character.CurrentTile)
+                {
+                    if (graph != null && graph.IsReady)
+                    {
+                        newPaths[character].NewPath(graph, start, goal);
+                    }
+                    return null;
+                }
+                else
+                {
+                    SwitchAndResetOldPath(character);
+                    return currentPaths[character];
+                }                
             }
             else
             {

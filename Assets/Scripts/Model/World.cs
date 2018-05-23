@@ -31,6 +31,7 @@ public class World
 
     HashSet<Tile> tilesWithPlatformConstructionSites;
     HashSet<Tile> tilesWithSlabConstructionSites;
+    HashSet<Tile> tilesWithStairsConstructionSites;
     HashSet<Tile> tilesWithSlabs;
 
     List<Building> buildingsMarkedForDeconstruction;
@@ -141,6 +142,7 @@ public class World
 
         tilesWithPlatformConstructionSites = new HashSet<Tile>();
         tilesWithSlabConstructionSites = new HashSet<Tile>();
+        tilesWithStairsConstructionSites = new HashSet<Tile>();
         tilesWithSlabs = new HashSet<Tile>();
 
         crystalsDepositsReservations = new Dictionary<Character, float>();
@@ -453,6 +455,11 @@ public class World
                 && !(prototype.CanBeBuiltOnRock == false && tile.Type == TileType.Rock)
                 && !(prototype.CanBeBuiltOnPlatform == false && tile.Type == TileType.WalkableEmpty)
                 && !(prototype.AllowToBuildOnTop == false && Platforms.ContainsKey(tile))
+                && !((tilesWithSlabConstructionSites.Contains(tile) 
+                     || tilesWithSlabs.Contains(tile)) && prototype.Type != "Platform")
+                && !((tilesWithPlatformConstructionSites.Contains(tile)
+                    || Platforms.ContainsKey(tile)) && prototype.Type != "Slab")
+                && !(tilesWithStairsConstructionSites.Contains(tile))
                 && ((IsCharacterOnTile(tile) == false && tile.ReservedForAccess != true) || prototype.MovementCost != 0f)
                 )
             {
@@ -477,33 +484,14 @@ public class World
         {
             return false;
         }
-
-        if (prototype.Type == "Platform")
-        {
-            Tile platformTile = tilesToCheck[0];
-            if (Platforms.ContainsKey(platformTile) 
-                || tilesWithPlatformConstructionSites.Contains(platformTile))
-            {
-                return false;
-            }
-        }
-        else if (prototype.Type == "Slab")
-        {
-            Tile slabTile = tilesToCheck[0];
-            Tile platformTile = tilesToCheck[0];
-            if (tilesWithSlabs.Contains(slabTile)
-                || tilesWithSlabConstructionSites.Contains(slabTile))
-            {
-                return false;
-            }
-        }
-
+      
         return true;
     }
 
     bool IsValidAccessTilePosition(Tile tile)
     {
-        return (Tile.CheckPassability(tile));
+        return (Tile.CheckPassability(tile) 
+                && tilesWithStairsConstructionSites.Contains(tile) == false);
     }
 
     public Tile MapPrototypeAccessTileToWorld(TilePosition origin, Rotation rotation,
@@ -609,13 +597,12 @@ public class World
                 ApplyNewMovementCostsToTiles(newBuilding);
             }
 
-            if (prototype.Type == "Platform")
+            if (prototype.Type == "Platform") tilesWithPlatformConstructionSites.Add(newBuilding.Tiles[0]);
+            else if (prototype.Type == "Slab") tilesWithSlabConstructionSites.Add(newBuilding.Tiles[0]);
+            else if (prototype.Type == "Stairs")
             {
-                tilesWithPlatformConstructionSites.Add(newBuilding.Tiles[0]);
-            }
-            else if (prototype.Type == "Slab")
-            {
-                tilesWithSlabs.Add(newBuilding.Tiles[0]);
+                tilesWithStairsConstructionSites.Add(newBuilding.Tiles[0]);
+                tilesWithStairsConstructionSites.Add(newBuilding.Tiles[1]);
             }
 
             ConstructionSite newConstructionSite = new ConstructionSite(newBuilding, prototype, false);
@@ -927,6 +914,11 @@ public class World
             tilesWithSlabConstructionSites.Remove(building.Tiles[0]);
             tilesWithSlabs.Add(building.Tiles[0]);
         }
+        else if (building.Type == "Stairs")
+        {
+            tilesWithStairsConstructionSites.Remove(building.Tiles[0]);
+            tilesWithStairsConstructionSites.Remove(building.Tiles[1]);
+        }
 
         IBuildingModule module = building.Module;
         if (module != null)
@@ -974,15 +966,17 @@ public class World
         else if (building.Type == "Stairs")
         {
             Stairs.Remove(building);
+            tilesWithStairsConstructionSites.Remove(building.Tiles[0]);
+            tilesWithStairsConstructionSites.Remove(building.Tiles[1]);
         }
         else if (building.Type == "Platform")
         {
-            if (Platforms.ContainsKey(building.Tiles[0]))
-                Platforms.Remove(building.Tiles[0]);
+            Platforms.Remove(building.Tiles[0]);
         }
         else if (building.Type == "Slab")
         {
             tilesWithSlabs.Remove(building.Tiles[0]);
+            tilesWithSlabConstructionSites.Remove(building.Tiles[0]);
         }        
 
         IBuildingModule module = building.Module;
@@ -1460,26 +1454,51 @@ public class World
             }
         }
 
+        bool crystals;
+        if (CanReserveNaturalDeposit(character, true))
+        {
+            crystals = true;
+        }
+        else if (CanReserveNaturalDeposit(character, false))
+        {
+            crystals = false;
+        }
+        else
+        {
+            return null;
+        }        
+
         if (NaturalDeposits.Count > 0)
         {
-            for (int attempt = 0; attempt < 30; attempt++)
+            Factory closestDeposit = null;
+            float minDistance = Mathf.Infinity;
+
+            foreach (Factory deposit in NaturalDeposits)
             {
-                int index = UnityEngine.Random.Range(0, NaturalDeposits.Count);
-
-                Factory f = NaturalDeposits[index];
-
-                if (character.AreBothAccessTilesMarkedAsInaccessbile(f))
-                {
+                if ((crystals == false && deposit.Prototype.ProducedResources.ContainsKey(0))
+                    || (crystals && deposit.Prototype.ProducedResources.ContainsKey(0) == false))
                     continue;
-                }
 
-                bool crystals = f.Prototype.ProducedResources.ContainsKey(0);
+                Tile accessTile = deposit.GetAccessTile();
+                if (accessTile == null) continue;
 
-                if (CanReserveNaturalDeposit(character, crystals) && f.CanReserveJob(character))
+                float distance = accessTile.DistanceTo(character.CurrentTile);
+                if (distance < minDistance)
                 {
-                    return f;
-                }          
+                    if (character.AreBothAccessTilesMarkedAsInaccessbile(deposit)
+                        || deposit.CanReserveJob(character) == false)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        minDistance = distance;
+                        closestDeposit = deposit;
+                    }                    
+                }
             }
+
+            return closestDeposit;
         }
 
         return null;

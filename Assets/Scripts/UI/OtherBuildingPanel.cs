@@ -45,8 +45,16 @@ public class OtherBuildingPanel : MonoBehaviour
     public void DeconstructButtonAction()
     {
         if (building == null || building.Prototype.CanBeDeconstructed == false) return;
-        
-        GameManager.Instance.World.MarkBuildingForDenconstruction(building);
-        building = null;                
+
+        Action action = () =>
+        {
+            if (building == null) return;
+            GameManager.Instance.World.MarkBuildingForDenconstruction(building);
+        };
+
+        GameManager.Instance.DialogBox.ShowDialogBox(
+            "s_deconstruction_prompt",
+            "s_yes", action,
+            "s_no", null);
     }
 }

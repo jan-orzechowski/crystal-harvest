@@ -396,25 +396,11 @@ public class GameManager : MonoBehaviour
                     }
                     else if (tile.Type == TileType.Rock)
                     {
-                        if ((tile.GetNorthNeighbour() != null && tile.GetNorthNeighbour().Type == TileType.Rock)
-                             && (tile.GetEastNeighbour() != null && tile.GetEastNeighbour().Type == TileType.Rock)
-                             && (tile.GetSouthNeighbour() != null && tile.GetSouthNeighbour().Type == TileType.Rock)
-                             && (tile.GetWestNeighbour() != null && tile.GetWestNeighbour().Type == TileType.Rock))
-                        {
-                            GameObject.Instantiate(
-                                RockTilePlanePrefab,
-                                new Vector3(x, height * LevelHeightOffset, y),
-                                Quaternion.identity,
-                                TilesParent.transform);
-                        }
-                        else
-                        {
-                            GameObject.Instantiate(
-                                RockTileCubePrefab,
-                                new Vector3(x, height * LevelHeightOffset, y),
-                                Quaternion.identity,
-                                TilesParent.transform);
-                        }                        
+                        GameObject.Instantiate(
+                            RockTileCubePrefab,
+                            new Vector3(x, height * LevelHeightOffset, y),
+                            Quaternion.identity,
+                            TilesParent.transform);                       
                     }
                 }   
             }
