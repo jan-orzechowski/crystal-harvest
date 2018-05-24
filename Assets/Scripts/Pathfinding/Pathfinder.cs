@@ -128,20 +128,9 @@ namespace Pathfinding
 
             // Jeśli nowa ścieżka jest właściwa i gotowa
             if (newPaths[character].IsReady)
-            {
-                if (newPaths[character].Peek() != character.CurrentTile)
-                {
-                    if (graph != null && graph.IsReady)
-                    {
-                        newPaths[character].NewPath(graph, start, goal);
-                    }
-                    return null;
-                }
-                else
-                {
-                    SwitchAndResetOldPath(character);
-                    return currentPaths[character];
-                }                
+            {              
+                SwitchAndResetOldPath(character);
+                return currentPaths[character];              
             }
             else
             {

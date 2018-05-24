@@ -31,7 +31,8 @@ public class BuildingModulePanel : MonoBehaviour
         if (Module is ConstructionSite)
         {
             ConstructionSite site = (ConstructionSite)Module;
-            canBeDeconstructed = (site.ConstructionMode && site.TransitionToDeconstructionStage == false);
+            canBeDeconstructed = (site.ConstructionMode 
+                                  && site.TransitionToDeconstructionStage == false);
         }
 
         if (canBeHalted && canBeDeconstructed)

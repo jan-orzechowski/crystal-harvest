@@ -181,6 +181,7 @@ public class ConstructionSite : IWorkplace
             {
                 Stage = ConstructionStage.Construction;                
                 stageTimeLeft = constructionTime;
+                world.UnregisterResources(InputStorage.Resources);
                 LoadRequiredResourcesForConstruction();
             }
             else if (Stage == ConstructionStage.Construction)

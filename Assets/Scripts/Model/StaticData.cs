@@ -7,7 +7,7 @@ public static class StaticData
 {
     public const string Version = "0.1";
 
-    public const float TimeLimit = (60f * 15f);
+    public const float TimeLimit = (60f * 20f);
 
     public const int WorldWidth = 50;
     public const int WorldLenght = 50;
@@ -28,7 +28,7 @@ public static class StaticData
 
     public const float ScaffoldingConstructionTime = 2f;
 
-    public const float StairsMovementCost = 4f;
+    public const float StairsMovementCost = 3f;
 
     public const float NeedLevelToSeekService = 0.25f;
     public const float NeedLevelToDie = 0.99f;
@@ -155,9 +155,9 @@ public static class StaticData
     public static Dictionary<TileType, float> LoadTilesMovementCosts()
     {
         return new Dictionary<TileType, float>(){ {TileType.Empty, 0f},
-                                                  {TileType.WalkableEmpty, 1f},
-                                                  {TileType.Sand, 4f},
-                                                  {TileType.Rock, 1f} };
+                                                  {TileType.WalkableEmpty, 0.75f},
+                                                  {TileType.Sand, 3f},
+                                                  {TileType.Rock, 0.75f} };
     }
 
     public static Dictionary<int, ResourceInfo> LoadResources()
@@ -184,7 +184,7 @@ public static class StaticData
             character.Needs = new Dictionary<string, float>()
             { {"Condition", 0f} };
             character.NeedGrowthPerSecond = new Dictionary<string, float>()
-            { {"Condition", 0.003f} };
+            { {"Condition", 0.0015f} };
         }
         else
         {
@@ -309,7 +309,7 @@ public static class StaticData
         bp.NormalizedSecondAccessTilePosition = new TilePosition(3, 0, 0);
         bp.NormalizedSecondAccessTileRotation = Rotation.W;
 
-        bp.ConstructionTime = 2f;
+        bp.ConstructionTime = 1f;
         bp.ConstructionResources = new Dictionary<int, int>() { { 1, 1 } };
         bp.ConstructionWithoutScaffolding = true;
 
@@ -334,7 +334,7 @@ public static class StaticData
 
         bp.NormalizedTilePositions = BuildingPrototype.GetNormalizedTilePositions(1, 1);
 
-        bp.MovementCost = 2f;
+        bp.MovementCost = 0.75f;
         bp.WalkableOnTop = true;
         bp.CanBeAccessedFromTop = true;
         bp.DisallowDiagonalMovement = true;
@@ -365,7 +365,7 @@ public static class StaticData
 
         bp.AllowRotation = false;
 
-        bp.MovementCost = 0.75f;
+        bp.MovementCost = 0.5f;
         bp.AllowToBuildOnTop = true;
         bp.HasAccessTile = false;
 
@@ -425,8 +425,8 @@ public static class StaticData
         bp.NormalizedAccessTileRotation = Rotation.N;
 
         bp.ConstructionTime = 6f;
-        bp.ConstructionResources = new Dictionary<int, int>() { { 1, 3 } };
-        bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 1, 3 } };
+        bp.ConstructionResources = new Dictionary<int, int>() { { 1, 2 } };
+        bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 1, 2 } };
 
         bp.MaxStorage = 18;
 
@@ -526,7 +526,7 @@ public static class StaticData
 
         bp.ProductionTime = 4f;
         bp.ConsumedResources = new Dictionary<int, int>() { { 3, 1 } };
-        bp.ProducedResources = new Dictionary<int, int>() { { 1, 3 } };
+        bp.ProducedResources = new Dictionary<int, int>() { { 1, 4 } };
 
         bp.NeedGrowthPerSecond = new Dictionary<string, float>() { { "Health", 0.01f },
                                                                    { "Condition", 0.01f } };
@@ -557,7 +557,7 @@ public static class StaticData
         bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 1, 3 } };
 
         bp.ProductionTime = 6f;
-        bp.ProducedResources = new Dictionary<int, int>() { { 2, 3 } };
+        bp.ProducedResources = new Dictionary<int, int>() { { 2, 4 } };
 
         bp.NeedGrowthPerSecond = new Dictionary<string, float>() { { "Health", 0.01f },
                                                                    { "Condition", 0.005f } };
@@ -590,7 +590,7 @@ public static class StaticData
 
         bp.ProductionTime = 4f;
         bp.ConsumedResources = new Dictionary<int, int>() { { 2, 1 }, { 4, 1 } };
-        bp.ProducedResources = new Dictionary<int, int>() { { 5, 1 } };
+        bp.ProducedResources = new Dictionary<int, int>() { { 5, 2 } };
 
         bp.NeedGrowthPerSecond = new Dictionary<string, float>() { { "Health", 0.01f },
                                                                    { "Condition", 0.005f } };
@@ -653,7 +653,7 @@ public static class StaticData
         bp.ResourcesFromDeconstruction = new Dictionary<int, int>() { { 1, 4 } };
 
         bp.ProductionTime = 7f;
-        bp.ConsumedResources = new Dictionary<int, int>() { { 1, 1 }, { 2, 1 }, { 7, 2 } };        
+        bp.ConsumedResources = new Dictionary<int, int>() { { 1, 1 }, { 7, 2 } };        
         bp.ProducesRobot = true;
 
         prototypes.Add(bp);

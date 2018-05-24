@@ -253,7 +253,7 @@ namespace Pathfinding
 
         public Tile Peek()
         {
-            if (path == null) return null;
+            if (path == null || path.Count == 0) return null;
             else { return path.Peek(); }
         }
 

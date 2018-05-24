@@ -341,7 +341,9 @@ public class Character : ISelectable
             return false;
         }
 
-        if (tile == null || inaccessibleTilesTimers.ContainsKey(tile))
+        if (tile == null 
+            || inaccessibleTilesTimers.ContainsKey(tile)
+            || tile.MovementCost == 0f)
         {
             DestinationTile = CurrentTile;
             return false;
