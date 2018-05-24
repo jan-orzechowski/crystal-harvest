@@ -36,7 +36,7 @@ public class SoundManager : MonoBehaviour
     List<AudioClip> unusedMusicClips;
 
     [HideInInspector]
-    public bool Muted;
+    public static bool Muted { get; protected set; }
 
     bool stopMusic;
 
@@ -68,6 +68,19 @@ public class SoundManager : MonoBehaviour
             MusicAudioSource.clip = GetRandomUnusedClip();
             // MusicAudioSource.Play();
         }
+    }
+
+    public void TurnSoundOn()
+    {
+        Muted = false;
+        if (stopMusic == false) MusicAudioSource.UnPause();
+    }
+
+    public void TurnSoundOff()
+    {
+        Muted = true;
+        MusicAudioSource.Pause();
+        SoundEffectsAudioSource.Stop();
     }
 
     AudioClip GetRandomUnusedClip()
@@ -102,6 +115,8 @@ public class SoundManager : MonoBehaviour
 
     public void PlayVictorySound()
     {
+        if (Muted) return;
+
         stopMusic = true;
         MusicAudioSource.Stop();
         MusicAudioSource.volume = VictoryAndDefeatSoundVolume;
@@ -110,6 +125,8 @@ public class SoundManager : MonoBehaviour
 
     public void PlayDefeatSound()
     {
+        if (Muted) return;
+
         stopMusic = true;
         MusicAudioSource.Stop();
         MusicAudioSource.volume = VictoryAndDefeatSoundVolume;

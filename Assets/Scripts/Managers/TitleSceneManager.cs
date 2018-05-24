@@ -20,6 +20,9 @@ public class TitleSceneManager : MonoBehaviour
     public GameObject CreditsPanel;
     bool creditsPanelActive;
 
+    public GameObject SoundOnButton;
+    public GameObject SoundOffButton;
+
     void Awake () 
     {
         Instance = this;        
@@ -40,6 +43,8 @@ public class TitleSceneManager : MonoBehaviour
         {
             field.UpdateText();
         }
+
+        SoundButtonUpdate();
     }
 
     private void Update()
@@ -85,5 +90,11 @@ public class TitleSceneManager : MonoBehaviour
             "s_quit_prompt",
             "s_yes", action,
             "s_no", null);        
-    }    
+    }
+
+    public void SoundButtonUpdate()
+    {
+        SoundOnButton.SetActive(SoundManager.Muted == true);
+        SoundOffButton.SetActive(SoundManager.Muted == false);
+    }
 }

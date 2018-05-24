@@ -69,7 +69,9 @@ public class GameManager : MonoBehaviour
 
         TextManager = new TextManager();
 
-        SoundManager.Muted = true;
+        bool wasSoundMuted = SoundManager.Muted;
+
+        SoundManager.TurnSoundOff();
 
         int startingAreaXSize = 5;
         int startingAreaYSize = 8;
@@ -96,7 +98,10 @@ public class GameManager : MonoBehaviour
 
         ResizeGroundPlane();
 
-        SoundManager.Muted = false;
+        if (wasSoundMuted == false)
+        {
+            SoundManager.TurnSoundOn();
+        } 
     }
 
     void Update ()

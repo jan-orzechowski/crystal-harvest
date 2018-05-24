@@ -66,7 +66,8 @@ public class DialogBox : MonoBehaviour
     }
 
     public void ShowDialogBox(string descriptionTextKey,
-                              string optionTextKey, Action optionAction)
+                              string optionTextKey, Action optionAction,
+                              bool hideAfterClick = true)
     {
         SetDialogText(GameManager.Instance.GetText(descriptionTextKey));
 
@@ -77,7 +78,7 @@ public class DialogBox : MonoBehaviour
         OneOptionObject.SetActive(true);
 
         OneOptionButton.SetText(textManager.GetText(optionTextKey));
-        OneOptionButton.SetAction(optionAction);
+        OneOptionButton.SetAction(optionAction, hideAfterClick);
     }
 
     void HideDialogBox()

@@ -130,9 +130,19 @@ public static class StaticData
             {"s_start_button", "Wznów" },
             {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
 
+            // Wskazówki
+            {"s_tips_1", "Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 " },
+            {"s_tips_2", "Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 " },
+            {"s_tips_3", "Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 " },
+            {"s_tips_next", "Dalej" },
+            {"s_tips_end", "OK" },
+
             // Inne
             {"s_stats_button", "Statystki" },
             {"s_build_button", "Konstrukcja" },
+            {"s_sound_on_button", "Przywróć dźwięk" },
+            {"s_sound_off_button", "Wycisz" },
+            {"s_tips_button", "Wskazówki" },
             {"s_timer_hover", "Czas pozostały do zakończenia misji" },
             {"s_counter_hover", "Kryształy do zebrania" },
             {"s_robots_hover", "Roboty" },

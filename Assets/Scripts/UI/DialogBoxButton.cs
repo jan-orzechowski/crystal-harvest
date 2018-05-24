@@ -10,14 +10,18 @@ public class DialogBoxButton : MonoBehaviour
     public Text Text;
     public Button Button;
 
-    public void SetAction(Action action)
+    public void SetAction(Action action, bool hideAfterClick = true)
     {
         Button.onClick.RemoveAllListeners();
         if (action != null)
         {
             Button.onClick.AddListener(() => { action(); });
         }
-        Button.onClick.AddListener(() => { DialogBox.ButtonClicked(); });
+
+        if (hideAfterClick)
+        {
+            Button.onClick.AddListener(() => { DialogBox.ButtonClicked(); });
+        }
 
         Button.onClick.AddListener(() => { DialogBox.SoundManager.PlayButtonSound(); });
     }
