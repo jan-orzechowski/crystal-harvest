@@ -63,10 +63,13 @@ public class SoundManager : MonoBehaviour
 
         if (Muted || stopMusic) return;
 
-        if (MusicAudioSource.isPlaying == false)
+        if (MusicClips.Length == 0) return;
+
+        if ((MusicAudioSource.clip == null || MusicAudioSource.time >= MusicAudioSource.clip.length)
+            && MusicAudioSource.isPlaying == false)
         {
             MusicAudioSource.clip = GetRandomUnusedClip();
-            // MusicAudioSource.Play();
+            MusicAudioSource.Play();
         }
     }
 

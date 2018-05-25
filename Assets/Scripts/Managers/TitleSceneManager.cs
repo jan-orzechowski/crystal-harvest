@@ -23,8 +23,13 @@ public class TitleSceneManager : MonoBehaviour
     public GameObject SoundOnButton;
     public GameObject SoundOffButton;
 
+    public GameObject QuitButton;
+
     void Awake () 
     {
+#if UNITY_WEBGL
+        QuitButton.gameObject.SetActive(false);
+#endif
         Instance = this;        
         VersionText.text = StaticData.Version;
         TextManager = new TextManager();

@@ -10452,7 +10452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MusicAudioSource: {fileID: 43983886}
   SoundEffectsAudioSource: {fileID: 1267472809}
-  MusicVolume: 1
+  MusicVolume: 0.8
   SoundEffectsVolume: 0.3
   VictoryAndDefeatSoundVolume: 0.7
   SelectSound: {fileID: 8300000, guid: fe4ccbaa88e0bfe4f85a81030127ae3c, type: 3}
@@ -10466,7 +10466,11 @@ MonoBehaviour:
   StartDeconstructionSound: {fileID: 8300000, guid: 27693c7debb25254b8e5e34cbd69594b,
     type: 3}
   MusicClips:
-  - {fileID: 8300000, guid: f843518154f99ae49ab313e65ad1ff9e, type: 3}
+  - {fileID: 8300000, guid: 4e7465d9a065f074db7a7b8dd3a2e2dd, type: 3}
+  - {fileID: 8300000, guid: b40e03e050906624c816d42ad38d8c9a, type: 3}
+  - {fileID: 8300000, guid: db8cd9acfbcd2c944bc5de87b27be490, type: 3}
+  - {fileID: 8300000, guid: 16a0f4d5c0a7bfe478fb170947002dd0, type: 3}
+  - {fileID: 8300000, guid: 266240b387a20cd4ba4ef0acca230672, type: 3}
 --- !u!1 &855726064
 GameObject:
   m_ObjectHideFlags: 0
