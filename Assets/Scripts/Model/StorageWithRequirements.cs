@@ -93,7 +93,7 @@ public class StorageWithRequirements : Storage
 
             if (MissingResources.ContainsKey(resourceID))
             {
-                MissingResources[resourceID] = MissingResources[resourceID] - 1;
+                MissingResources[resourceID] = MissingResources[resourceID] + 1;
             }
             else
             {
