@@ -304,9 +304,18 @@ public class World
             UnityEngine.SceneManagement.SceneManager.LoadScene("title_scene");
         };
 
-        GameManager.Instance.DialogBox.ShowDialogBox(
-            "s_defeat_text",
-            "s_defeat_confirmation", action);
+        if (HumanNumber <= 0)
+        {
+            GameManager.Instance.DialogBox.ShowDialogBox(
+                "s_death_defeat_text",
+                "s_defeat_confirmation", action);
+        }
+        else
+        {
+            GameManager.Instance.DialogBox.ShowDialogBox(
+                "s_time_defeat_text",
+                "s_defeat_confirmation", action);
+        }                       
     }
 
     void InitialAction()

@@ -5,7 +5,7 @@ using System;
 
 public static class StaticData
 {
-    public const string Version = "0.1";
+    public const string Version = "0.9";
 
     public const float TimeLimit = (60f * 20f);
 
@@ -55,12 +55,13 @@ public static class StaticData
             { "s_credits_palette", "Paleta" },
 
             // Wiadomości
-            {"s_start_text", "Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy Długi tekst początkowy" },
-            {"s_victory_text", "Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo Zwycięstwo " },
-            {"s_defeat_text", "Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka Porażka " },
-            {"s_start_confirmation", "Początek" },
-            {"s_victory_confirmation", "Zwycięstwo" },
-            {"s_defeat_confirmation", "Porażka" },
+            {"s_start_text", "Na galaktycznych rynkach nie ma cenniejszego surowca niż kosmiczne kryształy. Twoim zadaniem jest zrabować je z pustynnej planety i uciec, zanim Twoja obecność zostanie wykryta przez jej właścicieli." },
+            {"s_victory_text", "Udało się na czas zebrać kryształy! Nasze bogactwo będzie odtąd niezmierzone.            " },
+            {"s_time_defeat_text", "Czas upłynął, trzeba uciekać! Może następnym razem się uda...           " },
+            {"s_death_defeat_text", "Cała załoga zginęła! Na szczęście znajdzie się wielu kolejnych ochotników...          " },
+            { "s_start_confirmation", "Do roboty!" },
+            {"s_victory_confirmation", "Zwycięstwo!" },
+            {"s_defeat_confirmation", "A niech to." },
 
             // Zasoby
             {"s_crystals", "Kryształy" },
@@ -131,9 +132,9 @@ public static class StaticData
             {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
 
             // Wskazówki
-            {"s_tips_1", "Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 Tips 1 " },
-            {"s_tips_2", "Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 Tips 2 " },
-            {"s_tips_3", "Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 Tips 3 " },
+            {"s_tips_1", "Nie warto spieszyć się z wydobyciem kryształów; lepiej najpierw zadbać o potrzeby załogi oraz wyprodukowanie dużej liczby robotów do pomocy.\n\nAstronauci powoli tracą zdrowie w zależności od miejsca, w którym pracują. Roboty są bardziej wytrzymałe.        " },
+            {"s_tips_2", "Żeby upewnić się, że postaci koncentrują się na właściwych zadaniach, warto korzystać z przycisku wstrzymywania pracy budynku.          " },
+            {"s_tips_3", "Chodniki znacznie przyspieszają poruszanie się - przydadzą się do ułatwienia dostępu do kryształów.\n\nAktywna pauza pozwala nie tracić cennych sekund podczas zastanawiania się lub zlecania budowy.          " },
             {"s_tips_next", "Dalej" },
             {"s_tips_end", "OK" },
 
