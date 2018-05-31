@@ -290,7 +290,6 @@ public class ConstructionSite : IWorkplace
     {
         ConstructionStorage = new StorageWithRequirements(Building, null);
         DeconstructionStorage = new Storage(Building, Prototype.ResourcesFromDeconstruction, true);
-        GameManager.Instance.World.RegisterResources(Prototype.ResourcesFromDeconstruction);
     }   
 
     public float GetCompletionPercentage()

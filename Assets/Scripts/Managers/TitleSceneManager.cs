@@ -15,6 +15,8 @@ public class TitleSceneManager : MonoBehaviour
 
     public Text VersionText;
 
+    public GameObject Title;
+
     public GameObject MenuPanel;
 
     public GameObject CreditsPanel;
@@ -60,6 +62,7 @@ public class TitleSceneManager : MonoBehaviour
             {
                 MenuPanel.SetActive(true);
                 CreditsPanel.SetActive(false);
+                Title.SetActive(true);
                 creditsPanelActive = false;
             }
         }
@@ -81,6 +84,7 @@ public class TitleSceneManager : MonoBehaviour
     {
         MenuPanel.SetActive(false);
         CreditsPanel.SetActive(true);
+        Title.SetActive(false);
         creditsPanelActive = true;
     }
 

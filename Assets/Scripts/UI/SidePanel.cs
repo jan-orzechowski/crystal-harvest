@@ -88,12 +88,20 @@ public class SidePanel : MonoBehaviour
 
     public void InfoButtonAction()
     {
+        Action tips4 = () =>
+        {
+            GameManager.Instance.DialogBox.ShowDialogBox(
+                "s_tips_4",
+                "s_tips_end", null,
+                hideAfterClick: true);
+        };
+
         Action tips3 = () =>
         {
             GameManager.Instance.DialogBox.ShowDialogBox(
-                "s_tips_3", 
-                "s_tips_end", null,
-                hideAfterClick: true);
+                "s_tips_3",
+                "s_tips_next", tips4,
+                hideAfterClick: false);
         };
 
         Action tips2 = () =>

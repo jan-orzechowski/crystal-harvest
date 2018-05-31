@@ -5,12 +5,15 @@ using System;
 
 public static class StaticData
 {
-    public const string Version = "0.9";
+    public const string Version = "0.9a";
 
     public const float TimeLimit = (60f * 20f);
 
     public const int WorldWidth = 50;
     public const int WorldLenght = 50;
+
+    public const float MinRockPercentageOnMap = 0.08f;
+    public const float MaxRockPercentageOnMap = 0.12f;
 
     public const int MinOreAmountOnMap = 100;
     public const int MaxOreAmountOnMap = 150;
@@ -18,11 +21,14 @@ public static class StaticData
     public const int MinOreAmountInDeposit = 5;
     public const int MaxOreAmountInDeposit = 10;
 
-    public const int MinCrystalsAmountOnMap = 100;
-    public const int MaxCrystalsAmountOnMap = 200;
+    public const int MinCrystalsAmountOnMap = 130;
+    public const int MaxCrystalsAmountOnMap = 160;
 
-    public const int MinCrystalsAmountInDeposit = 5;
-    public const int MaxCrystalsAmountInDeposit = 10;
+    public const int MinCrystalsAmountInDeposit = 6;
+    public const int MaxCrystalsAmountInDeposit = 12;
+
+    public const float MinCrystalsDistanceFromStartingArea = 15f;
+    public const float MaxCrystalsDistanceFromStartingArea = 25f;
 
     public const int CrystalsAmountToGather = 100;
 
@@ -56,9 +62,9 @@ public static class StaticData
 
             // Wiadomości
             {"s_start_text", "Na galaktycznych rynkach nie ma cenniejszego surowca niż kosmiczne kryształy. Twoim zadaniem jest zrabować je z pustynnej planety i uciec, zanim Twoja obecność zostanie wykryta przez jej właścicieli." },
-            {"s_victory_text", "Udało się na czas zebrać kryształy! Nasze bogactwo będzie odtąd niezmierzone.            " },
-            {"s_time_defeat_text", "Czas upłynął, trzeba uciekać! Może następnym razem się uda...           " },
-            {"s_death_defeat_text", "Cała załoga zginęła! Na szczęście znajdzie się wielu kolejnych ochotników...          " },
+            {"s_victory_text", "Udało się na czas zebrać kryształy! Twoje bogactwo będzie odtąd niezmierzone.  " },
+            {"s_time_defeat_text", "Czas upłynął, trzeba uciekać! Może następnym razem się uda..." },
+            {"s_death_defeat_text", "Cała załoga zginęła! Na szczęście znajdzie się wielu kolejnych ochotników..." },
             { "s_start_confirmation", "Do roboty!" },
             {"s_victory_confirmation", "Zwycięstwo!" },
             {"s_defeat_confirmation", "A niech to." },
@@ -132,9 +138,10 @@ public static class StaticData
             {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
 
             // Wskazówki
-            {"s_tips_1", "Nie warto spieszyć się z wydobyciem kryształów; lepiej najpierw zadbać o potrzeby załogi oraz wyprodukowanie dużej liczby robotów do pomocy.\n\nAstronauci powoli tracą zdrowie w zależności od miejsca, w którym pracują. Roboty są bardziej wytrzymałe.        " },
-            {"s_tips_2", "Żeby upewnić się, że postaci koncentrują się na właściwych zadaniach, warto korzystać z przycisku wstrzymywania pracy budynku.          " },
-            {"s_tips_3", "Chodniki znacznie przyspieszają poruszanie się - przydadzą się do ułatwienia dostępu do kryształów.\n\nAktywna pauza pozwala nie tracić cennych sekund podczas zastanawiania się lub zlecania budowy.          " },
+            {"s_tips_1", "Sterowanie: \n \n - WSAD / strzałki - ruch kamery \n - Q, E - obrót kamery \n - Spacja - aktywna pauza \n - R - obrót budynku                                     " },
+            {"s_tips_2", "Nie warto spieszyć się z wydobyciem kryształów; lepiej najpierw zadbać o potrzeby załogi oraz wyprodukowanie dużej liczby robotów do pomocy.\n\nAstronauci powoli tracą zdrowie w zależności od miejsca, w którym pracują. Roboty są bardziej wytrzymałe.        " },
+            {"s_tips_3", "Żeby upewnić się, że postaci koncentrują się na właściwych zadaniach, warto korzystać z przycisku wstrzymywania pracy budynku.          " },
+            {"s_tips_4", "Chodniki znacznie przyspieszają poruszanie się - przydadzą się do ułatwienia dostępu do kryształów.\n\nAktywna pauza pozwala nie tracić cennych sekund podczas zastanawiania się lub zlecania budowy.          " },
             {"s_tips_next", "Dalej" },
             {"s_tips_end", "OK" },
 

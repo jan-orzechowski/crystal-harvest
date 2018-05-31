@@ -4531,6 +4531,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DialogBox: {fileID: 1074381988}
   VersionText: {fileID: 1527204791}
+  Title: {fileID: 2111779975}
   MenuPanel: {fileID: 1658544878}
   CreditsPanel: {fileID: 1127932208}
   SoundOnButton: {fileID: 824615164}

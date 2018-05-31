@@ -31,7 +31,7 @@ public class Character : ISelectable
 
     public Quaternion CurrentRotation { get; protected set; }
     Quaternion targetRotation;
-    float degreesPerSecond = 350f;
+    float degreesPerSecond = 450f;
 
     bool isLastTileRotationSet;
     Quaternion lastTileRotation;

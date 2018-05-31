@@ -6,9 +6,7 @@ using System;
 public class MapGenerator
 {    
     int rockPercentage = 45;
-    float minFinalRockPercentage = 0.08f;
-    float maxFinalRockPercentage = 0.12f;
-    
+        
     int smoothingIterations = 4;
 
     // Generator liczb pseudolosowych
@@ -46,6 +44,9 @@ public class MapGenerator
         this.ySize = ySize;
         this.startingAreaXSize = startingAreaXSize;
         this.startingAreaYSize = startingAreaYSize;
+
+        float minFinalRockPercentage = StaticData.MinRockPercentageOnMap;
+        float maxFinalRockPercentage = StaticData.MaxRockPercentageOnMap;
 
         int attempts = 50;        
         for (int a = 0; a < attempts; a++)
@@ -272,17 +273,21 @@ public class MapGenerator
                                               StaticData.MaxCrystalsAmountOnMap);
         
         Ore = new Dictionary<TilePosition, int>();
+        Crystals = new Dictionary<TilePosition, int>();
+
+        // Ore
 
         int orePlaced = 0;
 
-        int attempts = 200;
+        int attempts = 500;
         for (int i = 0; i < attempts; i++)
         {
             TilePosition randomTile = GetRandomTile();
             if (CheckTileValue(randomTile, rock) 
                 && Ore.ContainsKey(randomTile) == false
-                && IsTileInStartingArea(randomTile) == false)
-            {
+                && IsTileInStartingArea(randomTile) == false
+                && IsAccessible(randomTile))
+            {                
                 int randomDepositSize = prng.Next(StaticData.MinOreAmountInDeposit,
                                                   StaticData.MaxOreAmountInDeposit);
 
@@ -296,21 +301,32 @@ public class MapGenerator
             }
         }
 
-        Crystals = new Dictionary<TilePosition, int>();
+        // Crystals
 
         int numberOfCrystalSites = 4;
         int minNumberOfCrystalsPerSite = 3;
         int maxNumberOfCrystalsPerSite = 6;
-        int siteRadius = 2;
+        int minSiteRadius = 2;
+        int maxSiteRadius = 4;
 
         int crystalsPlaced = 0;
+
+        TilePosition startingPosition = new TilePosition(StartingAreaX + (startingAreaXSize / 2),
+                                                         StartingAreaY + (startingAreaYSize / 2),
+                                                         rock);
+
+        float minCrystalsDistanceFromStartingArea = StaticData.MinCrystalsDistanceFromStartingArea;
+        float maxCrystalsDistanceFromStartingArea = StaticData.MaxCrystalsDistanceFromStartingArea;
 
         for (int s = 0; s < numberOfCrystalSites; s++)
         {
             TilePosition sitePosition;
             while (true)
             {
-                sitePosition = GetRandomTile();
+                sitePosition = GetRandomTileInRadius(startingPosition, 
+                                                     minCrystalsDistanceFromStartingArea, 
+                                                     maxCrystalsDistanceFromStartingArea);
+
                 if (CheckTileValue(sitePosition, sand))
                 {
                     break;
@@ -320,12 +336,13 @@ public class MapGenerator
             int numberOfCrystalsForThisSite = prng.Next(minNumberOfCrystalsPerSite, 
                                                         maxNumberOfCrystalsPerSite);
 
-            attempts = 100;
+            attempts = 500;
             for (int i = 0; i < attempts; i++)
             {
-                TilePosition crystalsPosition = GetRandomTileInRadius(sitePosition, siteRadius);
+                TilePosition crystalsPosition = GetRandomTileInRadius(sitePosition, minSiteRadius, maxSiteRadius);
                 if (CheckTileValue(crystalsPosition, sand)
-                    && Crystals.ContainsKey(crystalsPosition) == false)
+                    && Crystals.ContainsKey(crystalsPosition) == false
+                    && IsAccessible(crystalsPosition))
                 {
                     int randomDepositSize = prng.Next(StaticData.MinCrystalsAmountInDeposit,
                                                       StaticData.MaxCrystalsAmountInDeposit);
@@ -339,7 +356,7 @@ public class MapGenerator
                     }
 
                     numberOfCrystalsForThisSite--;
-                    if(numberOfCrystalsForThisSite <= 0)
+                    if (numberOfCrystalsForThisSite <= 0)
                     {
                         break;
                     }
@@ -362,24 +379,20 @@ public class MapGenerator
         }
     }
 
-    TilePosition GetRandomTileInRadius(TilePosition center, int radius)
-    {
-        int minX = Math.Max(0, center.X - radius);
-        int maxX = Math.Min(xSize - 1, center.X + radius);
-        int minY = Math.Max(0, center.Y - radius);
-        int maxY = Math.Min(ySize - 1, center.Y + radius);
-
-        int x = prng.Next(minX, maxX);
-        int y = prng.Next(minY, maxY);
-
-        if (tiles[x, y] == rock)
+    TilePosition GetRandomTileInRadius(TilePosition center, float minRadius, float maxRadius)
+    {        
+        while (true)
         {
-            return new TilePosition(x, y, 1);
-        }
-        else
-        {
-            return new TilePosition(x, y, 0);
-        }
+            TilePosition randomPos = GetRandomTile();
+
+            float dist = Mathf.Sqrt(Mathf.Pow(randomPos.X - center.X, 2) +
+                                     Mathf.Pow(randomPos.Y - center.Y, 2));
+
+            if (dist > minRadius && dist < maxRadius)
+            {
+                return randomPos;   
+            }
+        }       
     }
 
     bool CheckTileValue(TilePosition position, int value)
@@ -419,5 +432,53 @@ public class MapGenerator
         Debug.Log(CountRocksOnMap());
         float result = ((float)CountRocksOnMap() / (xSize * ySize));
         return result;
+    }
+
+    bool IsAccessible(TilePosition tilePosition)
+    {
+        bool result =
+            (IsAccessibleFromNeighbour(tilePosition, GetNorthNeighbourPosition(tilePosition))
+            || IsAccessibleFromNeighbour(tilePosition, GetEastNeighbourPosition(tilePosition))
+            || IsAccessibleFromNeighbour(tilePosition, GetSouthNeighbourPosition(tilePosition))
+            || IsAccessibleFromNeighbour(tilePosition, GetWestNeighbourPosition(tilePosition)));
+        return result;
+    }
+
+    TilePosition GetNorthNeighbourPosition(TilePosition tilePosition)
+    {
+        return new TilePosition(tilePosition.X, tilePosition.Y + 1, tilePosition.Height);
+    }
+
+    TilePosition GetSouthNeighbourPosition(TilePosition tilePosition)
+    {
+        return new TilePosition(tilePosition.X, tilePosition.Y - 1, tilePosition.Height);
+    }
+
+    TilePosition GetEastNeighbourPosition(TilePosition tilePosition)
+    {
+        return new TilePosition(tilePosition.X + 1, tilePosition.Y, tilePosition.Height);
+    }
+
+    TilePosition GetWestNeighbourPosition(TilePosition tilePosition)
+    {
+        return new TilePosition(tilePosition.X - 1, tilePosition.Y, tilePosition.Height);
+    }
+
+    bool IsPositionInBounds(TilePosition postion)
+    {
+        return (postion.X < xSize && postion.Y < ySize
+                && postion.X >= 0 && postion.Y >= 0);
+    }
+
+    bool IsAccessibleFromNeighbour(TilePosition checkedTile, TilePosition neighbour)
+    {
+        if (IsPositionInBounds(neighbour) == false) return false;
+
+        else if (neighbour.Height != checkedTile.Height) return false;
+
+        else if (Crystals.ContainsKey(neighbour)
+                || Ore.ContainsKey(neighbour)) return false;
+
+        else return true;
     }
 }
