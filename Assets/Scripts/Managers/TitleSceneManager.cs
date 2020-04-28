@@ -27,6 +27,9 @@ public class TitleSceneManager : MonoBehaviour
 
     public GameObject QuitButton;
 
+    public GameObject SetToPolishButton;
+    public GameObject SetToEnglishButton;
+
     void Awake () 
     {
 #if UNITY_WEBGL
@@ -52,6 +55,7 @@ public class TitleSceneManager : MonoBehaviour
         }
 
         SoundButtonUpdate();
+        LanguageButtonUpdate();
     }
 
     private void Update()
@@ -105,5 +109,30 @@ public class TitleSceneManager : MonoBehaviour
     {
         SoundOnButton.SetActive(SoundManager.Muted == true);
         SoundOffButton.SetActive(SoundManager.Muted == false);
+    }
+
+    private void LanguageButtonUpdate()
+    {
+        SetToEnglishButton.SetActive(TextManager.currentLanguage == Language.Polish);
+        SetToPolishButton.SetActive(TextManager.currentLanguage == Language.English);
+    }
+
+    public void SetLanguage(bool setToPolish)
+    {
+        TextManager.ChangeLanguage(setToPolish ? Language.Polish : Language.English);
+
+        LanguageButtonUpdate();
+
+        ReplaceText[] textFields = CreditsPanel.GetComponentsInChildren<ReplaceText>();
+        foreach (ReplaceText field in textFields)
+        {
+            field.UpdateText();
+        }
+
+        textFields = MenuPanel.GetComponentsInChildren<ReplaceText>();
+        foreach (ReplaceText field in textFields)
+        {
+            field.UpdateText();
+        }
     }
 }

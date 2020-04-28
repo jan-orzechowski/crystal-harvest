@@ -1,15 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 
 public class TextManager
 {
+    public static Language currentLanguage = Language.English;
+
     Dictionary<string, string> strings;
 
     public TextManager() 
     {
-        strings = StaticData.LoadStrings();
+        strings = StaticLanguageData.Load(currentLanguage);
+    }
+
+    public void ChangeLanguage(Language newLanguage)
+    {
+        currentLanguage = newLanguage;
+
+        strings = StaticLanguageData.Load(newLanguage);    
     }
 
     public string GetText(string key)
