@@ -11,7 +11,11 @@ public class CharacterPanel : MonoBehaviour
 
     public ProgressBar HealthBar;
     public ProgressBar HungerBar;
+
     public Text TextSubpanel;
+
+    public Text HealthText;
+    public Text HungerText;
 
     void Update()
     {
@@ -30,6 +34,9 @@ public class CharacterPanel : MonoBehaviour
 
     public void SetCharacter(Character c)
     {
+        HealthText.text = GameManager.Instance.TextManager.GetText("Health");
+        HungerText.text = GameManager.Instance.TextManager.GetText("Hunger");
+
         if (c == null || c.IsRobot)
         {
             Character = null;

@@ -12,6 +12,8 @@ public class RobotPanel : MonoBehaviour
     public ProgressBar ConditionBar;
     public Text TextSubpanel;
 
+    public Text ConditionText;
+
     void Update()
     {
         if (Character == null) return;
@@ -21,6 +23,8 @@ public class RobotPanel : MonoBehaviour
 
     public void SetRobot(Character c)
     {
+        ConditionText.text = GameManager.Instance.TextManager.GetText("Condition");
+
         if (c == null || c.IsRobot == false)
         {
             Character = null;

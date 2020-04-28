@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 224078792394576046}
   - component: {fileID: 222811599467414870}
   - component: {fileID: 114264733154738550}
+  - component: {fileID: 114595329332976092}
   m_Layer: 5
   m_Name: MedicineIcon
   m_TagString: Untagged
@@ -58,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.3529412, g: 0.65882355, b: 0.69803923, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -72,6 +73,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114595329332976092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1965754638058592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoverTextKey: s_medicine
 --- !u!114 &114883239277038666
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -411,7 +411,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_medicine
+  HoverTextKey: s_medicine_desc
 --- !u!1 &25444357
 GameObject:
   m_ObjectHideFlags: 0
@@ -1040,7 +1040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_food
+  HoverTextKey: s_food_desc
 --- !u!1 &83628633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1682,6 +1682,8 @@ MonoBehaviour:
   HealthBar: {fileID: 1680294705}
   HungerBar: {fileID: 1764048040}
   TextSubpanel: {fileID: 871137383}
+  HealthText: {fileID: 468037589}
+  HungerText: {fileID: 1677687153}
 --- !u!114 &118300805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2796,7 +2798,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: 5a04967939bc1be43af0c79f447811fc,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: 5a04967939bc1be43af0c79f447811fc,
         type: 2}
@@ -2853,7 +2855,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114785627900928550, guid: 5a04967939bc1be43af0c79f447811fc, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 5a04967939bc1be43af0c79f447811fc, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &217286590
@@ -3689,7 +3692,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: ab34f36161402714981050fc294afdf5,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: ab34f36161402714981050fc294afdf5,
         type: 2}
@@ -3746,7 +3749,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114102214503589466, guid: ab34f36161402714981050fc294afdf5, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: ab34f36161402714981050fc294afdf5, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &309211289
@@ -6111,6 +6115,7 @@ GameObject:
   - component: {fileID: 540808290}
   - component: {fileID: 540808292}
   - component: {fileID: 540808291}
+  - component: {fileID: 540808293}
   m_Layer: 5
   m_Name: Backgorund
   m_TagString: Untagged
@@ -6151,7 +6156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6172,6 +6177,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 540808289}
+--- !u!114 &540808293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 540808289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoverTextKey: HealthDesc
 --- !u!1 &541192387 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1965754638058592, guid: 85466b611480ff141bcdf131a1f6b29a,
@@ -6193,7 +6210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_plants
+  HoverTextKey: s_plants_desc
 --- !u!1001 &549638833
 Prefab:
   m_ObjectHideFlags: 0
@@ -6239,7 +6256,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: a73a1112ec9c7694d841d22b886ee163,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: a73a1112ec9c7694d841d22b886ee163,
         type: 2}
@@ -6296,7 +6313,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114826622489733720, guid: a73a1112ec9c7694d841d22b886ee163, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: a73a1112ec9c7694d841d22b886ee163, type: 2}
   m_IsPrefabParent: 0
 --- !u!114 &556659997
@@ -7321,7 +7339,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: 9ac153e3bbb11da48b119bf2deddc6d5,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: 9ac153e3bbb11da48b119bf2deddc6d5,
         type: 2}
@@ -7378,7 +7396,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114383239680071900, guid: 9ac153e3bbb11da48b119bf2deddc6d5, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 9ac153e3bbb11da48b119bf2deddc6d5, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &667464956
@@ -7657,7 +7676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_metal
+  HoverTextKey: s_metal_desc
 --- !u!1 &685759770
 GameObject:
   m_ObjectHideFlags: 0
@@ -9218,7 +9237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_robots_hover
+  HoverTextKey: s_robot_desc
 --- !u!1 &783981119
 GameObject:
   m_ObjectHideFlags: 0
@@ -10866,7 +10885,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: 53100c28404a301409922c2798f07da1,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: 53100c28404a301409922c2798f07da1,
         type: 2}
@@ -10923,7 +10942,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114649083299920824, guid: 53100c28404a301409922c2798f07da1, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 53100c28404a301409922c2798f07da1, type: 2}
   m_IsPrefabParent: 0
 --- !u!114 &871137383 stripped
@@ -12766,7 +12786,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: ba67d7dab91dde247b9d0d8689f6ffb4,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: ba67d7dab91dde247b9d0d8689f6ffb4,
         type: 2}
@@ -12823,7 +12843,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114856610289581628, guid: ba67d7dab91dde247b9d0d8689f6ffb4, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: ba67d7dab91dde247b9d0d8689f6ffb4, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1042113715
@@ -12837,6 +12858,7 @@ GameObject:
   - component: {fileID: 1042113716}
   - component: {fileID: 1042113718}
   - component: {fileID: 1042113717}
+  - component: {fileID: 1042113719}
   m_Layer: 5
   m_Name: Backgorund
   m_TagString: Untagged
@@ -12877,7 +12899,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -12898,6 +12920,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1042113715}
+--- !u!114 &1042113719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1042113715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoverTextKey: HungerDesc
 --- !u!1 &1042402200
 GameObject:
   m_ObjectHideFlags: 0
@@ -13006,7 +13040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_parts
+  HoverTextKey: s_parts_desc
 --- !u!1 &1063482762
 GameObject:
   m_ObjectHideFlags: 0
@@ -13968,6 +14002,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConditionBar: {fileID: 1130060300}
   TextSubpanel: {fileID: 805649647}
+  ConditionText: {fileID: 192908444}
 --- !u!224 &1149296434
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14042,7 +14077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_gas
+  HoverTextKey: s_gas_desc
 --- !u!1 &1176426427
 GameObject:
   m_ObjectHideFlags: 0
@@ -14965,7 +15000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_humans_hover
+  HoverTextKey: s_humans_desc
 --- !u!114 &1338483681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17496,6 +17531,7 @@ GameObject:
   - component: {fileID: 1520500733}
   - component: {fileID: 1520500735}
   - component: {fileID: 1520500734}
+  - component: {fileID: 1520500736}
   m_Layer: 5
   m_Name: Backgorund
   m_TagString: Untagged
@@ -17536,7 +17572,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -17557,6 +17593,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1520500732}
+--- !u!114 &1520500736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1520500732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoverTextKey: ConditionDesc
 --- !u!1 &1554637797
 GameObject:
   m_ObjectHideFlags: 0
@@ -18169,7 +18217,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: 0dfac1e7794c44847a247af828a926b8,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: 0dfac1e7794c44847a247af828a926b8,
         type: 2}
@@ -18226,7 +18274,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114124583756829616, guid: 0dfac1e7794c44847a247af828a926b8, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 0dfac1e7794c44847a247af828a926b8, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1646953629
@@ -19479,7 +19528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_ore
+  HoverTextKey: s_ore_desc
 --- !u!1 &1793649877
 GameObject:
   m_ObjectHideFlags: 0
@@ -19789,7 +19838,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: 93f9884438c59814abf7db663c486cef,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: 93f9884438c59814abf7db663c486cef,
         type: 2}
@@ -19851,7 +19900,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114595329332976092, guid: 93f9884438c59814abf7db663c486cef, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 93f9884438c59814abf7db663c486cef, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1833881888
@@ -21834,7 +21884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 007cd1876570c604fae5d3a3fd6956f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HoverTextKey: s_crystals
+  HoverTextKey: s_crystals_desc
 --- !u!1 &2014316509
 GameObject:
   m_ObjectHideFlags: 0
@@ -23087,7 +23137,7 @@ Prefab:
     - target: {fileID: 224078792394576046, guid: 85466b611480ff141bcdf131a1f6b29a,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224078792394576046, guid: 85466b611480ff141bcdf131a1f6b29a,
         type: 2}
@@ -23144,7 +23194,8 @@ Prefab:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114727016270662302, guid: 85466b611480ff141bcdf131a1f6b29a, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 85466b611480ff141bcdf131a1f6b29a, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &2143428075
