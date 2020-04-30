@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -25,7 +24,7 @@ namespace Pathfinding
 
         World world;
 
-        Stopwatch stopwatch;
+        //Stopwatch stopwatch;
 
         int creatingNodesLastX;
         int creatingNodesLastY;
@@ -38,12 +37,12 @@ namespace Pathfinding
         {
             this.world = world;
 
-            stopwatch = new Stopwatch();
+            //stopwatch = new Stopwatch();
             
             IsReady = false;
             nodesCreated = false;
 
-            stopwatch.Start();
+            //stopwatch.Start();
 
             int nodesCount = world.XSize * world.YSize * world.Height;
 
@@ -57,7 +56,7 @@ namespace Pathfinding
             tempEdgesList = new List<Edge>(16);
             tempNeighboursList = new List<Node>(16);
 
-            stopwatch.Stop();
+            //stopwatch.Stop();
         }
 
         public void Reset()
@@ -65,7 +64,7 @@ namespace Pathfinding
             IsReady = false;
             nodesCreated = false;
 
-            stopwatch.Reset();
+            //stopwatch.Reset();
             tilesToProcess.Clear();
             tileNodeMap.Clear();
             tempEdgesList.Clear();
@@ -80,7 +79,7 @@ namespace Pathfinding
 
         void CreateNodes()
         {
-            stopwatch.Start();
+            //stopwatch.Start();
 
             nodesThisCall = 0;
 
@@ -105,7 +104,7 @@ namespace Pathfinding
                             creatingNodesLastX = x;
                             creatingNodesLastY = y + 1;
 
-                            stopwatch.Stop();
+                            //stopwatch.Stop();
 
                             return;
                         }
@@ -118,7 +117,7 @@ namespace Pathfinding
             nodesCreated = true;
             tilesToProcess = new Queue<Tile>(tileNodeMap.Keys);
 
-            stopwatch.Stop();
+            //stopwatch.Stop();
         }
 
         public Dictionary<Tile, Node> GetCompleteGraph()
@@ -146,7 +145,7 @@ namespace Pathfinding
                 return;
             }
 
-            stopwatch.Start();
+            //stopwatch.Start();
 
             tilesThisCall = 0;
 
@@ -157,8 +156,6 @@ namespace Pathfinding
                 tempNeighboursList.Clear();
 
                 // Sprawdzanie poruszania się wzdłuż osi X, Y
-
-                // Tile n;
 
                 Tile n = t.GetNorthNeighbour();
                 Tile e = t.GetEastNeighbour();
@@ -224,12 +221,13 @@ namespace Pathfinding
                 }          
 
                 IsReady = true;
-                stopwatch.Stop();
-                UnityEngine.Debug.Log("Stworzono graf do szukania ścieżek. Węzły: " + tileNodeMap.Count + ". Krawędzie: " + edgesCount
-                + ". Czas tworzenia: " + stopwatch.ElapsedMilliseconds + "ms.");
+                
+                //stopwatch.Stop();
+                //UnityEngine.Debug.Log("Stworzono graf do szukania ścieżek. Węzły: " + tileNodeMap.Count + ". Krawędzie: " + edgesCount
+                //+ ". Czas tworzenia: " + stopwatch.ElapsedMilliseconds + "ms.");
             }
 
-            stopwatch.Stop();                  
+            //stopwatch.Stop();                  
         }       
     }
 }
