@@ -221,7 +221,7 @@ public class ConstructionSite : IWorkplace
         }
         else
         {
-            Debug.LogWarning("Próbujemy przerwać budowę, kiedy trwa dekonstrukcja budynku");
+            //Debug.LogWarning("Próbujemy przerwać budowę, kiedy trwa dekonstrukcja budynku");
         }        
     }
 
@@ -242,12 +242,12 @@ public class ConstructionSite : IWorkplace
 
     public void StartDeconstructionPreparation()
     {
-        Debug.LogWarning("Próbujemy dekonstruować sam plac");
+        //Debug.LogWarning("Próbujemy dekonstruować sam plac");
     }
 
     public void CancelDeconstructionPreparation()
     {
-        Debug.LogWarning("Próbujemy zatrzymać dekonstrukcję samego placu");
+        //Debug.LogWarning("Próbujemy zatrzymać dekonstrukcję samego placu");
     }
 
     public bool CanReserveJob(Character character)

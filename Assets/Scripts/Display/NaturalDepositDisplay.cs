@@ -64,7 +64,5 @@ public class NaturalDepositDisplay : SelectableDisplayObject
                 return;
             }
         }
-
-        Debug.LogWarning("Stworzono instancję NaturalDepositDisplay bez przypisanej fabryki");
     }
 }

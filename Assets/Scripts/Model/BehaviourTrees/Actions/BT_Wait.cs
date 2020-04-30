@@ -14,11 +14,8 @@ public class BT_Wait : BT_Node
 
     public override BT_Result Tick(BT_AgentMemory am)
     {
-        // Debug.Log("BT_WAIT" + waitingTime);
-
         if (am.IsRunning(ID) == false)
         {
-            // Debug.Log("BT_Wait - początek. Czas: " + waitingTime + "s.");
             am.SetFloat(ID, "timer", waitingTime);
             am.StartRunning(ID);
         }
@@ -30,7 +27,6 @@ public class BT_Wait : BT_Node
         if (timer <= 0)
         {
             am.StopRunning(ID);
-            // Debug.Log("BT_Wait - koniec");
             return BT_Result.SUCCESS;
         }
         else

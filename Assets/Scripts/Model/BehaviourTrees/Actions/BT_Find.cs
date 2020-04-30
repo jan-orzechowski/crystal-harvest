@@ -64,19 +64,17 @@ public abstract class BT_Find : BT_Node
 
             if (am.Character.IsTileMarkedAsInaccessible(accessTile))
             {
-                // Debug.Log("pole niedostępne");
+                // Pole niedostępne
                 data.PotentialDestination = null;
                 return BT_Result.RUNNING;
             }
 
             if (am.Character.DestinationTile != accessTile)
             {
-                // Debug.Log("Szukanie - błędne pole");
+                // Błędne pole
                 data.PotentialDestination = null;
                 return BT_Result.RUNNING;
             }
-
-            // Debug.Log("szukanie trwa");
 
             if (am.Character.CurrentTile == accessTile)
             {
@@ -90,7 +88,6 @@ public abstract class BT_Find : BT_Node
                 if (am.Character.Path.IsImpossible)
                 {
                     // Ścieżka niemożliwa
-                    // Debug.Log("Szukanie - ścieżka niemożliwa");
                     data.PotentialDestination = null;
                     return BT_Result.RUNNING;
                 }

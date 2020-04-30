@@ -58,8 +58,6 @@ public class BT_FindTransportJob : BT_Node
         BT_FindTransportJobNodeData data = am.GetObject(ID) as BT_FindTransportJobNodeData;
         if (data == null) return BT_Result.FAILURE;
 
-        // Debug.Log("BT_FindTransportJob");
-
         World world = GameManager.Instance.World;
 
         if (data.PotentialReservation == null)

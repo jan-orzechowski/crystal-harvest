@@ -61,7 +61,7 @@ public class MapGenerator
             if (finalRockPercentage < minFinalRockPercentage
                 || finalRockPercentage > maxFinalRockPercentage)
             {
-                Debug.Log("Nieudana próba, nr: " + (a + 1) + ", %: " + finalRockPercentage);
+                //Debug.Log("Nieudana próba, nr: " + (a + 1) + ", %: " + finalRockPercentage);
                 continue;
             }
             else
@@ -429,7 +429,7 @@ public class MapGenerator
 
     float GetRockPercentage()
     {
-        Debug.Log(CountRocksOnMap());
+        //Debug.Log(CountRocksOnMap());
         float result = ((float)CountRocksOnMap() / (xSize * ySize));
         return result;
     }

@@ -30,8 +30,6 @@ public abstract class BT_GoTo : BT_Node
             {
                 am.Character.SetLastTileRotation(GetDestinationTileRotation(am));
 
-                // Debug.Log("Nowe GoTo: " + goal.ToString());
-
                 am.StartRunning(ID);
                 return BT_Result.RUNNING;
             }
@@ -49,18 +47,14 @@ public abstract class BT_GoTo : BT_Node
                 }
             }
 
-            // Debug.Log("GoTo: " + goal.ToString());
-
             if (am.Character.CurrentTile == goal)
             {
                 am.StopRunning(ID);
-                // Debug.Log("GoTo: sukces");
                 return BT_Result.SUCCESS;
             }
 
             if (am.Character.IsTileMarkedAsInaccessible(goal) || am.Character.DestinationTile != goal)
             {
-                // Debug.Log("GoTo: pole niedostępne");
                 am.StopRunning(ID);
                 return BT_Result.FAILURE;
             }

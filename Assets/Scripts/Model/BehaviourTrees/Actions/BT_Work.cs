@@ -18,7 +18,6 @@ public class BT_Work : BT_Node
 
             if (result)
             {
-                // Debug.Log("BT_WORK - running");
                 am.Character.DisplayObject.CharacterUsesModule(am.Workplace);
                 return BT_Result.RUNNING;
             }

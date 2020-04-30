@@ -38,18 +38,20 @@ public class ConstructionSiteDisplayObject : SelectableDisplayObject
 
     public float OverrideUpperPlanePosition = 0f;
 
+    /*
     void Awake()
     {
         if (ClippableBuilding == null || Building == null)
         {
-            Debug.LogError("Brak modelu budynku");     
+            Debug.LogError("Brak modelu budynku");
         }
-       
+
         if (ClippableScaffolding == null || Scaffolding == null)
         {
             Debug.LogError("Brak modelu rusztowania");
         }
     }
+    */
 
     void Update()
     {

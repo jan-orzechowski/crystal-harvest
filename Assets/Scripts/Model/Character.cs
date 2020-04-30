@@ -566,10 +566,6 @@ public class Character : ISelectable
         {
             DisplayObject = null;
         }
-        else
-        {
-            Debug.LogWarning("Niewłaściwy SelectableDisplayObject dla postaci");
-        }
     }
 
     public string DEBUG_GetSelectionText()
@@ -631,7 +627,7 @@ public class Character : ISelectable
     {
         if (DisplayObject == null)
         {
-            Debug.Log("Postać nie ma swojego modelu na mapie! Pozycja: " + CurrentTile.Position.ToString());
+            //Debug.Log("Postać nie ma swojego modelu na mapie! Pozycja: " + CurrentTile.Position.ToString());
             return null;
         } 
         else

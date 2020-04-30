@@ -159,7 +159,7 @@ public class Building : ISelectable
     {
         if (DisplayObject == null)
         {
-            Debug.Log("Budynek nie posiada modelu na mapie: " + Tiles[0].Position.ToString());
+            //Debug.Log("Budynek nie posiada modelu na mapie: " + Tiles[0].Position.ToString());
             return null;
         } 
         else

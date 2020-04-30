@@ -228,8 +228,6 @@ public class PlatformDisplayObject : SelectableDisplayObject
                 return;
             }
         }
-
-        Debug.LogWarning("Stworzono instancję PlatformDisplayObject bez przypisanego budynku");
     }
 }
 

@@ -43,7 +43,5 @@ public class ServiceDisplayObject : SelectableDisplayObject
                 return;
             }
         }
-
-        Debug.LogWarning("Stworzono instancję ServiceDisplayObject bez przypisanej usługi");
     }
 }

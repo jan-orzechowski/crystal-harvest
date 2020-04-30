@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        if (Instance != null) { Debug.LogError("Dwie instancje klasy GameManager!"); }
         Instance = this;
 
         TextManager = new TextManager();
@@ -202,7 +201,6 @@ public class GameManager : MonoBehaviour
         }
         if (model == null)
         {
-            Debug.Log("Nie znaleziono modelu dla budynku: " + building.Type);
             model = DebugBuildingPreviewPrefab;
         }
 
@@ -238,9 +236,9 @@ public class GameManager : MonoBehaviour
                 break;
             }
         }
+
         if (siteObjectPrefab == null)
         {
-            Debug.Log("Nie znaleziono placu konstrukcyjnego dla budynku: " + building.Type);
             return null;
         }
 

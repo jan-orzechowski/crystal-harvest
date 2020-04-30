@@ -31,11 +31,6 @@ public class FactoryPanel : MonoBehaviour
     {
         ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
 
-        if (slotsArray == null || slotsArray.Length == 0)
-        {
-            Debug.Log("Panel nie ma żadnych slotów na zasoby!");
-        }
-
         inputSlots = new List<ResourceIconSlot>();
         outputSlots = new List<ResourceIconSlot>();
 

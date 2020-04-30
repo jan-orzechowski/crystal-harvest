@@ -71,7 +71,7 @@ namespace Pathfinding
 
             if (tileNodeMap == null)
             {
-                UnityEngine.Debug.LogError("Pathfinding bez istniejącego grafu!");
+                //UnityEngine.Debug.LogError("Pathfinding bez istniejącego grafu!");
                 return;
             }
 
@@ -80,7 +80,7 @@ namespace Pathfinding
 
             if (startNode == null || goalNode == null)
             {
-                UnityEngine.Debug.LogError("Zażądano ścieżki pomiędzy nieistniejącymi polami!");
+                //UnityEngine.Debug.LogError("Zażądano ścieżki pomiędzy nieistniejącymi polami!");
                 return;
             }
 

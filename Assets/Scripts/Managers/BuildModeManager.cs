@@ -126,12 +126,12 @@ public class BuildModeManager : MonoBehaviour
     {
         if (BuildMode == BuildMode.Single)
         {
-            Debug.Log("BuildMode - Single Instant");
+            //Debug.Log("BuildMode - Single Instant");
             BuildMode = BuildMode.SingleInstant;
         }
         else if (BuildMode == BuildMode.SingleInstant)
         {
-            Debug.Log("BuildMode - Single");
+            //Debug.Log("BuildMode - Single");
             BuildMode = BuildMode.Single;
         }        
     }
@@ -141,10 +141,6 @@ public class BuildModeManager : MonoBehaviour
         if (currentPrototype.AllowRotation)
         {
             currentRotation = currentRotation.Rotate(Rotation.E);
-        }
-        else
-        {
-            Debug.Log("Tego budynku nie można obracać");
         }
     }
 }

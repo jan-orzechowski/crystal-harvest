@@ -143,7 +143,7 @@ namespace Pathfinding
             if (currentPaths.ContainsKey(character) == false ||
                 newPaths.ContainsKey(character) == false)
             {
-                Debug.Log("Próbowano wymienić ścieżki dla postaci spoza listy!");
+                //Debug.Log("Próbowano wymienić ścieżki dla postaci spoza listy!");
                 return;
             }
 

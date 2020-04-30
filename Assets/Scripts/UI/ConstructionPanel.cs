@@ -30,10 +30,7 @@ public class ConstructionPanel : MonoBehaviour
     void Awake ()
     {
         ResourceIconSlot[] slotsArray = this.transform.GetComponentsInChildren<ResourceIconSlot>();
-        if (slotsArray == null || slotsArray.Length == 0)
-        {
-            Debug.Log("Panel nie ma żadnych slotów na zasoby!");
-        }
+
         slots = new List<ResourceIconSlot>(slotsArray);
         slots.OrderBy(slot => slot.Order);
        

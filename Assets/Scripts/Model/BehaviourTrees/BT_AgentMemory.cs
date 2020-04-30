@@ -54,7 +54,10 @@ public class BT_AgentMemory
 
     public void ActivateNode(int nodeToActivateID)
     {
-        if (nodesActiveThisTick.Contains(nodeToActivateID)) Debug.Log("Błąd!");
+        if (nodesActiveThisTick.Contains(nodeToActivateID))
+        {
+            //Debug.Log("Błąd!");
+        }
 
         nodesActiveThisTick.Add(nodeToActivateID);
        
@@ -108,7 +111,7 @@ public class BT_AgentMemory
         if (nodesActiveThisTick.Contains(nodeToDeactivateID) == false ||
             nodesActiveThisTick[nodesActiveThisTick.Count - 1] != nodeToDeactivateID)
         {
-            Debug.Log("Błąd - węzeł dezaktywowany w niewłaściwej kolejności");
+            //Debug.Log("Błąd - węzeł dezaktywowany w niewłaściwej kolejności");
             return;
         }
 

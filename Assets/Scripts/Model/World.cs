@@ -101,7 +101,7 @@ public class World
 
         Tile.SetWorldForTiles(this);
 
-        Debug.Log("Stworzono mapę posiadającą " + XSize * YSize + " pól.");
+        //Debug.Log("Stworzono mapę posiadającą " + XSize * YSize + " pól.");
 
         Buildings = new List<Building>();
         Characters = new List<Character>();
@@ -384,7 +384,7 @@ public class World
             Characters.Add(c);
 
             GameManager.Instance.GenerateDisplayForCharacter(c, isRobot);
-            Debug.Log("Dodano postać: " + c.CurrentTile.Position.ToString());
+            //Debug.Log("Dodano postać: " + c.CurrentTile.Position.ToString());
             return true;
         }
         return false;
@@ -448,7 +448,7 @@ public class World
 
         Pathfinder.RemoveCharacter(c);
 
-        Debug.Log("Postać zmarła: " + c.Name);
+        //Debug.Log("Postać zmarła: " + c.Name);
 
         GameManager.Instance.RemoveDisplayForCharacter(c);
     }
@@ -593,10 +593,12 @@ public class World
         {
             if (buildingPrototypes[i].Type == type) prototype = buildingPrototypes[i];
         }
+
         if (prototype == null)
         {
-            Debug.LogWarning("Nie ma takiego rodzaju budynku: " + type);
+            //Debug.LogWarning("Nie ma takiego rodzaju budynku: " + type);
         }
+
         return prototype;
     }
 
@@ -604,7 +606,7 @@ public class World
     {
         if (IsValidBuildingPosition(origin, rotation, prototype) == false)
         {
-            Debug.Log("Nie można postawić budynku: lokacja jest nieodpowiednia.");
+            //Debug.Log("Nie można postawić budynku: lokacja jest nieodpowiednia.");
             return null;
         }
         else
@@ -728,7 +730,7 @@ public class World
         }
         else
         {            
-            Debug.Log("Próbowano dwa razy zarządzić dekonstrukcję tego samego budynku");
+            //Debug.Log("Próbowano dwa razy zarządzić dekonstrukcję tego samego budynku");
         }
     }
 
@@ -738,7 +740,7 @@ public class World
         {
             if (building.Module is ConstructionSite)
             {
-                Debug.LogWarning("Próbujemy zacząć dekonstruować budynek, który już ma przypisany plac");
+                //Debug.LogWarning("Próbujemy zacząć dekonstruować budynek, który już ma przypisany plac");
             }
 
             return (building.Module.IsReadyForDeconstruction());
@@ -796,7 +798,7 @@ public class World
 
         mapChangedThisFrame = true;
 
-        Debug.Log("Usunięto budynek: " + building.Tiles[0].Position.ToString());
+        //Debug.Log("Usunięto budynek: " + building.Tiles[0].Position.ToString());
 
         if (existingSite == false)
         {
@@ -821,7 +823,7 @@ public class World
     {
         if (ConstructionSites.Contains(site) == false || site.Building == null)
         {
-            Debug.Log("Próba ukończenia dekonstrukcji przez niezarejestrowany plac budowy");
+            //Debug.Log("Próba ukończenia dekonstrukcji przez niezarejestrowany plac budowy");
             return;
         }
 
@@ -851,7 +853,7 @@ public class World
         }
         else
         {
-            Debug.Log("Próbowano odwołać niezleconą rozbiórkę budynku");
+            //Debug.Log("Próbowano odwołać niezleconą rozbiórkę budynku");
         }
     }
     
@@ -859,7 +861,7 @@ public class World
     {
         if (ConstructionSites.Contains(site) == false)
         {
-            Debug.Log("Próba ukończenia konstrukcji przez niezarejestrowany plac budowy");
+            //Debug.Log("Próba ukończenia konstrukcji przez niezarejestrowany plac budowy");
             return null;
         }
 
@@ -1613,7 +1615,7 @@ public class World
             }
             else
             {
-                Debug.Log("Próbujemy usuwać zasoby, których nie dodaliśmy");
+                //Debug.Log("Próbujemy usuwać zasoby, których nie dodaliśmy");
             }
         }
     }

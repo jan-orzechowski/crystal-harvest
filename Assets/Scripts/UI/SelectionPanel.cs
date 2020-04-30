@@ -232,7 +232,7 @@ public class SelectionPanel : MonoBehaviour
 
         if (rdi == null)
         {
-            Debug.LogWarning("Brakuje ResourceDisplayInfo dla zasobu: " + resourceID);
+            //Debug.LogWarning("Brakuje ResourceDisplayInfo dla zasobu: " + resourceID);
             return;
         }
 
