@@ -32,6 +32,7 @@ public static class StaticLanguageData
                 {"s_credits_gfx", "Grafika" },
                 {"s_credits_scripts", "Dodatkowe skrypty" },
                 {"s_credits_palette", "Paleta" },
+                {"s_credits_translation", "Tłumaczenie na angielski" },
                         
                 // Wiadomości
                 {"s_start_text", "Na galaktycznych rynkach nie ma cenniejszego surowca niż kosmiczne kryształy. Twoim zadaniem jest zrabować je z pustynnej planety i uciec, zanim Twoja obecność zostanie wykryta przez jej właścicieli." },
@@ -181,6 +182,7 @@ public static class StaticLanguageData
                 {"s_credits_gfx", "Graphics" },
                 {"s_credits_scripts", "Additional Scripts" },
                 {"s_credits_palette", "Color Palette" },
+                {"s_credits_translation", "Translation" },
                         
                 // Wiadomości
                 {"s_start_text", "Space crystals are the most valuable resource on the intergalactic market. Your mission is to steal them from a desert planet and escape before your presence is detected by its owners." },
