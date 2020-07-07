@@ -510,6 +510,7 @@ GameObject:
   - component: {fileID: 36715344}
   - component: {fileID: 36715346}
   - component: {fileID: 36715345}
+  - component: {fileID: 36715347}
   m_Layer: 5
   m_Name: FoodSynthesizerText
   m_TagString: Untagged
@@ -569,7 +570,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Syntezator \u017Cywno\u015Bci"
+  m_Text: FoodSynthesizer
 --- !u!222 &36715346
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -577,6 +578,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 36715343}
+--- !u!114 &36715347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 36715343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: FoodSynthesizer
 --- !u!1 &38133663
 GameObject:
   m_ObjectHideFlags: 0
@@ -952,6 +965,7 @@ GameObject:
   - component: {fileID: 75834959}
   - component: {fileID: 75834961}
   - component: {fileID: 75834960}
+  - component: {fileID: 75834962}
   m_Layer: 5
   m_Name: RobotFactoryText
   m_TagString: Untagged
@@ -1011,7 +1025,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Fabryka robot\xF3w"
+  m_Text: RobotFactory
 --- !u!222 &75834961
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1019,6 +1033,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 75834958}
+--- !u!114 &75834962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 75834958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: RobotFactory
 --- !u!1 &76336924 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1965754638058592, guid: 9ac153e3bbb11da48b119bf2deddc6d5,
@@ -3953,6 +3979,7 @@ GameObject:
   - component: {fileID: 313016785}
   - component: {fileID: 313016787}
   - component: {fileID: 313016786}
+  - component: {fileID: 313016788}
   m_Layer: 5
   m_Name: CrystalStoragetText
   m_TagString: Untagged
@@ -4012,7 +4039,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Magazyn na kryszta\u0142y"
+  m_Text: CrystalStorage
 --- !u!222 &313016787
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4020,6 +4047,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 313016784}
+--- !u!114 &313016788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 313016784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: CrystalStorage
 --- !u!1 &314122979
 GameObject:
   m_ObjectHideFlags: 0
@@ -4433,6 +4472,7 @@ GameObject:
   - component: {fileID: 349517751}
   - component: {fileID: 349517753}
   - component: {fileID: 349517752}
+  - component: {fileID: 349517754}
   m_Layer: 5
   m_Name: SlabText
   m_TagString: Untagged
@@ -4492,7 +4532,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Chodnik
+  m_Text: Slab
 --- !u!222 &349517753
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4500,6 +4540,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 349517750}
+--- !u!114 &349517754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 349517750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Slab
 --- !u!1001 &360172659
 Prefab:
   m_ObjectHideFlags: 0
@@ -5572,6 +5624,7 @@ GameObject:
   - component: {fileID: 506991621}
   - component: {fileID: 506991623}
   - component: {fileID: 506991622}
+  - component: {fileID: 506991624}
   m_Layer: 5
   m_Name: HealingChamberText
   m_TagString: Untagged
@@ -5631,7 +5684,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Komora lecznicza
+  m_Text: HealingChamber
 --- !u!222 &506991623
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5639,6 +5692,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 506991620}
+--- !u!114 &506991624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 506991620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: HealingChamber
 --- !u!1 &510453632
 GameObject:
   m_ObjectHideFlags: 0
@@ -7588,6 +7653,7 @@ GameObject:
   - component: {fileID: 678796665}
   - component: {fileID: 678796667}
   - component: {fileID: 678796666}
+  - component: {fileID: 678796668}
   m_Layer: 5
   m_Name: LaboratoryText
   m_TagString: Untagged
@@ -7647,7 +7713,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Laboratorium
+  m_Text: Laboratory
 --- !u!222 &678796667
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7655,6 +7721,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 678796664}
+--- !u!114 &678796668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 678796664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Laboratory
 --- !u!1 &678955143 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1965754638058592, guid: 0dfac1e7794c44847a247af828a926b8,
@@ -8830,6 +8908,7 @@ GameObject:
   - component: {fileID: 731776990}
   - component: {fileID: 731776992}
   - component: {fileID: 731776991}
+  - component: {fileID: 731776993}
   m_Layer: 5
   m_Name: StorageText
   m_TagString: Untagged
@@ -8889,7 +8968,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Magazyn
+  m_Text: Storage
 --- !u!222 &731776992
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8897,6 +8976,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 731776989}
+--- !u!114 &731776993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 731776989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Storage
 --- !u!114 &736414649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10773,6 +10864,7 @@ GameObject:
   - component: {fileID: 866732146}
   - component: {fileID: 866732148}
   - component: {fileID: 866732147}
+  - component: {fileID: 866732149}
   m_Layer: 5
   m_Name: PartsFactoryText
   m_TagString: Untagged
@@ -10832,7 +10924,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Fabryka cz\u0119\u015Bci zamiennych"
+  m_Text: PartsFactory
 --- !u!222 &866732148
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10840,6 +10932,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 866732145}
+--- !u!114 &866732149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 866732145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: PartsFactory
 --- !u!1001 &869000783
 Prefab:
   m_ObjectHideFlags: 0
@@ -11050,6 +11154,7 @@ GameObject:
   - component: {fileID: 884383107}
   - component: {fileID: 884383109}
   - component: {fileID: 884383108}
+  - component: {fileID: 884383110}
   m_Layer: 5
   m_Name: MetalworksText
   m_TagString: Untagged
@@ -11109,7 +11214,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Huta
+  m_Text: Metalworks
 --- !u!222 &884383109
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11117,6 +11222,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 884383106}
+--- !u!114 &884383110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 884383106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Metalworks
 --- !u!224 &909385411 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224640075676194678, guid: f119e6f2c1648004e8c2ff537bbf24d5,
@@ -12013,6 +12130,7 @@ GameObject:
   - component: {fileID: 983629480}
   - component: {fileID: 983629482}
   - component: {fileID: 983629481}
+  - component: {fileID: 983629483}
   m_Layer: 5
   m_Name: StairsText
   m_TagString: Untagged
@@ -12072,7 +12190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Schody
+  m_Text: Stairs
 --- !u!222 &983629482
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12080,6 +12198,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 983629479}
+--- !u!114 &983629483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 983629479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Stairs
 --- !u!224 &984101833
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12461,6 +12591,7 @@ GameObject:
   - component: {fileID: 1034865506}
   - component: {fileID: 1034865508}
   - component: {fileID: 1034865507}
+  - component: {fileID: 1034865509}
   m_Layer: 5
   m_Name: GreenhouseText
   m_TagString: Untagged
@@ -12520,7 +12651,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Szklarnia
+  m_Text: Greenhouse
 --- !u!222 &1034865508
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12528,6 +12659,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1034865505}
+--- !u!114 &1034865509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1034865505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Greenhouse
 --- !u!1001 &1035506079
 Prefab:
   m_ObjectHideFlags: 0
@@ -14830,6 +14973,7 @@ GameObject:
   - component: {fileID: 1297609206}
   - component: {fileID: 1297609208}
   - component: {fileID: 1297609207}
+  - component: {fileID: 1297609209}
   m_Layer: 5
   m_Name: PlatformText
   m_TagString: Untagged
@@ -14889,7 +15033,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Platforma
+  m_Text: Platform
 --- !u!222 &1297609208
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14897,6 +15041,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1297609205}
+--- !u!114 &1297609209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1297609205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Platform
 --- !u!1 &1336345347
 GameObject:
   m_ObjectHideFlags: 0
@@ -15988,6 +16144,7 @@ GameObject:
   - component: {fileID: 1387406125}
   - component: {fileID: 1387406127}
   - component: {fileID: 1387406126}
+  - component: {fileID: 1387406128}
   m_Layer: 5
   m_Name: QuartersText
   m_TagString: Untagged
@@ -16047,7 +16204,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Kwatery
+  m_Text: Quarters
 --- !u!222 &1387406127
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16055,6 +16212,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1387406124}
+--- !u!114 &1387406128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1387406124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Quarters
 --- !u!114 &1388526137 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114359822763898884, guid: f119e6f2c1648004e8c2ff537bbf24d5,
@@ -20073,6 +20242,7 @@ GameObject:
   - component: {fileID: 1840220184}
   - component: {fileID: 1840220186}
   - component: {fileID: 1840220185}
+  - component: {fileID: 1840220187}
   m_Layer: 5
   m_Name: RefineryText
   m_TagString: Untagged
@@ -20132,7 +20302,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Rafineria
+  m_Text: Refinery
 --- !u!222 &1840220186
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20140,6 +20310,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1840220183}
+--- !u!114 &1840220187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1840220183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: Refinery
 --- !u!1 &1847708367
 GameObject:
   m_ObjectHideFlags: 0
@@ -20756,6 +20938,7 @@ GameObject:
   - component: {fileID: 1895572441}
   - component: {fileID: 1895572443}
   - component: {fileID: 1895572442}
+  - component: {fileID: 1895572444}
   m_Layer: 5
   m_Name: RepairStationText
   m_TagString: Untagged
@@ -20815,7 +20998,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Stacja napraw
+  m_Text: RepairStation
 --- !u!222 &1895572443
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20823,6 +21006,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1895572440}
+--- !u!114 &1895572444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1895572440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 929146f00db2e1042947932562f6379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textKey: RepairStation
 --- !u!1001 &1916470102
 Prefab:
   m_ObjectHideFlags: 0

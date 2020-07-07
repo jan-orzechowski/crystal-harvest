@@ -17,13 +17,14 @@ public class SidePanel : MonoBehaviour
     public GameObject SoundOnButton;
     public GameObject SoundOffButton;
 
-    public GameObject InfoButton; 
+    public GameObject InfoButton;
 
     public bool PanelVisible { get; protected set; }
 
     void Start () 
     {
         HidePanels();
+        LoadBuildPanelButtonsCaptions();
         ShowSoundButton(true);
     }
     
@@ -137,6 +138,15 @@ public class SidePanel : MonoBehaviour
                 SoundOffButton.SetActive(true);
                 SoundOnButton.SetActive(false);
             }
+        }
+    }
+
+    void LoadBuildPanelButtonsCaptions()
+    {
+        ReplaceText[] textFields = BuildPanel.GetComponentsInChildren<ReplaceText>();
+        foreach (ReplaceText field in textFields)
+        {
+            field.UpdateText();
         }
     }
 }
