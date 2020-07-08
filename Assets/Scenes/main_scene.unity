@@ -21182,6 +21182,35 @@ Prefab:
       propertyPath: SoundManager
       value: 
       objectReference: {fileID: 855187728}
+    - target: {fileID: 1029304830442290, guid: 34160506a22fee6499225a1d9701b064, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224499429062193500, guid: 34160506a22fee6499225a1d9701b064,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224033834793030492, guid: 34160506a22fee6499225a1d9701b064,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224823526829346914, guid: 34160506a22fee6499225a1d9701b064,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224335971255964498, guid: 34160506a22fee6499225a1d9701b064,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224654614514277006, guid: 34160506a22fee6499225a1d9701b064,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 200
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 34160506a22fee6499225a1d9701b064, type: 2}
   m_IsPrefabParent: 0
