@@ -4,7 +4,7 @@ using System;
 
 public static class StaticData
 {
-    public const string Version = "0.9a";
+    public const string Version = "0.9b";
 
     public const float TimeLimit = (60f * 20f);
 
