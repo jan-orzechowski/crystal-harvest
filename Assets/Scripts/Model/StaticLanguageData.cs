@@ -20,8 +20,8 @@ public static class StaticLanguageData
                 {"s_new_game_button", "Nowa gra" },
                 {"s_credits_button", "O grze" },
                 {"s_quit_button", "Wyjście" },
-                {"s_quit_prompt", "Czy na pewno chcesz opuścić grę?" },
-                {"s_retreat_prompt", "Czy na pewno chcesz przerwać misję?" },
+                {"s_quit_prompt", "Czy na pewno chcesz opuścić grę?                       " },
+                {"s_retreat_prompt", "Czy na pewno chcesz przerwać misję?                 " },
           
                 // O grze
                 {"s_credits_programming", "Projekt i programowanie" },
@@ -37,7 +37,7 @@ public static class StaticLanguageData
                 // Wiadomości
                 {"s_start_text", "Na galaktycznych rynkach nie ma cenniejszego surowca niż kosmiczne kryształy. Twoim zadaniem jest zrabować je z pustynnej planety i uciec, zanim Twoja obecność zostanie wykryta przez jej właścicieli." },
                 {"s_victory_text", "Udało się na czas zebrać kryształy! Twoje bogactwo będzie odtąd niezmierzone.  " },
-                {"s_time_defeat_text", "Czas upłynął, trzeba uciekać! Może następnym razem się uda..." },
+                {"s_time_defeat_text", "Czas upłynął, trzeba uciekać! Może następnym razem się uda...              " },
                 {"s_death_defeat_text", "Cała załoga zginęła! Na szczęście znajdzie się wielu kolejnych ochotników..." },
                 {"s_start_confirmation", "Do roboty!" },
                 {"s_victory_confirmation", "Zwycięstwo!" },
@@ -139,7 +139,7 @@ public static class StaticLanguageData
                 {"s_deconstruction_button", "Rozbiórka" },
                 {"s_halt_button", "Wstrzymaj" },
                 {"s_start_button", "Wznów" },
-                {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?" },
+                {"s_deconstruction_prompt", "Czy na pewno chcesz wyburzyć ten budynek?           " },
 
                 // Wskazówki
                 {"s_tips_1", "Sterowanie: \n\n - WSAD / strzałki - ruch kamery \n - Q, E - obrót kamery \n - Spacja - aktywna pauza \n - R - obrót budynku                                     " },
@@ -170,8 +170,8 @@ public static class StaticLanguageData
                 {"s_new_game_button", "New Game" },
                 {"s_credits_button", "About" },
                 {"s_quit_button", "Quit" },
-                {"s_quit_prompt", "Are you sure you want to quit?" },
-                {"s_retreat_prompt", "Are you sure you want to abandon the mission?" },
+                {"s_quit_prompt", "Are you sure you want to quit?                               " },
+                {"s_retreat_prompt", "Are you sure you want to abandon the mission?             " },
           
                 // O grze
                 {"s_credits_programming", "Design and Programming" },
@@ -187,8 +187,8 @@ public static class StaticLanguageData
                 // Wiadomości
                 {"s_start_text", "Space crystals are the most valuable resource on the intergalactic market. Your mission is to steal them from a desert planet and escape before your presence is detected by its owners." },
                 {"s_victory_text", "You successfully gathered the crystals! Your wealth shall now be unsurpassed.  " },
-                {"s_time_defeat_text", "Time's out, you need to run! Maybe next time..." },
-                {"s_death_defeat_text", "The entire crew is dead! Fortunately there are always more volunteers..." },
+                {"s_time_defeat_text", "Time's out, you need to run! Maybe next time...               " },
+                {"s_death_defeat_text", "The entire crew is dead! Fortunately there are always more volunteers...         " },
                 {"s_start_confirmation", "Let's get to work!" },
                 {"s_victory_confirmation", "Victory!" },
                 {"s_defeat_confirmation", "Too bad." },
@@ -236,7 +236,7 @@ public static class StaticLanguageData
                 {"Health", "Health" },
                 {"HealthDesc", "Health. Restored in the Healing Chamber" },
                 {"Condition", "Condition" },
-                {"ConditionDesc", "Condition. Restored in the Repair Station using Spare Parts" },          
+                {"ConditionDesc", "Condition. Restored in the Repair Station using spare parts" },          
 
                 // Budynki
                 {"Spaceship", "Spaceship" },
@@ -270,7 +270,7 @@ public static class StaticLanguageData
                 {"HealingChamberDesc", "Allows you to improve the health of your astronauts" },
                 {"QuartersDesc", "Here your astronauts can have a meal and some rest" },
                 {"MetalworksDesc", "Smelters ore into steel" },
-                {"RefineryDesc", "This building allows for the extraction of gas. It can only be constructed on sand." },
+                {"RefineryDesc", "This building allows for the extraction of gas. It can only be constructed on sand" },
                 {"LaboratoryDesc", "Used to make medicine for your astronauts" },
                 {"FoodSynthesizerDesc", "Synthesizes food out of plants" },
                 {"RobotFactoryDesc", "Builds robots that assist your astronauts in their work" },
@@ -289,12 +289,12 @@ public static class StaticLanguageData
                 {"s_deconstruction_button", "Demolish" },
                 {"s_halt_button", "Hold" },
                 {"s_start_button", "Continue" },
-                {"s_deconstruction_prompt", "Are you sure you want to demolish this building?" },
+                {"s_deconstruction_prompt", "Are you sure you want to demolish this building?              " },
 
                 // Wskazówki
-                {"s_tips_1", "Controls: \n\n WSAD / arrow keys – camera movement \n Q, E – camera rotation \n – Space – active pause \n R – rotate building                                     " },
+                {"s_tips_1", "Controls: \n\n - WSAD / arrow keys - camera movement \n - Q, E - camera rotation \n - Space - active pause \n - R - rotate building                                     " },
                 {"s_tips_2", "Your crew automatically decides what to do and where to go. \n\nTo make sure it is focused on the right tasks, it is recommended to limit the number of concurrent construction sites and to use the option to put a construction on hold.                                    " },
-                {"s_tips_3", "Your crew automatically begins to harvest crystals after you construct the Crystal Storage facility.\n\nIt is best to first ensure that your crew's needs are taken care of and to build a lot of robots to assist them – without them it may be difficult to make it on time.\n\nClicking on a crew member will show their hunger and health levels. If either drops to zero, the crew member dies." },
+                {"s_tips_3", "Your crew automatically begins to harvest crystals after you construct the Crystal Storage facility.\n\nIt is best to first ensure that your crew's needs are taken care of and to build a lot of robots to assist them - without them it may be difficult to make it on time.\n\nClicking on a crew member will show their hunger and health levels. If either drops to zero, the crew member dies." },
                 {"s_tips_4", "It is always a good idea to use the active pause to save valuable seconds while considering your next move.              " },
                 {"s_tips_next", "Next" },
                 {"s_tips_end", "OK" },
