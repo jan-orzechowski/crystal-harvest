@@ -646,6 +646,7 @@ public static class StaticData
             "Antonina",
             "Bartosz",
             "Daniel",
+            "Dominik",
             "Filip",
             "Jakub",
             "Joanna",
@@ -655,17 +656,20 @@ public static class StaticData
             "Konstanty",
             "Maciej",
             "Magdalena",
+            "Małgorzata",
             "Marcin",
             "Marta",
             "Michał",
             "Monika",
             "Natalia",
+            "Paulina",
             "Paweł",
             "Piotr",
             "Roman",
             "Ryszard",
+            "Samuel",
             "Szymon",
-            "Urszula"
+            "Urszula"            
         };
     }
 
