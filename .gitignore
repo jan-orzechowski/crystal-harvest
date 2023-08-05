@@ -39,4 +39,5 @@ sysinfo.txt
 !.gitignore
 !/Assets
 !/ProjectSettings
+!/Screenshots
 !README.md
